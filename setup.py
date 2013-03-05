@@ -29,6 +29,8 @@ setup(name='voteit.debate',
       tests_require=requires,
       test_suite="voteit.debate",
       entry_points = """\
+      [fanstatic.libraries]
+      voteit_debate_lib = voteit.debate.fanstaticlib:voteit_debate_lib
       """,
       paster_plugins=['pyramid'],
       message_extractors = { '.': [
