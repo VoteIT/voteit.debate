@@ -10,9 +10,14 @@
     <div metal:fill-slot="content">
 
         <tal:form replace="structure userid_form">Userid form</tal:form>
-        
+
+
+        <a href="javascript:" class="buttonize" id="go_next_speaker">Start next</a>
+
         <div id="speaker_list"></div>
 
+
+        <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>
 </body>
 </html>

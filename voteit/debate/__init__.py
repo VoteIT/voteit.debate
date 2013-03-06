@@ -6,3 +6,5 @@ DebateTSF = TranslationStringFactory(PROJECTNAME)
 
 def includeme(config):
     config.scan()
+    from .models import SpeakerListHandler
+    config.registry.registerAdapter(SpeakerListHandler)

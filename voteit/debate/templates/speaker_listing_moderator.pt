@@ -1,0 +1,22 @@
+<div xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+
+
+<ul>
+    <tal:iterate repeat="userid speaker_list.speakers">
+    <li>
+        <div class="speaker_name">${userid}</div>
+        <div class="speaker_controls">
+            <span class="time_spoken">0</span>
+            <a class="remove_speaker"
+               href="${request.resource_url(api.meeting, '_remove_speaker', query = {'index': repeat['userid'].index})}">remove</a>
+        </div>
+    </li>
+    </tal:iterate>
+</ul>
+
+</div>
+
+
