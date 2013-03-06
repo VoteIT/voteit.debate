@@ -8,16 +8,19 @@
 <body>
     <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage speaker list</h2>
     <div metal:fill-slot="content">
+        <a href="${request.resource_url(api.meeting, '_remove_speaker_list', query = {'came_from': request.url})}"
+           class="buttonize" i18n:translate="">Reset this speaker list</a>
 
         <tal:form replace="structure userid_form">Userid form</tal:form>
 
-
-        <a href="javascript:" class="buttonize" id="go_next_speaker">Start next</a>
-
-        <div id="speaker_list"></div>
-
+        <a href="javascript:" class="buttonize" id="start_speaker" i18n:translate="">Start</a>
+        <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
+        <a href="javascript:" class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
+        <a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
 
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>
+    
+    <div metal:fill-slot="columns" id="speaker_list"></div>
 </body>
 </html>

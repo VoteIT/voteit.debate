@@ -25,13 +25,16 @@ class SpeakerListHandler(object):
             self.context.__speaker_lists__ = OOBTree()
             return self.context.__speaker_lists__
 
+    @property
+    def speaker_list_name(self):
+        return getattr(self.context, '__active_speaker_list__', None)
+
     def set_active_list(self, name):
         assert name in self.speaker_lists
         self.context.__active_speaker_list__ = name
 
     def get_active_list(self):
-        name = getattr(self.context, '__active_speaker_list__', None)
-        return self.speaker_lists.get(name, None)
+        return self.speaker_lists.get(self.speaker_list_name, None)
 
     def active_ai(self, context):
         name = context.__name__

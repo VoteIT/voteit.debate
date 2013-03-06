@@ -1,22 +1,36 @@
-<div xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 
+<div id="left">
+    <h3 i18n:translate="">Queue</h3>
 
-<ul>
-    <tal:iterate repeat="userid speaker_list.speakers">
-    <li>
-        <div class="speaker_name">${userid}</div>
-        <div class="speaker_controls">
-            <span class="time_spoken">0</span>
-            <a class="remove_speaker"
-               href="${request.resource_url(api.meeting, '_remove_speaker', query = {'index': repeat['userid'].index})}">remove</a>
-        </div>
-    </li>
-    </tal:iterate>
-</ul>
-
+    <ul id="speaker_queue">
+        <tal:iterate repeat="userid speaker_list.speakers">
+        <li>
+            <div class="speaker_name">${userid}</div>
+            <div class="speaker_controls">
+                <span class="time_spoken">0</span>
+                <a class="remove_speaker"
+                   href="${request.resource_url(api.meeting, '_remove_speaker', query = {'index': repeat['userid'].index})}">remove</a>
+            </div>
+        </li>
+        </tal:iterate>
+    </ul>
 </div>
+<div id="right">
+    <h3 i18n:translate="">Log</h3>
+    <ul>
+        <tal:iterate repeat="(userid, timelog) speaker_list.speaker_log.items()">
+            <li>
+                <div>${userid}</div>
+                <div><b>${len(timelog)}</b> - ${sum(timelog)} <span i18n:translate="">sec</span></div>
+            </li>
+        </tal:iterate>
+    </ul>
+</div>
+
+</tal:main>
 
 

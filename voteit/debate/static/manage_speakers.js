@@ -8,6 +8,12 @@ $(document).ready(function () {
     load_speaker_list();
     $('img.spinner').remove();
     
+    //Bind events to controls
+    $("#start_speaker").on("click", start_speaker);
+    $("#pause_speaker").on("click", pause_speaker);
+    $("#finished_speaker").on("click", finished_speaker);
+    $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+    
     //Add speaker form
     $("form#add_speaker").on("submit", function(event) {
         event.preventDefault();
@@ -57,4 +63,34 @@ function remove_speaker(event) {
             load_speaker_list();
         }
     })
+}
+
+function start_speaker(event) {
+    event.preventDefault();
+    $('#speaker_queue li:first').addClass('active_speaker');
+}
+function pause_speaker(event) {
+    event.preventDefault();
+    $('#speaker_queue li:first').removeClass('active_speaker');
+}
+function finished_speaker(event) {
+    event.preventDefault();
+    var speaker_block = $('#speaker_queue li:first');
+    var speaker = speaker_block.find('.speaker_name').html();
+    var time_spoken = 0;
+    //speaker_block.find('.time_spoken').html(); #FIXME
+    
+    $.get(meeting_url + '_speaker_finished?seconds=' + time_spoken, function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry
+            flash_message('Couldnt go to next');
+        } else {
+            //Success
+            $('img.spinner').remove();
+            load_speaker_list();
+        }
+    })
+}
+function quickstart_next_speaker(event) {
+    event.preventDefault();
 }

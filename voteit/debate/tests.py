@@ -34,7 +34,6 @@ class SpeakerListHandlerTests(unittest.TestCase):
         self.failUnless(self.config.registry.queryAdapter(meeting, ISpeakerListHandler))
 
 
-
 class SpeakerListTests(unittest.TestCase):
     
     def setUp(self):
@@ -77,4 +76,3 @@ class SpeakerListTests(unittest.TestCase):
         obj.speakers.extend(['a', 'b', 'c'])
         obj.speaker_finished(u"4")
         self.assertEqual(set(obj.speaker_log['a']), set([4]))
-

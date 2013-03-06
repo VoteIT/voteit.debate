@@ -2,6 +2,7 @@ import deform
 from pyramid.view import view_config
 from pyramid.response import Response
 from pyramid.decorator import reify
+from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from betahaus.pyracont.factories import createSchema
 from voteit.core.views.base_view import BaseView
@@ -11,6 +12,7 @@ from voteit.core.views.api import APIView
 from voteit.core import security
 
 from .fanstaticlib import voteit_debate_manage_speakers_js
+from .fanstaticlib import voteit_debate_speaker_view_styles
 from .interfaces import ISpeakerListHandler
 
 
@@ -30,6 +32,7 @@ class ManageSpeakerList(BaseView):
                  renderer = "templates/manage_speaker_list.pt")
     def manage_speaker_list_view(self):
         voteit_debate_manage_speakers_js.need()
+        voteit_debate_speaker_view_styles.need()
         self.sl_handler.active_ai(self.context)
         self.response['userid_form'] = self.get_userid_form().render()
         return self.response
@@ -55,8 +58,21 @@ class ManageSpeakerList(BaseView):
         sl.remove(index)
         return Response()
 
+    @view_config(name = '_remove_speaker_list', context = IMeeting, permission = security.MODERATE_MEETING)
+    def remove_speaker_list(self):
+        came_from = self.request.GET['came_from']
+        del self.sl_handler.speaker_lists[self.sl_handler.speaker_list_name]
+        return HTTPFound(location = came_from)
+
     @view_config(name = "_speaker_listing_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_listing_moderator.pt")
     def speaker_listing_moderator(self):
         self.response['speaker_list'] = self.sl_handler.get_active_list()
         return self.response
+
+    @view_config(name = "_speaker_finished", context = IMeeting, permission = security.MODERATE_MEETING)
+    def speaker_finished(self):
+        seconds = self.request.GET['seconds']
+        sl = self.sl_handler.get_active_list()
+        sl.speaker_finished(seconds)
+        return Response()
