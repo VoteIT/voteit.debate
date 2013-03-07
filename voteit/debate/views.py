@@ -1,6 +1,7 @@
 import deform
 from pyramid.view import view_config
 from pyramid.response import Response
+from pyramid.renderers import render
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
@@ -49,7 +50,7 @@ class ManageSpeakerList(BaseView):
         except deform.ValidationFailure, e:
             return HTTPForbidden()
         sl.add(appstruct['userid'])
-        return Response()
+        return Response(self.speaker_item(appstruct['userid']))
 
     @view_config(name = '_remove_speaker', context = IMeeting, permission = security.MODERATE_MEETING)
     def remove_speaker(self):
@@ -68,6 +69,7 @@ class ManageSpeakerList(BaseView):
                  renderer = "templates/speaker_listing_moderator.pt")
     def speaker_listing_moderator(self):
         self.response['speaker_list'] = self.sl_handler.get_active_list()
+        self.response['speaker_item'] = self.speaker_item
         return self.response
 
     @view_config(name = "_speaker_finished", context = IMeeting, permission = security.MODERATE_MEETING)
@@ -76,3 +78,7 @@ class ManageSpeakerList(BaseView):
         sl = self.sl_handler.get_active_list()
         sl.speaker_finished(seconds)
         return Response()
+
+    def speaker_item(self, userid):
+        self.response['userid'] = userid
+        return render("templates/speaker_item.pt", self.response, request = self.request)

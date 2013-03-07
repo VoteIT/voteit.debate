@@ -8,14 +8,7 @@
 
     <ul id="speaker_queue">
         <tal:iterate repeat="userid speaker_list.speakers">
-        <li>
-            <div class="speaker_name">${userid}</div>
-            <div class="speaker_controls">
-                <span class="time_spoken">0</span>
-                <a class="remove_speaker"
-                   href="${request.resource_url(api.meeting, '_remove_speaker', query = {'index': repeat['userid'].index})}">remove</a>
-            </div>
-        </li>
+            <li tal:replace="structure speaker_item(userid)">Speaker here</li>
         </tal:iterate>
     </ul>
 </div>
