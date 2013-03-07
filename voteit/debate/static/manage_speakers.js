@@ -6,7 +6,8 @@ $(document).ready(function () {
     //Load initial data
     meeting_url = $('#meeting_url').attr('href');
     spinner();
-    load_speaker_list();
+    load_speaker_queue();
+    load_speaker_log();
     $('img.spinner').remove();
     
     //Bind events to controls
@@ -14,40 +15,57 @@ $(document).ready(function () {
     $("#pause_speaker").on("click", pause_speaker);
     $("#finished_speaker").on("click", finished_speaker);
     $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+    $("form#add_speaker").on("submit", add_speaker);
     
-    //Add speaker form
-    $("form#add_speaker").on("submit", function(event) {
-        event.preventDefault();
-        spinner().appendTo("input");
-        var form = $(this);
-        link = form.attr('action');
-        $.post(link, form.serialize(), function(data, textStatus, jqXHR) {
-            //Handle returned data here
-            $('#speaker_queue').append(data);
-        })
-        .done(function() { 
-            $('img.spinner').remove();
-            $(".remove_speaker").on("click", remove_speaker);
-            //load_speaker_list();
-        })
-        .fail(function() {
-            $('img.spinner').remove();
-            flash_message('fubar', 'error', true);
-            //flash_message(voteit.translation['permssions_updated_error'], 'error', true); 
-        });
-    });
-    
+    //Focus
+    //FIXME $("form#add_speaker input[type=text]").focus()    
 });
 
-function load_speaker_list() {
-    $('#speaker_list').load(meeting_url + '_speaker_listing_moderator', function(response, status, xhr) {
+function load_speaker_queue() {
+    spinner().appendTo(('#left'));
+    $('#left').load(meeting_url + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
             flash_message('badness');
         } else {
             //Success
             $(".remove_speaker").on("click", remove_speaker);
+            $("#change_order").on("click", start_change_order);
+            $("#save_order").on("click", save_order);
         }
+    })
+}
+function load_speaker_log() {
+    spinner().appendTo(('#right'));
+    $('#right').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry?
+            flash_message('badness');
+        } else {
+            //Success
+        }
+    })
+}
+
+function add_speaker(event) {
+    event.preventDefault();
+    spinner().appendTo("input");
+    var form = $(this);
+    link = form.attr('action');
+    $.post(link, form.serialize(), function(data, textStatus, jqXHR) {
+        //Handle returned data here
+        $('#speaker_queue').append(data);
+        form.find('input[name=userid]').val("");
+    })
+    .done(function() { 
+        $('img.spinner').remove();
+        $(".remove_speaker").on("click", remove_speaker);
+        //load_speaker_list();
+    })
+    .fail(function() {
+        $('img.spinner').remove();
+        flash_message('fubar', 'error', true);
+        //flash_message(voteit.translation['permssions_updated_error'], 'error', true); 
     })
 }
 
@@ -68,6 +86,36 @@ function remove_speaker(event) {
     })
 }
 
+function start_change_order(event) {
+    event.preventDefault();
+    if (timer != null || $('#timer').length != 0) {
+        flash_message("Can't sort when ongoing", 'error');
+        return false;
+    }
+    $('#speaker_list_controls').slideUp();
+    $("#speaker_queue").sortable();
+    $('#save_order').fadeIn();
+    
+}
+
+function save_order(event) {
+    event.preventDefault();
+    var queue_form = $("form[name=sort_speakers]");
+    $.post(queue_form.attr('action'), queue_form.serialize(), function(data, textStatus, jqXHR) {
+        //Handle returned data here
+    })
+    .done(function() { 
+        $('img.spinner').remove();
+        $("#speaker_queue").sortable("destroy");
+        $('#speaker_list_controls').slideDown();
+        $('#save_order').fadeOut();
+    })
+    .fail(function() {
+        $('img.spinner').remove();
+        flash_message("Order not set", 'error', true);
+        //flash_message(voteit.translation['permssions_updated_error'], 'error', true); 
+    });
+}
 
 
 function update_timer() {
@@ -100,6 +148,7 @@ function pause_speaker(event) {
     $('#timer').removeAttr('id');
     clearInterval(timer);
     timer = null;
+    spoken_time = 0;
 }
 
 function finished_speaker(event) {
@@ -113,7 +162,8 @@ function finished_speaker(event) {
             //Success
             $('img.spinner').remove();
             spoken_time = 0;
-            load_speaker_list();
+            speaker_block.remove();
+            $('#right').html(response);
         }
     })
 }

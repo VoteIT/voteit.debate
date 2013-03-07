@@ -5,4 +5,5 @@
         <a class="remove_speaker"
            href="${request.resource_url(api.meeting, '_remove_speaker', query = {'index': ''})}">remove</a>
     </div>
+    <input type="hidden" name="speaker_id" value="${userid}" />
 </li>

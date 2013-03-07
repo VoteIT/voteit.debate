@@ -64,6 +64,12 @@ class SpeakerListTests(unittest.TestCase):
         obj.remove(1)
         self.assertNotIn('b', obj.speakers)
 
+    def test_set(self):
+        obj = self._cut()
+        obj.speakers.extend(['a', 'b', 'c'])
+        obj.set([1, 2 ,3])
+        self.assertEqual((1, 2, 3,), tuple(obj.speakers))
+
     def test_speaker_finished(self):
         obj = self._cut()
         obj.speakers.extend(['a', 'b', 'c'])

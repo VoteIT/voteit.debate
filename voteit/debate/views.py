@@ -59,17 +59,30 @@ class ManageSpeakerList(BaseView):
         sl.remove(index)
         return Response()
 
+    @view_config(name = '_set_speaker_order', context = IMeeting, permission = security.MODERATE_MEETING)
+    def set_speaker_order(self):
+        sl = self.sl_handler.get_active_list()
+        post = self.request.POST.dict_of_lists()
+        sl.set(post['speaker_id'])
+        return Response()
+
     @view_config(name = '_remove_speaker_list', context = IMeeting, permission = security.MODERATE_MEETING)
     def remove_speaker_list(self):
         came_from = self.request.GET['came_from']
         del self.sl_handler.speaker_lists[self.sl_handler.speaker_list_name]
         return HTTPFound(location = came_from)
 
-    @view_config(name = "_speaker_listing_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
-                 renderer = "templates/speaker_listing_moderator.pt")
-    def speaker_listing_moderator(self):
+    @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "templates/speaker_queue_moderator.pt")
+    def speaker_queue_moderator(self):
         self.response['speaker_list'] = self.sl_handler.get_active_list()
         self.response['speaker_item'] = self.speaker_item
+        return self.response
+
+    @view_config(name = "_speaker_log_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "templates/speaker_log_moderator.pt")
+    def speaker_log_moderator(self):
+        self.response['speaker_list'] = self.sl_handler.get_active_list()
         return self.response
 
     @view_config(name = "_speaker_finished", context = IMeeting, permission = security.MODERATE_MEETING)
@@ -77,7 +90,7 @@ class ManageSpeakerList(BaseView):
         seconds = self.request.GET['seconds']
         sl = self.sl_handler.get_active_list()
         sl.speaker_finished(seconds)
-        return Response()
+        return Response(render("templates/speaker_log_moderator.pt", self.speaker_log_moderator(), request = self.request))
 
     def speaker_item(self, userid):
         self.response['userid'] = userid

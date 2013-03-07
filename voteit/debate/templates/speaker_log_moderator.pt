@@ -3,16 +3,6 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 
-<div id="left">
-    <h3 i18n:translate="">Queue</h3>
-
-    <ul id="speaker_queue">
-        <tal:iterate repeat="userid speaker_list.speakers">
-            <li tal:replace="structure speaker_item(userid)">Speaker here</li>
-        </tal:iterate>
-    </ul>
-</div>
-<div id="right">
     <h3 i18n:translate="">Log</h3>
     <ul>
         <tal:iterate repeat="(userid, timelog) speaker_list.speaker_log.items()">
@@ -22,8 +12,5 @@
             </li>
         </tal:iterate>
     </ul>
-</div>
 
 </tal:main>
-
-

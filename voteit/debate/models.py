@@ -59,6 +59,9 @@ class SpeakerList(Persistent):
     def remove(self, index):
         del self.speakers[index]
 
+    def set(self, value):
+        self.speakers = PersistentList(value)
+
     def speaker_finished(self, seconds):
         userid = self.speakers.pop(0)
         seconds = int(seconds)

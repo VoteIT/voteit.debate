@@ -17,3 +17,11 @@ class ISpeakerList(Interface):
     def remove(index):
         """ Remove at this position. Users can be added several times to the list.
         """
+
+    def set(value):
+        """ Set the list to these values. Must be possible to convert to a persistent list.
+        """
+
+    def speaker_finished(seconds):
+        """ The top speaker on the list has now finished. Move item to log, and log number of seconds.
+        """
