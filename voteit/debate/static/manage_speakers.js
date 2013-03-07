@@ -14,7 +14,7 @@ $(document).ready(function () {
     $("#start_speaker").on("click", start_speaker);
     $("#pause_speaker").on("click", pause_speaker);
     $("#finished_speaker").on("click", finished_speaker);
-    $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+    //$("#quickstart_next_speaker").on("click", quickstart_next_speaker);
     $("form#add_speaker").on("submit", add_speaker);
     
     //Focus
@@ -125,6 +125,8 @@ function update_timer() {
 
 function start_speaker(event) {
     event.preventDefault();
+    //console.log('start speaker');
+
     if ($('#speaker_queue li:first').length == 0) {
         flash_message('Nothing to start');
         return false;
@@ -140,19 +142,27 @@ function start_speaker(event) {
     if (timer == null) {
         timer = setInterval(update_timer, 100);    
     }
+    //console.log('starting speaker - done');
 }
 
 function pause_speaker(event) {
     event.preventDefault();
+    //console.log('pausing speaker');
     $('#speaker_queue li:first').removeClass('active_speaker');
     $('#timer').removeAttr('id');
     clearInterval(timer);
     timer = null;
     spoken_time = 0;
+    //console.log('pausing speaker - done');
 }
 
 function finished_speaker(event) {
     event.preventDefault();
+    //console.log('Speaker finished');
+    if (timer != null) {
+        pause_speaker(event);
+        //FIXME: Execution has to use a callback here to make sure pause has finished!
+    }
     var speaker_block = $('#speaker_queue li:first');
     $.get(meeting_url + '_speaker_finished?seconds=' + Math.round(spoken_time / 10), function(response, status, xhr) {
         if (status == "error") {
@@ -164,10 +174,12 @@ function finished_speaker(event) {
             spoken_time = 0;
             speaker_block.remove();
             $('#right').html(response);
+            //console.log('Speaker finished - done');
         }
     })
 }
 
 function quickstart_next_speaker(event) {
     event.preventDefault();
+    //FIXME - use callbacks with either jq deferred or something else.
 }

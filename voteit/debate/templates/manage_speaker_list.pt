@@ -17,7 +17,7 @@
         <a href="javascript:" class="buttonize" id="start_speaker" i18n:translate="">Start</a>
         <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
         <a href="javascript:" class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
-        <a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
+        <!--<a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>-->
 
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>
