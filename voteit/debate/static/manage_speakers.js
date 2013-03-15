@@ -5,7 +5,7 @@ var timer = null;
 $(document).ready(function () {
     //Load initial data
     meeting_url = $('#meeting_url').attr('href');
-    spinner();
+    spinner().appendTo($('#left'));
     load_speaker_queue();
     load_speaker_log();
     $('img.spinner').remove();
@@ -29,6 +29,7 @@ function load_speaker_queue() {
             flash_message(voteit.translation['error_loading'], 'error', true); 
         } else {
             //Success
+            $(".promote_start_speaker").on("click", promote_start_speaker);
             $(".remove_speaker").on("click", remove_speaker);
             $("#change_order").on("click", start_change_order);
             $("#save_order").on("click", save_order);
@@ -85,6 +86,15 @@ function remove_speaker(event) {
     })
 }
 
+function promote_start_speaker(event) {
+    event.preventDefault();
+    if (timer != null) {
+        pause_speaker(event);
+    }
+    $(this).parents('li').prependTo($(this).parents('ul'))
+    save_order(event, start_speaker);
+}
+
 function start_change_order(event) {
     event.preventDefault();
     if (timer != null) {
@@ -97,24 +107,25 @@ function start_change_order(event) {
     
 }
 
-function save_order(event) {
+function save_order(event, success_callback) {
     event.preventDefault();
     var queue_form = $("form[name=sort_speakers]");
     $.post(queue_form.attr('action'), queue_form.serialize(), function(data, textStatus, jqXHR) {
         //Handle returned data here
     })
-    .done(function() { 
+    .done(function() {
+        // Note callbacks here, we might need to move the other code to it's own call back.
         $('img.spinner').remove();
         $("#speaker_queue").sortable("destroy");
         $('#speaker_list_controls').slideDown();
         $('#save_order').fadeOut();
+        if (typeof success_callback !== "undefined") success_callback(event);
     })
     .fail(function() {
         $('img.spinner').remove();
         flash_message(voteit.translation['error_saving'], 'error', true); 
     });
 }
-
 
 function update_timer() {
     spoken_time += 1;
