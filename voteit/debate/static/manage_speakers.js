@@ -14,7 +14,7 @@ $(document).ready(function () {
     $("#start_speaker").on("click", start_speaker);
     $("#pause_speaker").on("click", pause_speaker);
     $("#finished_speaker").on("click", finished_speaker);
-    //$("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+    $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
     $("form#add_speaker").on("submit", add_speaker);
     
     //Focus
@@ -26,7 +26,7 @@ function load_speaker_queue() {
     $('#left').load(meeting_url + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
-            flash_message('badness');
+            flash_message(voteit.translation['error_loading'], 'error', true); 
         } else {
             //Success
             $(".remove_speaker").on("click", remove_speaker);
@@ -40,7 +40,7 @@ function load_speaker_log() {
     $('#right').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?
-            flash_message('badness');
+            flash_message(voteit.translation['error_loading'], 'error', true); 
         } else {
             //Success
         }
@@ -62,10 +62,9 @@ function add_speaker(event) {
         $(".remove_speaker").on("click", remove_speaker);
         //load_speaker_list();
     })
-    .fail(function() {
+    .fail(function(data) {
         $('img.spinner').remove();
-        flash_message('fubar', 'error', true);
-        //flash_message(voteit.translation['permssions_updated_error'], 'error', true); 
+        flash_message(voteit.translation['error_saving'], 'error', true); 
     })
 }
 
@@ -77,7 +76,7 @@ function remove_speaker(event) {
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
-            flash_message('Couldnt remove');
+            flash_message(voteit.translation['error_saving'], 'error', true); 
         } else {
             //Success
             $('img.spinner').remove();
@@ -88,8 +87,8 @@ function remove_speaker(event) {
 
 function start_change_order(event) {
     event.preventDefault();
-    if (timer != null || $('#timer').length != 0) {
-        flash_message("Can't sort when ongoing", 'error');
+    if (timer != null) {
+        flash_message(voteit.translation['sort_when_timer_active_error'], 'error', true);
         return false;
     }
     $('#speaker_list_controls').slideUp();
@@ -112,8 +111,7 @@ function save_order(event) {
     })
     .fail(function() {
         $('img.spinner').remove();
-        flash_message("Order not set", 'error', true);
-        //flash_message(voteit.translation['permssions_updated_error'], 'error', true); 
+        flash_message(voteit.translation['error_saving'], 'error', true); 
     });
 }
 
@@ -125,10 +123,9 @@ function update_timer() {
 
 function start_speaker(event) {
     event.preventDefault();
-    //console.log('start speaker');
 
     if ($('#speaker_queue li:first').length == 0) {
-        flash_message('Nothing to start');
+        flash_message(voteit.translation['nothing_to_start_error'], 'error', true); 
         return false;
     }
     $('#speaker_queue li:first').addClass('active_speaker');
@@ -136,50 +133,52 @@ function start_speaker(event) {
     if ($('#timer').html() == '') {
         $('#timer').html('0:0.0');
     }
-    var a = $('#timer').html().split(':');
-    var b = a[1].split('.')
-    spoken_time = parseInt(a[0]) * 600 + parseInt(b[0]) * 10 + parseInt(b[1]);
+    spoken_time = parse_spoken_time($('#timer').html());
     if (timer == null) {
         timer = setInterval(update_timer, 100);    
     }
-    //console.log('starting speaker - done');
+}
+
+function parse_spoken_time(text) {
+    // Parse a string like "10:11.7", with 10 as minutes, 11 as seconds and 7 as tenths of a second.
+    if (!text) return 0;
+    var a = text.split(':');
+    var b = a[1].split('.');
+    return parseInt(a[0]) * 600 + parseInt(b[0]) * 10 + parseInt(b[1]);
 }
 
 function pause_speaker(event) {
     event.preventDefault();
-    //console.log('pausing speaker');
     $('#speaker_queue li:first').removeClass('active_speaker');
     $('#timer').removeAttr('id');
     clearInterval(timer);
     timer = null;
-    spoken_time = 0;
-    //console.log('pausing speaker - done');
 }
 
-function finished_speaker(event) {
+function finished_speaker(event, success_callback) {
     event.preventDefault();
-    //console.log('Speaker finished');
     if (timer != null) {
         pause_speaker(event);
-        //FIXME: Execution has to use a callback here to make sure pause has finished!
     }
     var speaker_block = $('#speaker_queue li:first');
+    spoken_time = parse_spoken_time($('#speaker_queue li:first .time_spoken').html());
+
     $.get(meeting_url + '_speaker_finished?seconds=' + Math.round(spoken_time / 10), function(response, status, xhr) {
         if (status == "error") {
-            //Sleep, retry
-            flash_message('Couldnt go to next');
+            //Sleep, retry?
+            flash_message(voteit.translation['error_saving'], 'error', true); 
         } else {
             //Success
             $('img.spinner').remove();
             spoken_time = 0;
             speaker_block.remove();
             $('#right').html(response);
-            //console.log('Speaker finished - done');
+            if (typeof success_callback !== "undefined") success_callback(event);
         }
     })
 }
 
 function quickstart_next_speaker(event) {
     event.preventDefault();
-    //FIXME - use callbacks with either jq deferred or something else.
+    finished_speaker(event, start_speaker);
 }

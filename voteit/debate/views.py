@@ -15,6 +15,7 @@ from voteit.core import security
 from .fanstaticlib import voteit_debate_manage_speakers_js
 from .fanstaticlib import voteit_debate_speaker_view_styles
 from .interfaces import ISpeakerListHandler
+from . import DebateTSF as _
 
 
 class ManageSpeakerList(BaseView):
@@ -27,7 +28,7 @@ class ManageSpeakerList(BaseView):
         schema = createSchema('AddSpeakerSchema')
         schema = schema.bind(context = self.context, request = self.request, api = self.api)
         action_url = self.request.resource_url(self.api.meeting, '_add_speaker')
-        return deform.Form(schema, action = action_url, buttons = (), formid = "add_speaker")
+        return deform.Form(schema, action = action_url, buttons = (deform.Button('add', _(u"Add")),), formid = "add_speaker")
 
     @view_config(name = "manage_speaker_list", context = IAgendaItem, permission = security.MODERATE_MEETING,
                  renderer = "templates/manage_speaker_list.pt")
@@ -43,6 +44,7 @@ class ManageSpeakerList(BaseView):
         form = self.get_userid_form()
         controls = self.request.POST.items()
         sl = self.sl_handler.get_active_list()
+        #FIXME: Proper error messages
         if not sl:
             return HTTPForbidden()
         try:
