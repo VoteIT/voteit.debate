@@ -6,7 +6,14 @@ here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
-requires = ('voteit.core',)
+requires = ('voteit.core',
+            'voteit.irl',
+            'pyramid',
+            'colander',
+            'deform',
+            'fanstatic',
+            'Babel',
+            'lingua',)
 
 setup(name='voteit.debate',
       version='0.1dev',
