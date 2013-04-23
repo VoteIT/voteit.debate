@@ -2,6 +2,7 @@ from zope.interface import implements
 from zope.component import adapts
 from persistent import Persistent
 from persistent.list import PersistentList
+from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
 from voteit.core.models.interfaces import IMeeting
 
@@ -49,25 +50,29 @@ class SpeakerList(Persistent):
 
     def __init__(self, title = u""):
         self.speakers = PersistentList()
-        self.speaker_log = OOBTree()
+        self.speaker_log = IOBTree()
         self.current = None
         self.title = title
 
-    def add(self, userid):
-        self.speakers.append(userid)
+    def add(self, name):
+        name = int(name)
+        if name not in self.speakers:
+            self.speakers.append(name)
 
-    def remove(self, index):
-        del self.speakers[index]
+    def remove(self, name):
+        name = int(name)
+        self.speakers.remove(name)
 
     def set(self, value):
         self.speakers = PersistentList(value)
 
-    def speaker_finished(self, seconds):
-        userid = self.speakers.pop(0)
+    def speaker_finished(self, name, seconds):
+        name = int(name)
+        self.remove(name)
         seconds = int(seconds)
-        if userid not in self.speaker_log:
-            self.speaker_log[userid] = PersistentList()
-        self.speaker_log[userid].append(seconds)
+        if name not in self.speaker_log:
+            self.speaker_log[name] = PersistentList()
+        self.speaker_log[name].append(seconds)
 
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))

@@ -52,11 +52,17 @@ function add_speaker(event) {
     event.preventDefault();
     spinner().appendTo("input");
     var form = $(this);
+    var speaker_id = $("[name='pn']").attr('value');
+    // Does this speaker exist already?
+    if ($("#speaker_queue [value='" + speaker_id + "']").length > 0) {
+        flash_message(voteit.translation['speaker_already_in_list'], 'error', true);
+        return false;
+    }
     link = form.attr('action');
     $.post(link, form.serialize(), function(data, textStatus, jqXHR) {
         //Handle returned data here
         $('#speaker_queue').append(data);
-        form.find('input[name=userid]').val("");
+        $("input[name='pn']").val("");
     })
     .done(function() { 
         $('img.spinner').remove();
@@ -72,7 +78,7 @@ function add_speaker(event) {
 function remove_speaker(event) {
     event.preventDefault();
     var speaker_to_be_removed = $(this).parents('li');
-    var url = $(this).attr('href') + $('#speaker_queue li').index(speaker_to_be_removed);
+    var url = $(this).attr('href');
     spinner().appendTo($(this));
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
@@ -173,8 +179,10 @@ function finished_speaker(event, success_callback) {
     }
     var speaker_block = $('#speaker_queue li:first');
     spoken_time = parse_spoken_time($('#speaker_queue li:first .time_spoken').html());
-
-    $.get(meeting_url + '_speaker_finished?seconds=' + Math.round(spoken_time / 10), function(response, status, xhr) {
+    var url = meeting_url;
+    url += '_speaker_finished?seconds=' + Math.round(spoken_time / 10);
+    url += '&speaker_id=' + speaker_block.children('[name=speaker_id]').attr('value');
+    $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?
             flash_message(voteit.translation['error_saving'], 'error', true); 

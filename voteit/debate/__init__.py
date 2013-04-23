@@ -15,5 +15,5 @@ def includeme(config):
     js_util = config.registry.getUtility(IJSUtil)
     js_util.add_translations(
         sort_when_timer_active_error = _(u"Can't sort when timer is running"),
-        nothing_to_start_error = _(u"Nothing to start"),)
-    
+        nothing_to_start_error = _(u"Nothing to start"),
+        speaker_already_in_list = _(u"Speaker already in this list"),)

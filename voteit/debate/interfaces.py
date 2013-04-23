@@ -22,6 +22,6 @@ class ISpeakerList(Interface):
         """ Set the list to these values. Must be possible to convert to a persistent list.
         """
 
-    def speaker_finished(seconds):
+    def speaker_finished(name, seconds):
         """ The top speaker on the list has now finished. Move item to log, and log number of seconds.
         """

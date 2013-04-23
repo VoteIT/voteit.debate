@@ -8,8 +8,8 @@
 <a style="display: none" href="javascript:" class="buttonize" id="save_order" i18n:translate="">Save order</a>
 <form action="${request.resource_url(api.meeting, '_set_speaker_order')}" name="sort_speakers">
     <ul id="speaker_queue">
-        <tal:iterate repeat="userid speaker_list.speakers">
-            <li tal:replace="structure speaker_item(userid)">Speaker here</li>
+        <tal:iterate repeat="pn speaker_list.speakers">
+            <li tal:replace="structure speaker_item(pn)">Speaker here</li>
         </tal:iterate>
     </ul>
 </form>
