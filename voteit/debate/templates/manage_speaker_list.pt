@@ -6,6 +6,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 <body>
+
     <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage speaker list</h2>
     <div id="speaker_list_controls" metal:fill-slot="content">
 
@@ -20,19 +21,39 @@
                    i18n:translate="">&raquo; Add a new list</a></li>
         </ul>
 
-        <tal:form replace="structure add_form">Participant number add form</tal:form>
-
-        <a href="javascript:" class="buttonize" id="start_speaker" i18n:translate="">Start</a>
-        <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
-        <a href="javascript:" class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
-        <a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
-
+        <tal:context_active tal:condition="context_active">
+            <tal:form replace="structure add_form">Participant number add form</tal:form>
+            <a href="javascript:" class="buttonize" id="start_speaker" i18n:translate="">Start</a>
+            <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
+            <a href="javascript:" class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
+            <a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
+        </tal:context_active>
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>
     
     <div metal:fill-slot="columns">
         <div id="left"></div>
         <div id="right"></div>
+
+        <script language="javascript" type="text/javascript" tal:condition="context_active">
+            $(document).ready(function () {
+                //Load initial data
+                meeting_url = '${api.meeting_url}';
+                load_speaker_queue();
+                load_speaker_log();
+                //Bind events to controls
+                $("#start_speaker").on("click", start_speaker);
+                $("#pause_speaker").on("click", pause_speaker);
+                $("#finished_speaker").on("click", finished_speaker);
+                $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+                $("form#add_speaker").on("submit", add_speaker);
+                //Focus
+                //FIXME $("form#add_speaker input[type=text]").focus()
+            });
+        </script>
     </div>
+
+
+
 </body>
 </html>

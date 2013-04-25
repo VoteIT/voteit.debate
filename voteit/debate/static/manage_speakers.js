@@ -2,24 +2,7 @@ var meeting_url = '';
 var spoken_time = 0;
 var timer = null;
 
-$(document).ready(function () {
-    //Load initial data
-    meeting_url = $('#meeting_url').attr('href');
-    spinner().appendTo($('#left'));
-    load_speaker_queue();
-    load_speaker_log();
-    $('img.spinner').remove();
-    
-    //Bind events to controls
-    $("#start_speaker").on("click", start_speaker);
-    $("#pause_speaker").on("click", pause_speaker);
-    $("#finished_speaker").on("click", finished_speaker);
-    $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
-    $("form#add_speaker").on("submit", add_speaker);
-    
-    //Focus
-    //FIXME $("form#add_speaker input[type=text]").focus()    
-});
+//Init js code in template!
 
 function load_speaker_queue() {
     spinner().appendTo(('#left'));

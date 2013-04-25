@@ -45,6 +45,7 @@ class ManageSpeakerList(BaseView):
         voteit_debate_speaker_view_styles.need()
         self.response['add_form'] = self.get_add_form().render()
         self.response['context_lists'] = self.sl_handler.get_contextual_lists(self.context)
+        self.response['context_active'] = self.active_list in self.response['context_lists']
         self.response['active_list'] = self.active_list
         return self.response
 
