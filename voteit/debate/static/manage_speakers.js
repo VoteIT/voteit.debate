@@ -135,7 +135,7 @@ function start_speaker(event) {
     }
     spoken_time = parse_spoken_time($('#timer').html());
     if (timer == null) {
-        timer = setInterval(update_timer, 100);    
+        timer = setInterval(update_timer, 100);
     }
 }
 

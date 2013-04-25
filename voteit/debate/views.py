@@ -11,9 +11,14 @@ from voteit.core.views.base_view import BaseView
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core import security
+from voteit.core.fanstaticlib import (voteit_main_css,
+                                      jquery_deform)
 
 from .fanstaticlib import voteit_debate_manage_speakers_js
 from .fanstaticlib import voteit_debate_speaker_view_styles
+from .fanstaticlib import voteit_debate_fullscreen_speakers_js
+from .fanstaticlib import voteit_debate_fullscreen_speakers_css
+
 from .interfaces import ISpeakerListHandler
 from . import DebateTSF as _
 
@@ -120,3 +125,38 @@ class ManageSpeakerList(BaseView):
         userid = self.participant_numbers.number_to_userid[int(pn)]
         self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
         return render("templates/speaker_item.pt", self.response, request = self.request)
+
+
+class FullscreenSpeakerList(object):
+
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
+    @view_config(name = "fullscreen_speaker_list", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "templates/fullscreen_view.pt")
+    def fullscreen_view(self):
+        voteit_main_css.need()
+        jquery_deform.need()
+        voteit_debate_fullscreen_speakers_js.need()
+        voteit_debate_fullscreen_speakers_css.need()
+        response = dict()
+        return response
+
+    @view_config(name = "_fullscreen_list", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer = "templates/fullscreen_list.pt")
+    def fullscreen_list(self):
+        sl_handler = self.request.registry.getAdapter(self.context, ISpeakerListHandler)
+        participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
+        root = self.context.__parent__
+        active_list = sl_handler.get_active_list()
+        speaker_profiles = []
+        for num in active_list.speakers:
+            userid = participant_numbers.number_to_userid[num]
+            speaker_profiles.append(root.users[userid])
+        active_list
+        response = dict(
+            active_list = active_list,
+            speaker_profiles = speaker_profiles,
+        )
+        return response

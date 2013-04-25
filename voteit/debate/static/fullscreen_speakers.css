@@ -1,0 +1,9 @@
+.user_fullname {
+    font-size: 30px;
+    line-height: 40px;
+    float: left;
+    padding-left: 10px;
+}
+.profile-pic {
+    float: left;
+}

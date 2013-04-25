@@ -1,0 +1,21 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+    xmlns:tal="http://xml.zope.org/namespaces/tal"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="voteit.debate">
+    <tal:active_list condition="active_list">
+        <h1>${active_list.title}</h1>
+        <ul>
+            <li tal:repeat="user speaker_profiles">
+                <h2>
+                    <img tal:replace="structure user.get_image_tag(size = 40)">
+                    <span class="user_fullname">${user.title}</span>
+                </h2>
+            </li>
+        </ul>
+    </tal:active_list>
+    <tal:not_active condition="not active_list">
+        <h1 i18n:translate="">No list currently active</h1>
+    </tal:not_active>
+    <div class="meta" id="status" style="display: none;" i18n:translate="">Error: Connection timeout. Will try again.</div>
+
+</tal:main>
