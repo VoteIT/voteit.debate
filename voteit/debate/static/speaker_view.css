@@ -1,3 +1,11 @@
 .active_speaker {
     border: 1px solid green;
 }
+
+#add_speaker li {
+    display: inline;
+}
+
+#speaker_list_controls .selected {
+    border: 1px solid #ccc;
+}

@@ -8,9 +8,17 @@
 <body>
     <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage speaker list</h2>
     <div id="speaker_list_controls" metal:fill-slot="content">
-        
-        <a href="${request.resource_url(api.meeting, '_remove_speaker_list', query = {'came_from': request.url})}"
-           class="buttonize" i18n:translate="">Reset this speaker list</a>
+
+        <ul>
+            <li tal:repeat="sl context_lists">
+                <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set', 'name': sl.name})}"
+                   tal:attributes="class sl.name == active_list.name and 'selected' or ''">${sl.title}</a>
+                <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'remove', 'name': sl.name})}"
+                   i18n:translate="">Delete</a>
+            </li>
+            <li><a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'add'})}"
+                   i18n:translate="">&raquo; Add a new list</a></li>
+        </ul>
 
         <tal:form replace="structure add_form">Participant number add form</tal:form>
 
