@@ -1,3 +1,21 @@
+body {
+    background-color: #fff;
+    margin: 25px 0;
+    color: #5c5a5d
+}
+#wrapper {
+    width: 990px;
+    margin: 0 auto;
+    display: block;
+}
+#header h1 {
+    font-size: 50px;
+    padding-right: 45px;
+    background: url(/static/images/voteit_logo.png) right top no-repeat;
+    padding-bottom: 0.5em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #5c5a5d;
+}
 .user_fullname {
     font-size: 30px;
     line-height: 40px;
@@ -6,4 +24,45 @@
 }
 .profile-pic {
     float: left;
+}
+#agenda_item_title {
+    font-size: 40px;
+    padding-left: 50px;
+    margin-bottom: 0.5em;
+}
+#speaker-list-items {
+}
+#speaker-list-items .user {
+    min-width: 600px;
+    float: left;
+    border: 1px solid #5c5a5d;
+    background-color: #F2F2F2;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+#speaker-list-items .list-status {
+    float: left;
+    width: 62px;
+    height: 62px;
+}
+#speaker-list-items .first .list-status span {
+    background: url(/debate_static/speaker.png) left top no-repeat;
+    border-color: transparent;
+}
+#speaker-list-items .list-status span {
+    display: block;
+    margin: 10px;
+    width: 42px;
+    height: 42px;
+    border: 1px solid #5c5a5d;
+    font-size: 30px;
+    line-height: 40px;
+    text-align: center;
+    border-radius: 21px;
+    -webkit-border-radius: 21px;
+    -moz-border-radius: 21px;
+}
+#speaker-list-items .first > .user  {
+    color: #fff;
+    background: #5c5a5d;
 }

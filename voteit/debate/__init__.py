@@ -11,6 +11,9 @@ def includeme(config):
     from .models import SpeakerListHandler
     config.registry.registerAdapter(SpeakerListHandler)
 
+    cache_ttl_seconds = int(config.registry.settings.get('cache_ttl_seconds', 7200))
+    config.add_static_view('debate_static', '%s:static' % PROJECTNAME, cache_max_age = cache_ttl_seconds)
+
     _ = DebateTSF
     js_util = config.registry.getUtility(IJSUtil)
     js_util.add_translations(
