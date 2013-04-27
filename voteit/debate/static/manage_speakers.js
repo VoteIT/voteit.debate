@@ -182,5 +182,9 @@ function finished_speaker(event, success_callback) {
 
 function quickstart_next_speaker(event) {
     event.preventDefault();
-    finished_speaker(event, start_speaker);
+    if (timer == null) {
+        start_speaker(event);
+    } else {
+        finished_speaker(event, start_speaker);
+    }
 }
