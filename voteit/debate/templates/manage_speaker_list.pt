@@ -13,7 +13,7 @@
         <ul>
             <li tal:repeat="sl context_lists">
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set', 'name': sl.name})}"
-                   tal:attributes="class sl.name == active_list.name and 'selected' or ''">${sl.title}</a>
+                   tal:attributes="class (active_list and sl.name == active_list.name) and 'selected' or ''">${sl.title}</a>
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'remove', 'name': sl.name})}"
                    i18n:translate="">Delete</a>
             </li>

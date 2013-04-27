@@ -154,9 +154,14 @@ class FullscreenSpeakerList(object):
         for num in active_list.speakers:
             userid = participant_numbers.number_to_userid[num]
             speaker_profiles.append(root.users[userid])
-        active_list
+
+        def _get_entries_count(userid):
+            num = participant_numbers.userid_to_number[userid]
+            return len(active_list.speaker_log.get(num, ()))
+
         response = dict(
             active_list = active_list,
             speaker_profiles = speaker_profiles,
+            get_entries_count = _get_entries_count,
         )
         return response
