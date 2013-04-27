@@ -96,7 +96,7 @@ class ManageSpeakerList(BaseView):
     def set_speaker_order(self):
         sl = self.active_list
         post = self.request.POST.dict_of_lists()
-        sl.set(post['speaker_id'])
+        sl.set([int(x) for x in post['speaker_id']])
         return Response()
 
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,

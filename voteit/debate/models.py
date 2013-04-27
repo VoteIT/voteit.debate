@@ -85,7 +85,7 @@ class SpeakerList(Persistent):
         self.speakers.remove(name)
 
     def set(self, value):
-        self.speakers = PersistentList(value)
+        self.speakers = PersistentList([int(x) for x in value])
 
     def speaker_finished(self, name, seconds):
         name = int(name)
