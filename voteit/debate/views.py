@@ -6,6 +6,7 @@ from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from betahaus.pyracont.factories import createSchema
+from betahaus.viewcomponent import view_action
 from voteit.irl.models.interfaces import IParticipantNumbers
 from voteit.core.views.base_view import BaseView
 from voteit.core.models.interfaces import IAgendaItem
@@ -165,3 +166,19 @@ class FullscreenSpeakerList(object):
             get_entries_count = _get_entries_count,
         )
         return response
+
+
+@view_action('meeting', 'fullscreen_speaker_list', title = _(u"Speaker list for projectors"),
+             permission = security.MODERATE_MEETING)
+def fullscreen_speaker_list_menu(context, request, va, **kw):
+    api = kw['api']
+    url = "%s%s" % (api.meeting_url, 'fullscreen_speaker_list')
+    return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
+
+
+@view_action('context_actions', 'manage_speaker_list', title = _(u"Speaker lists"),
+             interface = IAgendaItem)
+def manage_speaker_list_menu(context, request, va, **kw):
+    api = kw['api']
+    url = u"%s%s" % (request.resource_url(context), 'manage_speaker_list')
+    return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
