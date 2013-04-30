@@ -2,16 +2,7 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-
-<h3 i18n:translate="">Queue</h3>
-<a href="javascript:" class="buttonize" id="change_order" i18n:translate="">Change order</a>
-<a style="display: none" href="javascript:" class="buttonize" id="save_order" i18n:translate="">Save order</a>
-<form action="${request.resource_url(api.meeting, '_set_speaker_order')}" name="sort_speakers">
-    <ul id="speaker_queue">
-        <tal:iterate repeat="pn speaker_list.speakers">
-            <li tal:replace="structure speaker_item(pn)">Speaker here</li>
-        </tal:iterate>
-    </ul>
-</form>
-
+    <tal:iterate repeat="pn speaker_list.speakers">
+        <li tal:replace="structure speaker_item(pn)">Speaker here</li>
+    </tal:iterate>
 </tal:main>

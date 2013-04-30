@@ -113,15 +113,23 @@ class SpeakerListTests(unittest.TestCase):
         obj.set([1, 2 ,3])
         self.assertEqual((1, 2, 3,), tuple(obj.speakers))
 
-    def test_speaker_finished(self):
+    def test_speaker_active(self):
         obj = self._cut('n')
         obj.speakers.extend([1, 2, 3])
-        obj.speaker_finished(2, 3)
+        obj.speaker_active(1)
+        self.assertEqual(obj.current, 1)
+        self.assertEqual(obj.speakers, [2, 3])
+
+    def test_speaker_finished(self):
+        obj = self._cut('n')
+        obj.speakers.extend([1, 3])
+        obj.current = 2
+        obj.speaker_finished(3)
         self.assertEqual(set(obj.speaker_log[2]), set([3]))
         self.assertNotIn(2, obj.speakers)
 
     def test_unicode_seconds_speaker_finished(self):
         obj = self._cut('n')
-        obj.speakers.extend(['a', 'b', 'c', 12])
-        obj.speaker_finished(12, u"4")
+        obj.current = 12
+        obj.speaker_finished(4)
         self.assertEqual(set(obj.speaker_log[12]), set([4]))

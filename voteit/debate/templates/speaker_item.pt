@@ -9,8 +9,8 @@
     </div>
     <div class="speaker_controls">
         <span class="time_spoken"></span>
-        <a class="promote_start_speaker"
-           href="javascript:">start</a>
+        <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn})}"
+           class="promote_start_speaker" i18n:translate="">start</a>
         <a class="remove_speaker"
            href="${request.resource_url(api.meeting, '_remove_speaker', query = {'pn': pn})}">remove</a>
     </div>

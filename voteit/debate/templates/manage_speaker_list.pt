@@ -9,7 +9,6 @@
 
     <h2 metal:fill-slot="page_heading" id="page_heading" i18n:translate="">Manage speaker list</h2>
     <div id="speaker_list_controls" metal:fill-slot="content">
-
         <ul>
             <li tal:repeat="sl context_lists">
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set', 'name': sl.name})}"
@@ -23,16 +22,25 @@
 
         <tal:context_active tal:condition="context_active">
             <tal:form replace="structure add_form">Participant number add form</tal:form>
-            <a href="javascript:" class="buttonize" id="start_speaker" i18n:translate="">Start</a>
+            <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
+               class="buttonize" id="start_speaker" i18n:translate="">Start</a>
             <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
-            <a href="javascript:" class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
+            <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
+               class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
             <a href="javascript:" class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
         </tal:context_active>
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>
-    
+
     <div metal:fill-slot="columns">
-        <div id="left"></div>
+        <div id="left">
+            <h3 i18n:translate="">Active</h3>
+            <ul id="speaker_active">
+                <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)">
+            </ul>
+            <h3 i18n:translate="">Queue</h3>
+            <ul id="speaker_queue"></ul>
+        </div>
         <div id="right"></div>
 
         <script language="javascript" type="text/javascript" tal:condition="context_active">
@@ -52,8 +60,6 @@
             });
         </script>
     </div>
-
-
 
 </body>
 </html>

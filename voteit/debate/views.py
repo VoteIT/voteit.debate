@@ -55,6 +55,7 @@ class ManageSpeakerList(BaseView):
         self.response['context_lists'] = self.sl_handler.get_contextual_lists(self.context)
         self.response['context_active'] = self.active_list in self.response['context_lists']
         self.response['active_list'] = self.active_list
+        self.response['speaker_item'] = self.speaker_item
         return self.response
 
     @view_config(name = "speaker_list_action", context = IAgendaItem, permission = security.MODERATE_MEETING)
@@ -69,6 +70,25 @@ class ManageSpeakerList(BaseView):
             name = self.request.GET['name']
             self.sl_handler.set_active_list(name)
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
+
+    @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
+    def speaker_action(self):
+        action = self.request.GET['action']
+        if self.request.GET['list_name'] != self.active_list.name:
+            return HTTPForbidden()
+        if action == 'active':
+            speaker_name = self.request.GET.get('name', None) #Specific speaker, or simply top of the list
+            if speaker_name == None:
+                if self.active_list.speakers:
+                    speaker_name = self.active_list.speakers[0]
+                else:
+                    raise HTTPForbidden()
+            self.active_list.speaker_active(speaker_name)
+            return Response(self.speaker_item(speaker_name))
+        if action == 'finished':
+            seconds = int(self.request.GET['seconds'])
+            self.active_list.speaker_finished(seconds)
+            return Response(render("templates/speaker_log_moderator.pt", self.speaker_log_moderator(), request = self.request))
 
     @view_config(name = "_add_speaker", context = IMeeting, permission = security.MODERATE_MEETING)
     def add_speaker(self):
@@ -85,21 +105,16 @@ class ManageSpeakerList(BaseView):
         pn = appstruct['pn']
         if pn in sl.speakers:
             return HTTPForbidden()
-        sl.add(pn)
-        return Response(self.speaker_item(pn))
+        if pn in self.participant_numbers.number_to_userid:
+            sl.add(pn)
+            return Response()
+        return HTTPForbidden()
 
     @view_config(name = '_remove_speaker', context = IMeeting, permission = security.MODERATE_MEETING)
     def remove_speaker(self):
         pn = int(self.request.GET.get('pn'))
         sl = self.active_list
         sl.remove(pn)
-        return Response()
-
-    @view_config(name = '_set_speaker_order', context = IMeeting, permission = security.MODERATE_MEETING)
-    def set_speaker_order(self):
-        sl = self.active_list
-        post = self.request.POST.dict_of_lists()
-        sl.set([int(x) for x in post['speaker_id']])
         return Response()
 
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
@@ -115,18 +130,11 @@ class ManageSpeakerList(BaseView):
         self.response['speaker_list'] = self.active_list
         return self.response
 
-    @view_config(name = "_speaker_finished", context = IMeeting, permission = security.MODERATE_MEETING)
-    def speaker_finished(self):
-        seconds = self.request.GET['seconds']
-        speaker_id = int(self.request.GET['speaker_id'])
-        sl = self.active_list
-        sl.speaker_finished(speaker_id, seconds)
-        return Response(render("templates/speaker_log_moderator.pt", self.speaker_log_moderator(), request = self.request))
-
     def speaker_item(self, pn):
         self.response['pn'] = pn
         userid = self.participant_numbers.number_to_userid[int(pn)]
         self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
+        self.response['active_list'] = self.active_list
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
 

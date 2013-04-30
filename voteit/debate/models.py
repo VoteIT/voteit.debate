@@ -87,13 +87,22 @@ class SpeakerList(Persistent):
     def set(self, value):
         self.speakers = PersistentList([int(x) for x in value])
 
-    def speaker_finished(self, name, seconds):
+    def speaker_active(self, name):
         name = int(name)
-        self.remove(name)
+        if name in self.speakers:
+            self.current = name
+            self.remove(name)
+        else:
+            self.current = None
+
+    def speaker_finished(self, seconds):
+        if self.current == None:
+            return
         seconds = int(seconds)
-        if name not in self.speaker_log:
-            self.speaker_log[name] = PersistentList()
-        self.speaker_log[name].append(seconds)
+        if self.current not in self.speaker_log:
+            self.speaker_log[self.current] = PersistentList()
+        self.speaker_log[self.current].append(seconds)
+        self.current = None
 
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))
