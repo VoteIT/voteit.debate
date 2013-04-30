@@ -8,13 +8,21 @@ body {
     margin: 0 auto;
     display: block;
 }
-#header h1 {
+#heading-wrapper {
+    margin-bottom: 20px;
+    border-bottom: 1px solid #5c5a5d;
+}
+#heading-wrapper h1 {
     font-size: 50px;
     padding-right: 45px;
     background: url(/static/images/voteit_logo.png) right top no-repeat;
-    padding-bottom: 0.5em;
-    margin-bottom: 1em;
-    border-bottom: 1px solid #5c5a5d;
+}
+#voteit-logo {
+    float: right;
+}
+#meeting-logo {
+    float: left;
+    margin-right: 50px;
 }
 .user_fullname {
     font-size: 30px;

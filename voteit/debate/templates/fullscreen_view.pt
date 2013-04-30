@@ -9,12 +9,15 @@
 </head>
 <body>
 <div id="wrapper">
-    <div id="header">
-        <h1>
-            ${context.title}
-        </h1>
+    <div id="heading-wrapper">
+        <img tal:condition="context.get_field_value('meeting_logo_url')"
+             id="meeting-logo"
+             src="${context.get_field_value('meeting_logo_url')}"
+             alt="Meeting logo" i18n:attributes="alt" />
+        <img id="voteit-logo" src="${request.application_url}/static/images/voteit_logo.png" />
+        <h1>${context.title}</h1>
+        <div class="clear"><!-- --></div>
     </div>
-    
     <div id="speaker_list">
     </div>
 </div>
