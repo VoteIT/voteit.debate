@@ -89,6 +89,11 @@ class ManageSpeakerList(BaseView):
             seconds = int(self.request.GET['seconds'])
             self.active_list.speaker_finished(seconds)
             return Response(render("templates/speaker_log_moderator.pt", self.speaker_log_moderator(), request = self.request))
+        if action == 'remove':
+            speaker_name = int(self.request.GET['name'])
+            self.active_list.remove(speaker_name)
+            return Response()
+        return HTTPForbidden()
 
     @view_config(name = "_add_speaker", context = IMeeting, permission = security.MODERATE_MEETING)
     def add_speaker(self):
@@ -109,13 +114,6 @@ class ManageSpeakerList(BaseView):
             sl.add(pn)
             return Response()
         return HTTPForbidden()
-
-    @view_config(name = '_remove_speaker', context = IMeeting, permission = security.MODERATE_MEETING)
-    def remove_speaker(self):
-        pn = int(self.request.GET.get('pn'))
-        sl = self.active_list
-        sl.remove(pn)
-        return Response()
 
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")

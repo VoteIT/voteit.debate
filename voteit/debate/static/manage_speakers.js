@@ -58,6 +58,7 @@ function remove_speaker(event) {
     event.preventDefault();
     var speaker_to_be_removed = $(this).parents('li');
     var url = $(event.target).attr('href');
+    url += '&action=remove';
     spinner().appendTo($(this));
     $.get(url, function(response, status, xhr) {
         if (status == "error") {

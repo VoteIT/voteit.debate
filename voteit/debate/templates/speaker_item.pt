@@ -12,7 +12,7 @@
         <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn})}"
            class="promote_start_speaker" i18n:translate="">start</a>
         <a class="remove_speaker"
-           href="${request.resource_url(api.meeting, '_remove_speaker', query = {'pn': pn})}">remove</a>
+           href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn})}">remove</a>
     </div>
     <input type="hidden" name="speaker_id" value="${pn}" />
 </li>
