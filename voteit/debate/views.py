@@ -9,8 +9,10 @@ from betahaus.pyracont.factories import createSchema
 from betahaus.viewcomponent import view_action
 from voteit.irl.models.interfaces import IParticipantNumbers
 from voteit.core.views.base_view import BaseView
+from voteit.core.views.meeting import MeetingView
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
+from voteit.core.schemas.common import add_csrf_token
 from voteit.core import security
 from voteit.core.fanstaticlib import (voteit_main_css,
                                       jquery_deform)
@@ -128,6 +130,17 @@ class ManageSpeakerList(BaseView):
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
 
+class SpeakerSettingsView(MeetingView):
+
+    @view_config(context=IMeeting, name="speaker_list_settings", renderer="voteit.core.views:templates/base_edit.pt",
+                 permission=security.MODERATE_MEETING)
+    def speaker_list_settings(self):
+        schema = createSchema("SpeakerListSettingsSchema")
+        add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context=self.context, request=self.request, api = self.api)
+        return self.form(schema)
+
+
 class FullscreenSpeakerList(object):
 
     def __init__(self, context, request):
@@ -151,30 +164,33 @@ class FullscreenSpeakerList(object):
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
         root = self.context.__parent__
         active_list = sl_handler.get_active_list()
+        num_lists = self.context.get_field_value('speaker_list_count', 1)
         speaker_profiles = []
         for num in active_list.speakers:
             userid = participant_numbers.number_to_userid[num]
             speaker_profiles.append(root.users[userid])
 
-        def _get_entries_count(userid):
+        def _get_user_list_number(userid):
             num = participant_numbers.userid_to_number[userid]
-            return len(active_list.speaker_log.get(num, ()))
+            spoken_times = len(active_list.speaker_log.get(num, ())) + 1
+            return spoken_times <= num_lists and spoken_times or num_lists
 
         response = dict(
             active_list = active_list,
             speaker_profiles = speaker_profiles,
-            get_entries_count = _get_entries_count,
+            get_user_list_number = _get_user_list_number,
         )
         return response
 
 
 @view_action('meeting', 'fullscreen_speaker_list', title = _(u"Speaker list for projectors"),
-             permission = security.MODERATE_MEETING)
-def fullscreen_speaker_list_menu(context, request, va, **kw):
+             permission = security.MODERATE_MEETING, link = 'fullscreen_speaker_list')
+@view_action('settings_menu', 'speaker_list_settings', title = _(u"Speaker list settings"),
+             permission = security.MODERATE_MEETING, link = 'speaker_list_settings')
+def meeting_context_menu_item(context, request, va, **kw):
     api = kw['api']
-    url = "%s%s" % (api.meeting_url, 'fullscreen_speaker_list')
+    url = "%s%s" % (api.meeting_url, va.kwargs['link'])
     return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
-
 
 @view_action('context_actions', 'manage_speaker_list', title = _(u"Speaker lists"),
              interface = IAgendaItem)

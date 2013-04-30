@@ -14,28 +14,14 @@ class AddSpeakerSchema(colander.Schema):
                              widget = deferred_autocompleting_participant_number_widget,
                              validator = deferred_existing_participant_number_validator,)
 
+_list_alts = [(unicode(x), unicode(x)) for x in range(1, 4)]
 
-#@schema_factory('AddSpeakerListSchema')
-#class AddSpeakerListSchema(colander.Schema):
-#    title = colander.SchemaNode(colander.String(),
-#                                title = _(u"Add speaker list"),)
-#
-#
-#@colander.deferred
-#def deferred_speaker_list_widget(node, kw):
-#    """ Must be used where context contains local selectable lists.
-#    """
-#    request = kw['request']
-#    api = kw['api']
-#    sl_handler = request.registry.getAdapter(api.meeting, ISpeakerListHandler)
-#    choices = [('', _(u"<Select>"))]
-#    for (name, sl) in sl_handler.speaker_lists.items():
-#        choices.append((name, sl.title))
-#    return deform.widget.SelectWidget(values = choices)
-#
-#
-#@schema_factory('SpeakerListsSchema')
-#class SpeakerListsSchema(colander.Schema):
-#    list_name = colander.SchemaNode(colander.String(),
-#                                    title = _(u"Select list"),
-#                                    widget = deferred_speaker_list_widget)
+
+@schema_factory('SpeakerListSettingsSchema')
+class SpeakerListSettingsSchema(colander.Schema):
+    speaker_list_count = colander.SchemaNode(colander.Int(),
+                                             title = _(u"Number of speaker lists to use"),
+                                             description = _(u"speaker_lists_to_use_description",
+                                                             default = u""), #FIXME: Go Anders :)
+                                             widget = deform.widget.SelectWidget(values = _list_alts),
+                                             default = u'1',)

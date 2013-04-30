@@ -9,7 +9,7 @@
                 <li tal:attributes="class repeat['user'].start and 'first' or ''">
                     <div class="list-status">
                         <span tal:condition="repeat['user'].start">&nbsp;</span>
-                        <span tal:condition="not repeat['user'].start">${get_entries_count(user.userid)}</span>
+                        <span tal:condition="not repeat['user'].start">${get_user_list_number(user.userid)}</span>
                     </div>
                     <div class="user">
                         <img tal:replace="structure user.get_image_tag(size = 40)">
