@@ -36,6 +36,29 @@ function load_speaker_log() {
     })
 }
 
+function rename_speaker_show(event) {
+    event.preventDefault();
+    var form = $(event.target).siblings('.rename_form');
+    form.show();
+}
+
+function rename_speaker_submit(event) {
+    event.preventDefault();
+    $(event.target).serialize();
+    var form = $(event.target);
+    var url = form.attr('action');
+    $.get(url, form.serialize(), function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry
+            flash_message(voteit.translation['error_saving'], 'error', true);
+        } else {
+            //Success
+            form.siblings('.sl_title').html(response);
+        }
+        $('img.spinner').remove();
+        form.hide()
+    })
+}
 function clear_speaker_log(event) {
     event.preventDefault();
     spinner().appendTo($(event.target));

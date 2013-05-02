@@ -12,7 +12,13 @@
         <ul>
             <li tal:repeat="sl context_lists">
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set', 'name': sl.name})}"
-                   tal:attributes="class (active_list and sl.name == active_list.name) and 'selected' or ''">${sl.title}</a>
+                   tal:attributes="class (active_list and sl.name == active_list.name) and 'selected sl_title' or 'sl_title'">${sl.title}</a>
+                <form action="${request.resource_url(context, 'speaker_list_action', query = {'action': 'rename', 'name': sl.name})}"
+                    method="GET" class="rename_form" style="display: none;">
+                    <input name="list_title_rename" />
+                </form>
+                <a href="javascript:" class="rename_sl"
+                   i18n:translate="">Rename</a>
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'remove', 'name': sl.name})}"
                    i18n:translate="">Delete</a>
             </li>
@@ -56,6 +62,8 @@
                 load_speaker_queue();
                 load_speaker_log();
                 //Bind events to controls
+                $(".rename_sl").on("click", rename_speaker_show);
+                $(".rename_form").on("submit", rename_speaker_submit);
                 $("#start_speaker").on("click", start_speaker);
                 $("#pause_speaker").on("click", pause_speaker);
                 $("#finished_speaker").on("click", finished_speaker);

@@ -75,6 +75,11 @@ class ManageSpeakerList(BaseView):
         if action == 'clear':
             name = self.request.GET['name']
             self.active_list.speaker_log.clear()
+        if action == 'rename':
+            name = self.request.GET['name']
+            #FIXME: Escape title?
+            self.sl_handler.speaker_lists[name].title = self.request.GET['list_title_rename']
+            return Response(self.request.GET['list_title_rename'])
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
 
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
