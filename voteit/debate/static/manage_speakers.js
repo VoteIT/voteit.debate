@@ -38,6 +38,7 @@ function add_speaker(event) {
     // Does this speaker exist already?
     if ($("#speaker_queue [value='" + speaker_id + "']").length > 0) {
         flash_message(voteit.translation['speaker_already_in_list'], 'error', true);
+        $("[name='pn']").val("");
         return false;
     }
     link = form.attr('action');
@@ -50,8 +51,9 @@ function add_speaker(event) {
     })
     .fail(function(data) {
         $('img.spinner').remove();
-        flash_message(voteit.translation['error_saving'], 'error', true); 
+        flash_message(voteit.translation['error_saving'], 'error', true);
     })
+    $("[name='pn']").val("");
 }
 
 function remove_speaker(event) {
