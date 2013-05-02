@@ -43,7 +43,8 @@ class ManageSpeakerList(BaseView):
     def get_add_form(self):
         schema = createSchema('AddSpeakerSchema')
         schema = schema.bind(context = self.context, request = self.request, api = self.api)
-        action_url = self.request.resource_url(self.api.meeting, '_add_speaker')
+        action_url = self.request.resource_url(self.api.meeting, 'speaker_action',
+                                               query = {'action': 'add', 'list_name': self.active_list.name})
         return deform.Form(schema, action = action_url, buttons = (deform.Button('add', _(u"Add")),), formid = "add_speaker")
 
     @view_config(name = "manage_speaker_list", context = IAgendaItem, permission = security.MODERATE_MEETING,
@@ -96,26 +97,19 @@ class ManageSpeakerList(BaseView):
             speaker_name = int(self.request.GET['name'])
             self.active_list.remove(speaker_name)
             return Response()
-        return HTTPForbidden()
-
-    @view_config(name = "_add_speaker", context = IMeeting, permission = security.MODERATE_MEETING)
-    def add_speaker(self):
-        form = self.get_add_form()
-        controls = self.request.POST.items()
-        sl = self.active_list
-        #FIXME: Proper error messages
-        if not sl:
-            return HTTPForbidden()
-        try:
-            appstruct = form.validate(controls)
-        except deform.ValidationFailure, e:
-            return HTTPForbidden()
-        pn = appstruct['pn']
-        if pn in sl.speakers:
-            return HTTPForbidden()
-        if pn in self.participant_numbers.number_to_userid:
-            sl.add(pn)
-            return Response()
+        if action == 'add':
+            form = self.get_add_form()
+            controls = self.request.POST.items()
+            try:
+                appstruct = form.validate(controls)
+            except deform.ValidationFailure, e:
+                return HTTPForbidden()
+            pn = appstruct['pn']
+            if pn in self.active_list.speakers:
+                return HTTPForbidden()
+            if pn in self.participant_numbers.number_to_userid:
+                self.active_list.add(pn)
+                return Response()
         return HTTPForbidden()
 
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
