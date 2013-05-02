@@ -9,3 +9,7 @@
 #speaker_active .speaker_controls a {
     display: none;
 }
+
+#clear_speaker_log {
+    float: right;
+}

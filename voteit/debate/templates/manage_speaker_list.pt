@@ -42,7 +42,12 @@
             <h3 i18n:translate="">Queue</h3>
             <ul id="speaker_queue"></ul>
         </div>
-        <div id="right"></div>
+        <div id="right">
+            <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'clear', 'name': active_list.name})}"
+               class="buttonize" id="clear_speaker_log" i18n:translate="">Clear</a>
+            <h3 i18n:translate="">Log</h3>
+            <ul id="speaker_log"></ul>
+        </div>
 
         <script language="javascript" type="text/javascript" tal:condition="context_active">
             $(document).ready(function () {
@@ -56,8 +61,9 @@
                 $("#finished_speaker").on("click", finished_speaker);
                 $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
                 $("form#add_speaker").on("submit", add_speaker);
+                $("#clear_speaker_log").on("click", clear_speaker_log);
                 //Focus
-                //FIXME $("form#add_speaker input[type=text]").focus()
+                $("name=[pn]").focus()
             });
         </script>
     </div>

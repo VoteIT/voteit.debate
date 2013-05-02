@@ -2,18 +2,13 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-
-    <h3 i18n:translate="">Log</h3>
-    <ul>
-        <tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
-            <li>
-                <div>
-                    <span>${pn}:</span>
-                    <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
-                </div>
-                <div><b>${len(timelog)}</b> - ${sum(timelog)} <span i18n:translate="">sec</span></div>
-            </li>
-        </tal:iterate>
-    </ul>
-
+<tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
+    <li>
+        <div>
+            <span>${pn}:</span>
+            <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
+        </div>
+        <div><b>${len(timelog)}</b> - ${sum(timelog)} <span i18n:translate="">sec</span></div>
+    </li>
+</tal:iterate>
 </tal:main>

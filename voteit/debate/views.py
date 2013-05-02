@@ -69,6 +69,9 @@ class ManageSpeakerList(BaseView):
         if action == 'set':
             name = self.request.GET['name']
             self.sl_handler.set_active_list(name)
+        if action == 'clear':
+            name = self.request.GET['name']
+            self.active_list.speaker_log.clear()
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
 
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)

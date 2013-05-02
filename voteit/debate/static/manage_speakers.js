@@ -9,7 +9,7 @@ function load_speaker_queue(success_callback) {
     $('#speaker_queue').load(meeting_url + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
-            flash_message(voteit.translation['error_loading'], 'error', true); 
+            flash_message(voteit.translation['error_loading'], 'error', true);
         } else {
             //Success
             $(".promote_start_speaker").on("click", promote_start_speaker);
@@ -19,14 +19,30 @@ function load_speaker_queue(success_callback) {
     })
 }
 function load_speaker_log() {
-    spinner().appendTo(('#right'));
-    $('#right').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
+    spinner().appendTo('#speaker_log');
+    $('#speaker_log').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?
-            flash_message(voteit.translation['error_loading'], 'error', true); 
+            flash_message(voteit.translation['error_loading'], 'error', true);
+        } else {
+        }
+        $('img.spinner').remove();
+    })
+}
+
+function clear_speaker_log(event) {
+    event.preventDefault();
+    spinner().appendTo($(event.target));
+    var url = $(this.target).attr('href');
+    $.get(url, function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry
+            flash_message(voteit.translation['error_saving'], 'error', true);
         } else {
             //Success
+            $("#speaker_log").empty();
         }
+        $('img.spinner').remove();
     })
 }
 
@@ -157,7 +173,7 @@ function finished_speaker(event, success_callback) {
             $('img.spinner').remove();
             spoken_time = 0;
             $('#speaker_active li').remove();
-            $('#right').html(response);
+            $('#speaker_log').html(response);
             load_speaker_queue();
             if (typeof success_callback !== "undefined") success_callback(event);
         }
