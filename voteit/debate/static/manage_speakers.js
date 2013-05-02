@@ -6,6 +6,10 @@ var reload_timer = null;
 //Init js code in template!
 
 
+$(window).on('beforeunload', function() {
+    if (($('#speaker_active li .time_spoken').length > 0) && ($('#speaker_active li .time_spoken').html() !== "")) return "Unsaved changes";
+});
+
 function load_speaker_queue(success_callback) {
     if (reload_timer != null) {
         reload_timer = clearInterval(reload_timer);
