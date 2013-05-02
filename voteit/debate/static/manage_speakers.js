@@ -1,23 +1,29 @@
 var meeting_url = '';
 var spoken_time = 0;
 var timer = null;
+var reload_timer = null;
 
 //Init js code in template!
 
+
 function load_speaker_queue(success_callback) {
-    spinner().appendTo(('#speaker_queue'));
+    if (reload_timer != null) {
+        reload_timer = clearInterval(reload_timer);
+    }
     $('#speaker_queue').load(meeting_url + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
-            flash_message(voteit.translation['error_loading'], 'error', true);
+            $('#status').show();
         } else {
             //Success
             $(".promote_start_speaker").on("click", promote_start_speaker);
             $(".remove_speaker").on("click", remove_speaker);
             if (typeof success_callback !== "undefined") success_callback(event);
         }
+        reload_timer = setInterval(load_speaker_queue, 4000);
     })
 }
+
 function load_speaker_log() {
     spinner().appendTo('#speaker_log');
     $('#speaker_log').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {

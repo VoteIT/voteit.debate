@@ -5,4 +5,6 @@
     <tal:iterate repeat="pn speaker_list.speakers">
         <li tal:replace="structure speaker_item(pn)">Speaker here</li>
     </tal:iterate>
+    <div class="meta" id="status" style="display: none;" i18n:translate="">Error: Connection timeout. Will try again.</div>
+
 </tal:main>
