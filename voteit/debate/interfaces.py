@@ -12,11 +12,14 @@ class ISpeakerList(Interface):
     speaker_log = Attribute("An OOBTree with speaker id as key and then a list with seonds this person has spoken.")
     current = Attribute("Current speaker id. Either None if no one is set, or an int.")
 
-    def add(userid):
-        """ Add userid to speakers """
+    def add(name, use_lists = 1):
+        """ Add name to speakers. Name is the delegate number. (An int)
+            use_lists is a setting to promote speakers that have spoken less than others,
+            also known as secondary speaker lists.
+        """
 
-    def remove(index):
-        """ Remove at this position. Users can be added several times to the list.
+    def remove(name):
+        """ Remove name from list.
         """
 
     def set(value):

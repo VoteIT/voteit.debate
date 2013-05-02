@@ -108,7 +108,8 @@ class ManageSpeakerList(BaseView):
             if pn in self.active_list.speakers:
                 return HTTPForbidden()
             if pn in self.participant_numbers.number_to_userid:
-                self.active_list.add(pn)
+                use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
+                self.active_list.add(pn, use_lists = use_lists)
                 return Response()
         return HTTPForbidden()
 

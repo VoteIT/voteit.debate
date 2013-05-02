@@ -101,6 +101,28 @@ class SpeakerListTests(unittest.TestCase):
         obj.add("1")
         self.assertIn(1, obj.speakers)
 
+    def test_add_with_secondary_speaker_list(self):
+        obj = self._cut('n')
+        obj.add(1)
+        obj.speaker_active(1)
+        obj.speaker_finished(10)
+        obj.add(1)
+        obj.add(2, use_lists = 2)
+        self.assertEqual([2, 1], obj.speakers)
+
+    def test_add_with_lots_of_speakers(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [1, 1, 1]
+        obj.speaker_log[2] = [1]
+        obj.speaker_log[3] = [1, 1]
+        obj.speaker_log[4] = [1, 1, 1]
+        obj.speaker_log[5] = [1]
+        obj.speakers.extend([1, 2, 3, 4])
+        obj.add(5, 3)
+        self.assertEqual(obj.speakers, [1, 2, 5, 3, 4])
+        obj.add(6, 3)
+        self.assertEqual(obj.speakers, [6, 1, 2, 5, 3, 4])
+
     def test_remove(self):
         obj = self._cut('n')
         obj.speakers.extend([1, 2, 3])
