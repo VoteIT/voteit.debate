@@ -5,9 +5,12 @@
 
     <h3 i18n:translate="">Log</h3>
     <ul>
-        <tal:iterate repeat="(userid, timelog) speaker_list.speaker_log.items()">
+        <tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
             <li>
-                <div>${userid}</div>
+                <div>
+                    <span>${pn}:</span>
+                    <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
+                </div>
                 <div><b>${len(timelog)}</b> - ${sum(timelog)} <span i18n:translate="">sec</span></div>
             </li>
         </tal:iterate>

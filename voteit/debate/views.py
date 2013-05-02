@@ -125,7 +125,15 @@ class ManageSpeakerList(BaseView):
     @view_config(name = "_speaker_log_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_log_moderator.pt")
     def speaker_log_moderator(self):
-        self.response['speaker_list'] = self.active_list
+        self.response['active_list'] = self.active_list
+        number_to_profile_tag = {}
+        for pn in self.active_list.speaker_log.keys():
+            if pn in self.participant_numbers.number_to_userid:
+                userid = self.participant_numbers.number_to_userid[pn]
+                number_to_profile_tag[pn] = self.api.get_creators_info([userid], portrait = False)
+            else:
+                number_to_profile_tag[pn] = pn
+        self.response['number_to_profile_tag'] = number_to_profile_tag
         return self.response
 
     def speaker_item(self, pn):
