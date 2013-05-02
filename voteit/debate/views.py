@@ -21,6 +21,8 @@ from .fanstaticlib import voteit_debate_manage_speakers_js
 from .fanstaticlib import voteit_debate_speaker_view_styles
 from .fanstaticlib import voteit_debate_fullscreen_speakers_js
 from .fanstaticlib import voteit_debate_fullscreen_speakers_css
+from .fanstaticlib import voteit_debate_user_speaker_js
+from .fanstaticlib import voteit_debate_user_speaker_css
 
 from .interfaces import ISpeakerListHandler
 from . import DebateTSF as _
@@ -198,6 +200,38 @@ class FullscreenSpeakerList(object):
         return response
 
 
+class UserSpeakerLists(BaseView):
+
+    @reify
+    def sl_handler(self):
+        return self.request.registry.getAdapter(self.api.meeting, ISpeakerListHandler)
+
+    @reify
+    def participant_numbers(self):
+        return self.request.registry.getAdapter(self.api.meeting, IParticipantNumbers)
+
+    @view_config(name = "_user_speaker_lists", context = IAgendaItem, permission = security.VIEW,
+                 renderer = "templates/user_speaker.pt")
+    def view(self):
+        action = self.request.GET.get('action', None)
+        pn = self.participant_numbers.userid_to_number[self.api.userid]
+        use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
+        if action:
+            list_name = self.request.GET.get('list_name', None)
+            if list_name not in self.sl_handler.speaker_lists:
+                raise HTTPForbidden(_(u"Speaker list doesn't exist"))
+            sl = self.sl_handler.speaker_lists[list_name]
+            if action == u'add':
+                sl.add(pn, use_lists = use_lists)
+            if action == u'remove':
+                sl.remove(pn)
+        self.response['speaker_lists'] = self.sl_handler.get_contextual_lists(self.context)
+        self.response['active_list'] = self.sl_handler.get_active_list()
+        self.response['pn'] = pn
+        self.response['use_lists'] = use_lists
+        return self.response
+
+
 @view_action('meeting', 'fullscreen_speaker_list', title = _(u"Speaker list for projectors"),
              permission = security.MODERATE_MEETING, link = 'fullscreen_speaker_list')
 @view_action('settings_menu', 'speaker_list_settings', title = _(u"Speaker list settings"),
@@ -213,3 +247,19 @@ def manage_speaker_list_menu(context, request, va, **kw):
     api = kw['api']
     url = u"%s%s" % (request.resource_url(context), 'manage_speaker_list')
     return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
+
+@view_action('agenda_item_top', 'user_speaker_list')
+def user_speaker_list(context, request, *args, **kw):
+    api = kw['api']
+    if not api.meeting.get_field_value('show_controls_for_participants', False):
+        return u""
+    if context.get_workflow_state() not in (u'upcoming', u'ongoing'):
+        return u""
+    participant_numbers = request.registry.getAdapter(api.meeting, IParticipantNumbers)
+    if api.userid not in participant_numbers.userid_to_number:
+        return u""
+    response = dict()
+    response.update(kw)
+    voteit_debate_user_speaker_js.need()
+    voteit_debate_user_speaker_css.need()
+    return render("templates/user_speaker_area.pt", response, request = request)

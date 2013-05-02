@@ -25,3 +25,8 @@ class SpeakerListSettingsSchema(colander.Schema):
                                                              default = u""), #FIXME: Go Anders :)
                                              widget = deform.widget.SelectWidget(values = _list_alts),
                                              default = u'1',)
+    show_controls_for_participants = colander.SchemaNode(
+        colander.Bool(),
+        title = _(u"Show user controls for speaker list statuses"),
+        default = False,
+    )

@@ -1,0 +1,43 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+<tal:iterate repeat="sl speaker_lists">
+    <div tal:attributes="class active_list == sl and 'active_list speaker_list' or 'speaker_list'">
+        <div class="inner_wrapper">
+            <div class="sl_title">
+                <h4>${sl.title}</h4>
+                <span class="meta">
+                    ${len(sl.speakers)} <span i18n:translate="">in queue</span>
+                </span>
+            </div>
+            <div class="sl_controls">
+                <tal:not_in_list condition="pn not in sl.speakers">
+                    <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
+                       class="buttonize add" i18n:translate="">Add yourself</a>
+                </tal:not_in_list>
+                <tal:in_list condition="pn in sl.speakers">
+                    <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'remove', 'list_name': sl.name})}"
+                       class="buttonize remove" i18n:translate="">Remove yourself</a>
+                </tal:in_list>
+            </div>
+            <div class="sl_stats">
+                <tal:not_in_list condition="pn not in sl.speakers">
+                    <div class="meta" i18n:translate="">
+                        You will enter list att position
+                        <b tal:content="sl.get_expected_pos(pn, use_lists) + 1" i18n:name="num"></b>
+                        if you wish to speak
+                    </div>
+                </tal:not_in_list>
+                <tal:in_list condition="pn in sl.speakers">
+                    <div class="meta" i18n:translate="">
+                        <b tal:content="sl.speakers.index(pn)" i18n:name="num"></b>
+                        speakers before you
+                    </div>
+                </tal:in_list>
+            </div>
+            <div class="clear"><!-- --></div>
+        </div>
+    </div>
+</tal:iterate>
+</tal:main>

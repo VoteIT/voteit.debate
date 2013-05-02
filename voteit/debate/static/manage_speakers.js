@@ -39,7 +39,7 @@ function load_speaker_log() {
 function clear_speaker_log(event) {
     event.preventDefault();
     spinner().appendTo($(event.target));
-    var url = $(this.target).attr('href');
+    var url = $(event.target).attr('href');
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry

@@ -11,3 +11,5 @@ voteit_debate_speaker_view_styles = Resource(voteit_debate_lib, 'speaker_view.cs
 voteit_debate_manage_speakers_js = Resource(voteit_debate_lib, 'manage_speakers.js', depends = (voteit_common_js,))
 voteit_debate_fullscreen_speakers_js = Resource(voteit_debate_lib, 'fullscreen_speakers.js')
 voteit_debate_fullscreen_speakers_css = Resource(voteit_debate_lib, 'fullscreen_speakers.css')
+voteit_debate_user_speaker_js = Resource(voteit_debate_lib, 'user_speaker.js')
+voteit_debate_user_speaker_css = Resource(voteit_debate_lib, 'user_speaker.css')

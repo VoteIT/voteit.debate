@@ -75,27 +75,31 @@ class SpeakerList(Persistent):
         self.current = None
         self.title = title
 
-    def add(self, name, use_lists = 1):
-        
+    def get_expected_pos(self, name, use_lists = 1):
+        assert int(use_lists) #0 is not an okay value either
         def _compare_val(pn):
             n = len(self.speaker_log.get(pn, ())) + 1
             return n < use_lists and n or use_lists
-
-        assert int(use_lists) #0 is not an okay value either
-        name = int(name)
-        if name in self.speakers:
-            return
         compare_val = _compare_val(name)
         pos = len(self.speakers)
         for pn in reversed(self.speakers):
             if compare_val == _compare_val(pn):
                 break
             pos -= 1
+        return pos
+
+    def add(self, name, use_lists = 1):
+        assert int(use_lists) #0 is not an okay value either
+        name = int(name)
+        if name in self.speakers:
+            return
+        pos = self.get_expected_pos(name, use_lists = use_lists)
         self.speakers.insert(pos, name)
 
     def remove(self, name):
         name = int(name)
-        self.speakers.remove(name)
+        if name in self.speakers:
+            self.speakers.remove(name)
 
     def set(self, value):
         self.speakers = PersistentList([int(x) for x in value])
