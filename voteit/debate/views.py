@@ -83,6 +83,10 @@ class ManageSpeakerList(BaseView):
             #FIXME: Escape title?
             self.sl_handler.speaker_lists[name].title = self.request.GET['list_title_rename']
             return Response(self.request.GET['list_title_rename'])
+        if action == 'set_state':
+            name = self.request.GET['name']
+            state = self.request.GET['state']
+            self.sl_handler.speaker_lists[name].set_state(state)
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
 
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
@@ -119,7 +123,7 @@ class ManageSpeakerList(BaseView):
                 return Response() #No reason to bother...
             if pn in self.participant_numbers.number_to_userid:
                 use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-                self.active_list.add(pn, use_lists = use_lists)
+                self.active_list.add(pn, use_lists = use_lists, override = True)
                 return Response()
         return HTTPForbidden()
 

@@ -28,6 +28,11 @@
 
         <tal:context_active tal:condition="context_active">
             <tal:form replace="structure add_form">Participant number add form</tal:form>
+            <div class="meta"><span class="state">
+                <span tal:attributes="class active_list.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
+                    ${active_list.get_state_title()}
+                </span>
+            </span></div>
             <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
                class="buttonize" id="start_speaker" i18n:translate="">Start</a>
             <a href="javascript:" class="buttonize" id="pause_speaker" i18n:translate="">Pause</a>
@@ -35,6 +40,10 @@
                class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
             <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
                class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
+            <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': active_list.name, 'state': 'closed'})}"
+               class="buttonize list_state" tal:condition="active_list.state != u'closed'" i18n:translate="">Close list</a>
+            <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': active_list.name, 'state': 'open'})}"
+               class="buttonize list_state" tal:condition="active_list.state != u'open'" i18n:translate="">Open list</a>
         </tal:context_active>
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>

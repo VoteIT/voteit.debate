@@ -20,6 +20,9 @@
     width: 300px;
     overflow:hidden;
 }
+#user_speaker_lists .sl_title .icon {
+    padding-top: 5px;
+}
 #user_speaker_lists .sl_stats {
     float: left;
     width: 200px;

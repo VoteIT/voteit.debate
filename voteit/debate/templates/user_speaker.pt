@@ -8,11 +8,15 @@
             <div class="sl_title">
                 <h4>${sl.title}</h4>
                 <span class="meta">
-                    ${len(sl.speakers)} <span i18n:translate="">in queue</span>
+                    <span class="state">
+                        <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
+                            ${sl.get_state_title()} - ${len(sl.speakers)} <span i18n:translate="">in queue</span>
+                        </span>
+                    </span>
                 </span>
             </div>
             <div class="sl_controls">
-                <tal:not_in_list condition="pn not in sl.speakers">
+                <tal:not_in_list condition="sl.state == 'open' and pn not in sl.speakers">
                     <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
                        class="buttonize add" i18n:translate="">Add yourself</a>
                 </tal:not_in_list>
@@ -22,7 +26,7 @@
                 </tal:in_list>
             </div>
             <div class="sl_stats">
-                <tal:not_in_list condition="pn not in sl.speakers">
+                <tal:not_in_list condition="pn not in sl.speakers and sl.state == 'open'">
                     <div class="meta" i18n:translate="">
                         You will enter list att position
                         <b tal:content="sl.get_expected_pos(pn, use_lists) + 1" i18n:name="num"></b>

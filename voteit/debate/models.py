@@ -8,6 +8,7 @@ from voteit.core.models.interfaces import IMeeting
 
 from .interfaces import ISpeakerListHandler
 from .interfaces import ISpeakerList
+from . import DebateTSF as _
 
 
 class SpeakerListHandler(object):
@@ -65,15 +66,23 @@ class SpeakerListHandler(object):
         del self.speaker_lists[name]
 
 
+_POSSIBLE_STATES = {u"open": _(u"Open"), u"closed": _(u"Closed")}
+
+
 class SpeakerList(Persistent):
     implements(ISpeakerList)
+    name = u""
+    current = None
+    title = u""
+    state = u""
 
-    def __init__(self, name, title = u""):
+    def __init__(self, name, title = u"", state = u"open"):
         self.name = name
         self.speakers = PersistentList()
         self.speaker_log = IOBTree()
         self.current = None
         self.title = title
+        self.set_state(state)
 
     def get_expected_pos(self, name, use_lists = 1):
         assert int(use_lists) #0 is not an okay value either
@@ -88,8 +97,10 @@ class SpeakerList(Persistent):
             pos -= 1
         return pos
 
-    def add(self, name, use_lists = 1):
+    def add(self, name, use_lists = 1, override = False):
         assert int(use_lists) #0 is not an okay value either
+        if not override and self.state == u"closed":
+            return
         name = int(name)
         if name in self.speakers:
             return
@@ -120,6 +131,13 @@ class SpeakerList(Persistent):
             self.speaker_log[self.current] = PersistentList()
         self.speaker_log[self.current].append(seconds)
         self.current = None
+
+    def set_state(self, state):
+        assert state in _POSSIBLE_STATES
+        self.state = state
+
+    def get_state_title(self):
+        return _POSSIBLE_STATES.get(self.state, u"")
 
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))

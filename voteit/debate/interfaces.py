@@ -17,10 +17,10 @@ class ISpeakerList(Interface):
         """ Get the expected entry position for name. (Where name is participant number, an int)
         """
 
-    def add(name, use_lists = 1):
+    def add(name, use_lists = 1, override = False):
         """ Add name to speakers. Name is the delegate number. (An int)
             use_lists is a setting to promote speakers that have spoken less than others,
-            also known as secondary speaker lists.
+            also known as secondary speaker lists. Override means add even if a list is closed.
         """
 
     def remove(name):
@@ -38,4 +38,12 @@ class ISpeakerList(Interface):
 
     def speaker_finished(seconds):
         """ The speaker set as current has finished speaking. Move item to log, and log number of seconds.
+        """
+
+    def set_state(state):
+        """ Set a state, either open or closed.
+        """
+
+    def get_state_title():
+        """ Get a translatable title for the current state.
         """

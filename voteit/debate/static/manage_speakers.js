@@ -65,6 +65,7 @@ function rename_speaker_submit(event) {
         form.hide()
     })
 }
+
 function clear_speaker_log(event) {
     event.preventDefault();
     spinner().appendTo($(event.target));
