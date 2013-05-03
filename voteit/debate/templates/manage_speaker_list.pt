@@ -52,7 +52,7 @@
         <div id="left" tal:condition="context_active">
             <h3 i18n:translate="">Active</h3>
             <ul id="speaker_active">
-                <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)">
+                <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />
             </ul>
             <h3 i18n:translate="">Queue</h3>
             <ul id="speaker_queue"></ul>

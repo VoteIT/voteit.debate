@@ -17,7 +17,7 @@
                     <span>&nbsp;</span>
                 </div>
                 <div class="user">
-                    <img tal:replace="structure active_speaker.get_image_tag(size = 40)">
+                    <img tal:replace="structure active_speaker.get_image_tag(size = 40)" />
                     <span class="user_fullname">${active_speaker.title}</span>
                     <div class="clear"><!-- --></div>
                 </div>
@@ -29,7 +29,7 @@
                         <span>${get_user_list_number(user.userid)}</span>
                     </div>
                     <div class="user">
-                        <img tal:replace="structure user.get_image_tag(size = 40)">
+                        <img tal:replace="structure user.get_image_tag(size = 40)" />
                         <span class="user_fullname">${user.title}</span>
                         <div class="clear"><!-- --></div>
                     </div>

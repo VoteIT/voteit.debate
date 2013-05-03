@@ -1,0 +1,173 @@
+# Translations template for voteit.debate.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the voteit.debate project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: voteit.debate 0.1dev\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-05-03 13:06+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: voteit/debate/__init__.py:22
+msgid "Nothing to start"
+msgstr ""
+
+#: voteit/debate/__init__.py:23
+msgid "Speaker already in this list"
+msgstr ""
+
+#: voteit/debate/models.py:69
+msgid "Open"
+msgstr ""
+
+#: voteit/debate/models.py:69
+msgid "Closed"
+msgstr ""
+
+#: voteit/debate/schemas.py:13
+msgid "Add speaker"
+msgstr ""
+
+#: voteit/debate/schemas.py:23
+msgid "Number of speaker lists to use"
+msgstr ""
+
+#. Default:
+#: voteit/debate/schemas.py:24
+msgid "speaker_lists_to_use_description"
+msgstr ""
+
+#: voteit/debate/schemas.py:30
+msgid "Show user controls for speaker list statuses"
+msgstr ""
+
+#: voteit/debate/views.py:50
+msgid "Add"
+msgstr ""
+
+#: voteit/debate/views.py:237
+msgid "Speaker list doesn't exist"
+msgstr ""
+
+#: voteit/debate/views.py:250
+msgid "Speaker list for projectors"
+msgstr ""
+
+#: voteit/debate/views.py:252
+msgid "Speaker list settings"
+msgstr ""
+
+#: voteit/debate/views.py:259
+msgid "Speaker lists"
+msgstr ""
+
+#: voteit/debate/templates/fullscreen_list.pt:42
+msgid "No list currently active"
+msgstr ""
+
+#: voteit/debate/templates/fullscreen_list.pt:44
+#: voteit/debate/templates/speaker_queue_moderator.pt:9
+msgid "Error: Connection timeout. Will try again."
+msgstr ""
+
+#: voteit/debate/templates/fullscreen_view.pt:8
+msgid "Speakers"
+msgstr ""
+
+#: voteit/debate/templates/fullscreen_view.pt:13
+msgid "Meeting logo"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:10
+msgid "Manage speaker list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:20
+msgid "Rename"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:22
+msgid "Delete"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:25
+msgid "&raquo; Add a new list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:36
+msgid "Start"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:38
+msgid "Pause"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:39
+msgid "Finished speaking"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:41
+msgid "Quickstart next"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:43
+msgid "Close list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:45
+msgid "Open list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:53
+msgid "Active"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:57
+msgid "Queue"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:61
+msgid "Clear"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:63
+msgid "Log"
+msgstr ""
+
+#: voteit/debate/templates/speaker_item.pt:12
+msgid "start"
+msgstr ""
+
+#: voteit/debate/templates/speaker_log_moderator.pt:11
+msgid "sec"
+msgstr ""
+
+#: voteit/debate/templates/user_speaker.pt:13
+msgid "in queue"
+msgstr ""
+
+#: voteit/debate/templates/user_speaker.pt:20
+msgid "Add yourself"
+msgstr ""
+
+#: voteit/debate/templates/user_speaker.pt:24
+msgid "Remove yourself"
+msgstr ""
+
+#: voteit/debate/templates/user_speaker.pt:30
+msgid "You will enter list att position ${num} if you wish to speak"
+msgstr ""
+
+#: voteit/debate/templates/user_speaker.pt:37
+msgid "${num} speakers before you"
+msgstr ""
+
