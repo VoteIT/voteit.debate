@@ -126,8 +126,7 @@ class ManageSpeakerList(BaseView):
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")
     def speaker_queue_moderator(self):
-        if not self.active_list:
-            return u""
+        self.response['active_context'] = self.active_list in self.sl_handler.get_contextual_lists(self.context)
         self.response['speaker_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
         return self.response
