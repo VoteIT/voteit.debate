@@ -50,7 +50,7 @@
         </div>
         <div id="right">
             <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'clear', 'name': active_list.name})}"
-               class="buttonize" id="clear_speaker_log" i18n:translate="">Clear</a>
+               tal:condition="active_list" class="buttonize" id="clear_speaker_log" i18n:translate="">Clear</a>
             <h3 i18n:translate="">Log</h3>
             <ul id="speaker_log"></ul>
         </div>

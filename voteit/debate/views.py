@@ -54,7 +54,10 @@ class ManageSpeakerList(BaseView):
     def manage_speaker_list_view(self):
         voteit_debate_manage_speakers_js.need()
         voteit_debate_speaker_view_styles.need()
-        self.response['add_form'] = self.get_add_form().render()
+        if self.active_list:
+            self.response['add_form'] = self.get_add_form().render()
+        else:
+            self.response['add_form'] = u""
         self.response['context_lists'] = self.sl_handler.get_contextual_lists(self.context)
         self.response['context_active'] = self.active_list in self.response['context_lists']
         self.response['active_list'] = self.active_list
@@ -123,6 +126,8 @@ class ManageSpeakerList(BaseView):
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")
     def speaker_queue_moderator(self):
+        if not self.active_list:
+            return u""
         self.response['speaker_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
         return self.response
