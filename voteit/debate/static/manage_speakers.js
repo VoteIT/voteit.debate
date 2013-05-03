@@ -59,7 +59,7 @@ function rename_speaker_submit(event) {
             flash_message(voteit.translation['error_saving'], 'error', true);
         } else {
             //Success
-            form.siblings('.sl_title').html(response);
+            form.parents('li').children('.sl_title').html(response);
         }
         $('img.spinner').remove();
         form.hide()

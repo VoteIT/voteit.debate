@@ -12,18 +12,29 @@
         <ul>
             <li tal:repeat="sl context_lists">
                 <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set', 'name': sl.name})}"
-                   tal:attributes="class (active_list and sl.name == active_list.name) and 'selected sl_title' or 'sl_title'">${sl.title}</a>
-                <form action="${request.resource_url(context, 'speaker_list_action', query = {'action': 'rename', 'name': sl.name})}"
-                    method="GET" class="rename_form" style="display: none;">
-                    <input name="list_title_rename" />
-                </form>
-                <a href="javascript:" class="rename_sl"
-                   i18n:translate="">Rename</a>
-                <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'remove', 'name': sl.name})}"
-                   i18n:translate="">Delete</a>
+                   tal:attributes="class (active_list and sl.name == active_list.name) and 'selected sl_title' or 'sl_title'">
+                   <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
+                   ${sl.title}
+                   </span>
+                </a>
+                <div class="list_controls">
+                    <form action="${request.resource_url(context, 'speaker_list_action', query = {'action': 'rename', 'name': sl.name})}"
+                        method="GET" class="rename_form" style="display: none;">
+                        <input name="list_title_rename" />
+                    </form>
+                    <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': sl.name, 'state': 'closed'})}"
+                       class="list_state" tal:condition="sl.state != u'closed'" i18n:translate="">Close list</a>
+                    <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': sl.name, 'state': 'open'})}"
+                       class="list_state" tal:condition="sl.state != u'open'" i18n:translate="">Open list</a>
+                    <a href="javascript:" class="rename_sl"
+                       i18n:translate="">Rename</a>
+                    <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'remove', 'name': sl.name})}"
+                       i18n:translate="">Delete</a>
+                </div>
+                <div class="clear"><!-- --></div>
             </li>
             <li><a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'add'})}"
-                   i18n:translate="">&raquo; Add a new list</a></li>
+                   class="icon-right arrow-right" i18n:translate="">Add a new list</a></li>
         </ul>
 
         <tal:context_active tal:condition="context_active">
@@ -40,10 +51,6 @@
                class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
             <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
                class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
-            <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': active_list.name, 'state': 'closed'})}"
-               class="buttonize list_state" tal:condition="active_list.state != u'closed'" i18n:translate="">Close list</a>
-            <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'set_state', 'name': active_list.name, 'state': 'open'})}"
-               class="buttonize list_state" tal:condition="active_list.state != u'open'" i18n:translate="">Open list</a>
         </tal:context_active>
         <a id="meeting_url" style="display: none" href="${api.meeting_url}"></a>
     </div>

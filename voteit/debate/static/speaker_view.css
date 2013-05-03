@@ -13,3 +13,25 @@
 #clear_speaker_log {
     float: right;
 }
+.list_controls {
+    float: right;
+}
+.sl_title {
+    float: left;
+    border: 1px solid #5c5a5d;
+    background-color: #F2F2F2;
+    padding: 10px;
+    margin-bottom: 10px;
+    clear: both;
+    width: 400px;
+    font-size: 20px;
+}
+.sl_title.selected {
+    color: #fff;
+    background: #5c5a5d;
+}
+.list_controls a {
+    padding-left: 10px;
+}
+#speaker_list_controls .selected .icon.ongoing { background-image: url(/static/workflow_icons/ongoing_menu.png); }
+#speaker_list_controls .selected .icon.closed { background-image: url(/static/workflow_icons/closed_menu.png); }
