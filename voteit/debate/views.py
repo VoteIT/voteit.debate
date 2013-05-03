@@ -211,6 +211,7 @@ class FullscreenSpeakerList(object):
             active_speaker = active_speaker,
             speaker_profiles = speaker_profiles,
             get_user_list_number = _get_user_list_number,
+            userid_to_number = participant_numbers.userid_to_number, #FIXME: This shouldn't be needed, refactor later
         )
         return response
 

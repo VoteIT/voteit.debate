@@ -30,6 +30,12 @@ body {
     float: left;
     padding-left: 10px;
 }
+.delegate_number {
+    font-size: 30px;
+    line-height: 40px;
+    float: right;
+    padding-left: 10px;
+}
 .profile-pic {
     float: left;
 }
@@ -41,7 +47,7 @@ body {
 #speaker-list-items {
 }
 #speaker-list-items .user {
-    min-width: 600px;
+    min-width: 650px;
     float: left;
     border: 1px solid #5c5a5d;
     background-color: #F2F2F2;
