@@ -191,10 +191,12 @@ class FullscreenSpeakerList(object):
         root = self.context.__parent__
         active_list = sl_handler.get_active_list()
         num_lists = self.context.get_field_value('speaker_list_count', 1)
-        speaker_profiles = []
         if active_list.current != None: #Note could be int 0!
             userid = participant_numbers.number_to_userid[active_list.current]
-            speaker_profiles.append(root.users[userid])
+            active_speaker = root.users[userid]
+        else:
+            active_speaker = None
+        speaker_profiles = []
         for num in active_list.speakers:
             userid = participant_numbers.number_to_userid[num]
             speaker_profiles.append(root.users[userid])
@@ -206,6 +208,7 @@ class FullscreenSpeakerList(object):
 
         response = dict(
             active_list = active_list,
+            active_speaker = active_speaker,
             speaker_profiles = speaker_profiles,
             get_user_list_number = _get_user_list_number,
         )
