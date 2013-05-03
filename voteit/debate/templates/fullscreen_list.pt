@@ -3,6 +3,13 @@
     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
     i18n:domain="voteit.debate">
     <tal:active_list condition="active_list">
+        <span id="state-area" class="meta">
+            <span class="state">
+                <span tal:attributes="class active_list.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
+                    ${active_list.get_state_title()}
+                </span>
+            </span>
+        </span>
         <h1 id="agenda_item_title" class="icon">${active_list.title}</h1>
         <ul id="speaker-list-items">
             <tal:iterate repeat="user speaker_profiles">

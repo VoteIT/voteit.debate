@@ -74,3 +74,6 @@ body {
     color: #fff;
     background: #5c5a5d;
 }
+#state-area {
+    float: right;
+}
