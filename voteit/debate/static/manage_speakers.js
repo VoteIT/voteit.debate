@@ -29,15 +29,17 @@ function load_speaker_queue(success_callback) {
 }
 
 function load_speaker_log() {
-    spinner().appendTo('#speaker_log');
-    $('#speaker_log').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
-        if (status == "error") {
-            //Sleep, retry?
-            flash_message(voteit.translation['error_loading'], 'error', true);
-        } else {
-        }
-        $('img.spinner').remove();
-    })
+    if ($('#speaker_log').length > 0) {
+        spinner().appendTo('#speaker_log');
+        $('#speaker_log').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
+            if (status == "error") {
+                //Sleep, retry?
+                flash_message(voteit.translation['error_loading'], 'error', true);
+            } else {
+            }
+            $('img.spinner').remove();
+        })
+    }
 }
 
 function rename_speaker_show(event) {

@@ -2,8 +2,8 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate"
-      tal:condition="active_context">
-    <tal:iterate repeat="pn speaker_list.speakers">
+      tal:condition="active_list">
+    <tal:iterate repeat="pn active_list.speakers">
         <li tal:replace="structure speaker_item(pn)">Speaker here</li>
     </tal:iterate>
     <div class="meta" id="status" style="display: none;" i18n:translate="">Error: Connection timeout. Will try again.</div>

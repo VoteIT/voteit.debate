@@ -40,7 +40,7 @@
     </div>
 
     <div metal:fill-slot="columns">
-        <div id="left">
+        <div id="left" tal:condition="context_active">
             <h3 i18n:translate="">Active</h3>
             <ul id="speaker_active">
                 <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)">
@@ -48,7 +48,7 @@
             <h3 i18n:translate="">Queue</h3>
             <ul id="speaker_queue"></ul>
         </div>
-        <div id="right">
+        <div id="right" tal:condition="context_active">
             <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'clear', 'name': active_list.name})}"
                tal:condition="active_list" class="buttonize" id="clear_speaker_log" i18n:translate="">Clear</a>
             <h3 i18n:translate="">Log</h3>

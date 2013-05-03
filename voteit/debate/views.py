@@ -116,7 +116,7 @@ class ManageSpeakerList(BaseView):
                 return HTTPForbidden()
             pn = appstruct['pn']
             if pn in self.active_list.speakers:
-                return HTTPForbidden()
+                return Response() #No reason to bother...
             if pn in self.participant_numbers.number_to_userid:
                 use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
                 self.active_list.add(pn, use_lists = use_lists)
@@ -126,8 +126,7 @@ class ManageSpeakerList(BaseView):
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")
     def speaker_queue_moderator(self):
-        self.response['active_context'] = self.active_list in self.sl_handler.get_contextual_lists(self.context)
-        self.response['speaker_list'] = self.active_list
+        self.response['active_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
         return self.response
 
