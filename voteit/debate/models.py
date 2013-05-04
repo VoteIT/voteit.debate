@@ -92,7 +92,7 @@ class SpeakerList(Persistent):
         compare_val = _compare_val(name)
         pos = len(self.speakers)
         for pn in reversed(self.speakers):
-            if compare_val == _compare_val(pn):
+            if compare_val >= _compare_val(pn):
                 break
             pos -= 1
         return pos

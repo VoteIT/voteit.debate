@@ -123,6 +123,13 @@ class SpeakerListTests(unittest.TestCase):
         obj.add(6, 3)
         self.assertEqual(obj.speakers, [6, 1, 2, 5, 3, 4])
 
+    def test_add_with_one_in_log(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [1]
+        obj.speakers.extend([2])
+        obj.add(1, use_lists = 2)
+        self.assertEqual(obj.speakers, [2, 1])
+
     def test_remove(self):
         obj = self._cut('n')
         obj.speakers.extend([1, 2, 3])
