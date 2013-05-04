@@ -8,15 +8,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-03 13:06+0200\n"
-"PO-Revision-Date: 2013-05-03 13:03+0100\n"
+"POT-Creation-Date: 2013-05-04 14:58+0200\n"
+"PO-Revision-Date: 2013-05-04 15:01+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 0.9.6\n"
+"X-Generator: Poedit 1.5.5\n"
 
 #: voteit/debate/__init__.py:22
 msgid "Nothing to start"
@@ -51,31 +52,42 @@ msgstr ""
 msgid "Show user controls for speaker list statuses"
 msgstr "Visa användarkontroller för talarlistor"
 
-#: voteit/debate/views.py:50
+#: voteit/debate/views.py:54
 msgid "Add"
 msgstr "Lägg till"
 
-#: voteit/debate/views.py:237
+#: voteit/debate/views.py:242
 msgid "Speaker list doesn't exist"
 msgstr "Talarlistan existerar inte"
 
-#: voteit/debate/views.py:250
+#: voteit/debate/views.py:287 voteit/debate/views.py:306
+#: voteit/debate/templates/speaker_statistics.pt:14
+#| msgid "Speaker lists"
+msgid "Speaker statistics"
+msgstr "Talarstatistik"
+
+#: voteit/debate/views.py:288
+#| msgid "sec"
+msgid "Seconds"
+msgstr "Sekunder"
+
+#: voteit/debate/views.py:304
 msgid "Speaker list for projectors"
 msgstr "Talarlista för projektor"
 
-#: voteit/debate/views.py:252
+#: voteit/debate/views.py:308
 msgid "Speaker list settings"
 msgstr "Talarlistinställningar"
 
-#: voteit/debate/views.py:259
+#: voteit/debate/views.py:315
 msgid "Speaker lists"
 msgstr "Talarlistor"
 
-#: voteit/debate/templates/fullscreen_list.pt:42
+#: voteit/debate/templates/fullscreen_list.pt:44
 msgid "No list currently active"
 msgstr "Ingen lista aktiv"
 
-#: voteit/debate/templates/fullscreen_list.pt:44
+#: voteit/debate/templates/fullscreen_list.pt:46
 #: voteit/debate/templates/speaker_queue_moderator.pt:9
 msgid "Error: Connection timeout. Will try again."
 msgstr "Fel i anslutningen. Försöker igen."
@@ -92,55 +104,57 @@ msgstr "Möteslogo"
 msgid "Manage speaker list"
 msgstr "Hantera talarlista"
 
-#: voteit/debate/templates/manage_speaker_list.pt:20
-msgid "Rename"
-msgstr "Byt namn"
-
-#: voteit/debate/templates/manage_speaker_list.pt:22
-msgid "Delete"
-msgstr "Radera"
-
 #: voteit/debate/templates/manage_speaker_list.pt:25
-msgid "&raquo; Add a new list"
-msgstr "Lägg till ny lista"
-
-#: voteit/debate/templates/manage_speaker_list.pt:36
-msgid "Start"
-msgstr "Start"
-
-#: voteit/debate/templates/manage_speaker_list.pt:38
-msgid "Pause"
-msgstr "Paus"
-
-#: voteit/debate/templates/manage_speaker_list.pt:39
-msgid "Finished speaking"
-msgstr "Talat slut"
-
-#: voteit/debate/templates/manage_speaker_list.pt:41
-msgid "Quickstart next"
-msgstr "Snabbstarta nästa"
-
-#: voteit/debate/templates/manage_speaker_list.pt:43
 msgid "Close list"
 msgstr "Stäng lista"
 
-#: voteit/debate/templates/manage_speaker_list.pt:45
+#: voteit/debate/templates/manage_speaker_list.pt:27
 msgid "Open list"
 msgstr "Öppna lista"
 
-#: voteit/debate/templates/manage_speaker_list.pt:53
+#: voteit/debate/templates/manage_speaker_list.pt:29
+msgid "Rename"
+msgstr "Byt namn"
+
+#: voteit/debate/templates/manage_speaker_list.pt:31
+msgid "Delete"
+msgstr "Radera"
+
+#: voteit/debate/templates/manage_speaker_list.pt:36
+#, fuzzy
+#| msgid "&raquo; Add a new list"
+msgid "Add a new list"
+msgstr "Lägg till ny lista"
+
+#: voteit/debate/templates/manage_speaker_list.pt:47
+msgid "Start"
+msgstr "Start"
+
+#: voteit/debate/templates/manage_speaker_list.pt:49
+msgid "Pause"
+msgstr "Paus"
+
+#: voteit/debate/templates/manage_speaker_list.pt:50
+msgid "Finished speaking"
+msgstr "Talat slut"
+
+#: voteit/debate/templates/manage_speaker_list.pt:52
+msgid "Quickstart next"
+msgstr "Snabbstarta nästa"
+
+#: voteit/debate/templates/manage_speaker_list.pt:60
 msgid "Active"
 msgstr "Aktiv"
 
-#: voteit/debate/templates/manage_speaker_list.pt:57
+#: voteit/debate/templates/manage_speaker_list.pt:64
 msgid "Queue"
 msgstr "Kö"
 
-#: voteit/debate/templates/manage_speaker_list.pt:61
+#: voteit/debate/templates/manage_speaker_list.pt:68
 msgid "Clear"
 msgstr "Rensa"
 
-#: voteit/debate/templates/manage_speaker_list.pt:63
+#: voteit/debate/templates/manage_speaker_list.pt:70
 msgid "Log"
 msgstr "Logg"
 
@@ -151,6 +165,27 @@ msgstr "start"
 #: voteit/debate/templates/speaker_log_moderator.pt:11
 msgid "sec"
 msgstr "sek"
+
+#: voteit/debate/templates/speaker_statistics.pt:16
+msgid "Back"
+msgstr "Tillbaka"
+
+#: voteit/debate/templates/speaker_statistics.pt:19
+msgid "Export CSV, one entry per row"
+msgstr "Exportera till CSV, en taltid per rad"
+
+#: voteit/debate/templates/speaker_statistics.pt:26
+#| msgid "Rename"
+msgid "Name"
+msgstr "Namn"
+
+#: voteit/debate/templates/speaker_statistics.pt:27
+msgid "Times spoken"
+msgstr "Antal talat"
+
+#: voteit/debate/templates/speaker_statistics.pt:28
+msgid "Total s"
+msgstr "Totala s"
 
 #: voteit/debate/templates/user_speaker.pt:13
 msgid "in queue"
@@ -171,4 +206,3 @@ msgstr "Om du begär ordet hamnar du på position ${num}"
 #: voteit/debate/templates/user_speaker.pt:37
 msgid "${num} speakers before you"
 msgstr "${num} talare före dig"
-

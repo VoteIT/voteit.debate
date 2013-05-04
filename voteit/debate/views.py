@@ -1,3 +1,7 @@
+import csv
+import StringIO
+from decimal import Decimal
+
 import deform
 from pyramid.view import view_config
 from pyramid.response import Response
@@ -247,9 +251,60 @@ class UserSpeakerLists(BaseView):
         self.response['use_lists'] = use_lists
         return self.response
 
+    @view_config(name = "speaker_statistics", context = IMeeting, permission = security.VIEW,
+                 renderer = "templates/speaker_statistics.pt")
+    def speaker_statistics_view(self):
+        self.response['number_to_userid'] = self.participant_numbers.number_to_userid
+        #self.response['speaker_lists'] = self.sl_handler.speaker_lists.values()
+        results = {}
+        maxval = 0
+        for sl in self.sl_handler.speaker_lists.values():
+            for (pn, entries) in sl.speaker_log.items():
+                current = results.setdefault(pn, [])
+                current.extend(entries)
+                this_val = sum(current)
+                if this_val > maxval:
+                    maxval = this_val
+        self.response['results'] = [(x, results[x]) for x in sorted(results)]
+
+        def _get_percentage(num):
+            try:
+                return int(round(Decimal(num) / maxval * 100))
+            except:
+                import pdb;pdb.set_trace()
+#            try:
+#            except:
+#                return u"0%"
+
+        self.response['get_perc'] = _get_percentage
+        return self.response
+
+    @view_config(name='speaker_statistics.csv', context=IMeeting, permission=security.VIEW)
+    def export(self):
+        output = StringIO.StringIO()
+        writer = csv.writer(output, delimiter=';' ,quotechar='"', quoting=csv.QUOTE_ALL)
+        writer.writerow([self.context.title.encode('utf-8')])
+        writer.writerow([self.api.translate(_(u"Speaker statistics"))])
+        writer.writerow(["#", self.api.translate(_(u"Seconds"))])
+        for sl in self.sl_handler.speaker_lists.values():
+            if not len(sl.speaker_log):
+                continue
+            writer.writerow([""])
+            writer.writerow([sl.title.encode('utf-8')])
+            for (pn, entries) in sl.speaker_log.items():
+                for entry in entries:
+                    writer.writerow([pn, entry])
+        contents = output.getvalue()
+        output.close()
+        response = Response(content_type='text/csv',
+                            body=contents)
+        return response
+
 
 @view_action('meeting', 'fullscreen_speaker_list', title = _(u"Speaker list for projectors"),
              permission = security.MODERATE_MEETING, link = 'fullscreen_speaker_list')
+@view_action('meeting', 'speaker_statistics', title = _(u"Speaker statistics"),
+             permission = security.VIEW, link = 'speaker_statistics')
 @view_action('settings_menu', 'speaker_list_settings', title = _(u"Speaker list settings"),
              permission = security.MODERATE_MEETING, link = 'speaker_list_settings')
 def meeting_context_menu_item(context, request, va, **kw):

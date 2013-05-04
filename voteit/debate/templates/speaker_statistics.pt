@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="load: ${api.template_dir}main.pt"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+<body>
+    <div metal:fill-slot="full_window" id="content">
+
+        <tal:messages replace="structure api.render_single_view_component(context, request, 'main', 'flash_messages')">Messages</tal:messages>
+        <div class="clear"><!-- --></div>
+
+        <h2 id="page_heading" i18n:translate="">Speaker statistics</h2>
+
+        <a href="${request.resource_url(context)}" class="arrow-left icon iconpadding" i18n:translate="">Back</a>
+        <br/><br/>
+        
+        <a href="${request.resource_url(context, 'speaker_statistics.csv')}"
+           class="buttonize" i18n:translate="">Export CSV, one entry per row</a>
+
+        <table class="listing">
+            <thead>
+                <tr>
+                    <th class="heading">#</th>
+                    <th i18n:translate="" class="heading">Name</th>
+                    <th i18n:translate="" class="heading">Times spoken</th>
+                    <th i18n:translate="" class="heading">Total s</th>
+                    <th style="min-width: 200px;">&nbsp;</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tal:speakers repeat="(pn, spoken_list) results">
+                <tr>
+                    <td tal:content="pn">1</td>
+                    <td tal:content="structure api.get_creators_info([number_to_userid[pn]], portrait = False)">Hen Henysson</td>
+                    <td tal:content="len(spoken_list)">3</td>
+                    <td tal:content="sum(spoken_list)">60</td>
+                    <td>
+                        <div style="background-color: #006680; height: 10px; width: ${get_perc(sum(spoken_list))}%;"><!-- --></div>
+                    </td>
+                </tr>
+                </tal:speakers>
+            </tbody>
+        </table>
+    </div> <!-- content - place nothing outside this ;) -->
+</body>
+</html>
+

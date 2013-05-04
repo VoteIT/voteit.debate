@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-03 13:06+0200\n"
+"POT-Creation-Date: 2013-05-04 14:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,31 +50,40 @@ msgstr ""
 msgid "Show user controls for speaker list statuses"
 msgstr ""
 
-#: voteit/debate/views.py:50
+#: voteit/debate/views.py:54
 msgid "Add"
 msgstr ""
 
-#: voteit/debate/views.py:237
+#: voteit/debate/views.py:242
 msgid "Speaker list doesn't exist"
 msgstr ""
 
-#: voteit/debate/views.py:250
+#: voteit/debate/views.py:287 voteit/debate/views.py:306
+#: voteit/debate/templates/speaker_statistics.pt:14
+msgid "Speaker statistics"
+msgstr ""
+
+#: voteit/debate/views.py:288
+msgid "Seconds"
+msgstr ""
+
+#: voteit/debate/views.py:304
 msgid "Speaker list for projectors"
 msgstr ""
 
-#: voteit/debate/views.py:252
+#: voteit/debate/views.py:308
 msgid "Speaker list settings"
 msgstr ""
 
-#: voteit/debate/views.py:259
+#: voteit/debate/views.py:315
 msgid "Speaker lists"
 msgstr ""
 
-#: voteit/debate/templates/fullscreen_list.pt:42
+#: voteit/debate/templates/fullscreen_list.pt:44
 msgid "No list currently active"
 msgstr ""
 
-#: voteit/debate/templates/fullscreen_list.pt:44
+#: voteit/debate/templates/fullscreen_list.pt:46
 #: voteit/debate/templates/speaker_queue_moderator.pt:9
 msgid "Error: Connection timeout. Will try again."
 msgstr ""
@@ -91,55 +100,55 @@ msgstr ""
 msgid "Manage speaker list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:20
-msgid "Rename"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:22
-msgid "Delete"
-msgstr ""
-
 #: voteit/debate/templates/manage_speaker_list.pt:25
-msgid "&raquo; Add a new list"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:36
-msgid "Start"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:38
-msgid "Pause"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:39
-msgid "Finished speaking"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:41
-msgid "Quickstart next"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:43
 msgid "Close list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:45
+#: voteit/debate/templates/manage_speaker_list.pt:27
 msgid "Open list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:53
+#: voteit/debate/templates/manage_speaker_list.pt:29
+msgid "Rename"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:31
+msgid "Delete"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:36
+msgid "Add a new list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:47
+msgid "Start"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:49
+msgid "Pause"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:50
+msgid "Finished speaking"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:52
+msgid "Quickstart next"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:60
 msgid "Active"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:57
+#: voteit/debate/templates/manage_speaker_list.pt:64
 msgid "Queue"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:61
+#: voteit/debate/templates/manage_speaker_list.pt:68
 msgid "Clear"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:63
+#: voteit/debate/templates/manage_speaker_list.pt:70
 msgid "Log"
 msgstr ""
 
@@ -149,6 +158,26 @@ msgstr ""
 
 #: voteit/debate/templates/speaker_log_moderator.pt:11
 msgid "sec"
+msgstr ""
+
+#: voteit/debate/templates/speaker_statistics.pt:16
+msgid "Back"
+msgstr ""
+
+#: voteit/debate/templates/speaker_statistics.pt:19
+msgid "Export CSV, one entry per row"
+msgstr ""
+
+#: voteit/debate/templates/speaker_statistics.pt:26
+msgid "Name"
+msgstr ""
+
+#: voteit/debate/templates/speaker_statistics.pt:27
+msgid "Times spoken"
+msgstr ""
+
+#: voteit/debate/templates/speaker_statistics.pt:28
+msgid "Total s"
 msgstr ""
 
 #: voteit/debate/templates/user_speaker.pt:13
