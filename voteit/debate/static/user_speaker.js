@@ -16,7 +16,6 @@ function load_user_speaker_lists() {
 }
 
 $("#user_speaker_lists .sl_controls a").live("click", user_speaker_action);
-
 function user_speaker_action(event) {
     event.preventDefault();
     spinner().appendTo($(event.target));

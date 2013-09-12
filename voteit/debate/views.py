@@ -234,9 +234,9 @@ class UserSpeakerLists(BaseView):
                  renderer = "templates/user_speaker.pt")
     def view(self):
         action = self.request.GET.get('action', None)
-        pn = self.participant_numbers.userid_to_number[self.api.userid]
+        pn = self.participant_numbers.userid_to_number.get(self.api.userid, None)
         use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-        if action:
+        if pn != None and action:
             list_name = self.request.GET.get('list_name', None)
             if list_name not in self.sl_handler.speaker_lists:
                 raise HTTPForbidden(_(u"Speaker list doesn't exist"))
@@ -325,9 +325,6 @@ def user_speaker_list(context, request, *args, **kw):
     if not api.meeting.get_field_value('show_controls_for_participants', False):
         return u""
     if context.get_workflow_state() not in (u'upcoming', u'ongoing'):
-        return u""
-    participant_numbers = request.registry.getAdapter(api.meeting, IParticipantNumbers)
-    if api.userid not in participant_numbers.userid_to_number:
         return u""
     response = dict()
     response.update(kw)
