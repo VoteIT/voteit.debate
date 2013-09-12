@@ -5,6 +5,26 @@ from zope.interface import Interface
 class ISpeakerListHandler(Interface):
     """ Adapts a Meeting object and handles speaker lists locally.
     """
+    speaker_lists = Attribute("Storage for all speaker lists.")
+    speaker_list_name = Attribute("Internal name (id) of the active speaker list. Not ment to be displayed.")
+
+    def set_active_list(name):
+        """ Set the name of the currently active list. Can also be None to unset. """
+
+    def get_active_list():
+        """ Return the currently active list, or None. """
+
+    def get_contextual_lists(context):
+        """ Return all speaker lists for a specific context - sorted. """
+
+    def add_contextual_list(context):
+        """ Create a new speaker list in this context.
+            (Any context inside a meeting will do, but normally Agenda items are used.)
+        """
+
+    def remove_list(name):
+        """ Remove a speaker list, and unset it as active if it was.
+        """
 
 
 class ISpeakerList(Interface):
