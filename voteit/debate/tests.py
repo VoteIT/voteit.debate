@@ -31,7 +31,7 @@ class SpeakerListHandlerTests(unittest.TestCase):
         self.failUnless(verifyClass(ISpeakerListHandler, self._cut))
 
     def test_verify_object(self):
-        self.failUnless(verifyObject(ISpeakerListHandler, self._cut(None)))
+        self.failUnless(verifyObject(ISpeakerListHandler, self._cut(testing.DummyResource())))
 
     def test_integration(self):
         self.config.include('voteit.core.models.js_util')
@@ -129,6 +129,23 @@ class SpeakerListTests(unittest.TestCase):
         obj.speakers.extend([2])
         obj.add(1, use_lists = 2)
         self.assertEqual(obj.speakers, [2, 1])
+
+    def test_add_with_1_safe_pos_and_2_lists(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [1]
+        obj.speaker_log[2] = [1]
+        obj.speakers.extend([1, 2])
+        obj.add(3, use_lists = 2, safe_pos = 1)
+        self.assertEqual(obj.speakers, [1, 3, 2])
+
+    def test_get_pos_with_2_safe_pos_and_2_lists(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [1]
+        obj.speaker_log[2] = [1]
+        obj.speaker_log[3] = [1]
+        obj.speakers.extend([1, 2, 3])
+        self.assertEqual(obj.get_expected_pos(4, use_lists = 2, safe_pos = 0), 0)
+        self.assertEqual(obj.get_expected_pos(4, use_lists = 2, safe_pos = 2), 2) #Starts with 0! :)
 
     def test_remove(self):
         obj = self._cut('n')

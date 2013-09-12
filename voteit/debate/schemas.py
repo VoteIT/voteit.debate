@@ -15,7 +15,7 @@ class AddSpeakerSchema(colander.Schema):
                              validator = deferred_existing_participant_number_validator,)
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 4)]
-
+_safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 
 @schema_factory('SpeakerListSettingsSchema')
 class SpeakerListSettingsSchema(colander.Schema):
@@ -28,5 +28,16 @@ class SpeakerListSettingsSchema(colander.Schema):
     show_controls_for_participants = colander.SchemaNode(
         colander.Bool(),
         title = _(u"Show user controls for speaker list statuses"),
+        description = _(u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
         default = False,
+    )
+    safe_positions = colander.SchemaNode(
+        colander.Int(),
+        widget = deform.widget.SelectWidget(values = _safe_pos_list_alts),
+        default = u'0',
+        title = _(u"Safe positions"),
+        description = _(u"safe_positions_description",
+                        default = u"Don't move down users from this position even if they should loose their place. "
+                            u"For instance, if 1 is entered here and 2 speaker lists are used, the next speaker "
+                            u"in line will never be moved down regardless of what list they're on.")
     )

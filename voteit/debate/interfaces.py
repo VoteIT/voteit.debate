@@ -33,14 +33,16 @@ class ISpeakerList(Interface):
     speaker_log = Attribute("An IOBTree with speaker id as key and then a list with seonds this person has spoken.")
     current = Attribute("Current speaker id. Either None if no one is set, or an int.")
 
-    def get_expected_pos(name, use_lists = 1):
+    def get_expected_pos(name, use_lists = 1, safe_pos = 0):
         """ Get the expected entry position for name. (Where name is participant number, an int)
         """
 
-    def add(name, use_lists = 1, override = False):
+    def add(name, use_lists = 1, safe_pos = 0, override = False):
         """ Add name to speakers. Name is the delegate number. (An int)
             use_lists is a setting to promote speakers that have spoken less than others,
-            also known as secondary speaker lists. Override means add even if a list is closed.
+            also known as secondary speaker lists.
+            safe_pos never promotes someone above this position. (To avoid shuffling the top of the list)
+            Override means add even if a list is closed.
         """
 
     def remove(name):

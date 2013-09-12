@@ -29,7 +29,7 @@
                 <tal:not_in_list condition="pn != None and pn not in sl.speakers and sl.state == 'open'">
                     <div class="meta" i18n:translate="">
                         You will enter list att position
-                        <b tal:content="sl.get_expected_pos(pn, use_lists) + 1" i18n:name="num"></b>
+                        <b tal:content="sl.get_expected_pos(pn, use_lists = use_lists, safe_pos = safe_pos) + 1" i18n:name="num"></b>
                         if you wish to speak
                     </div>
                 </tal:not_in_list>

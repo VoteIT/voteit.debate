@@ -84,7 +84,7 @@ class SpeakerList(Persistent):
         self.title = title
         self.set_state(state)
 
-    def get_expected_pos(self, name, use_lists = 1):
+    def get_expected_pos(self, name, use_lists = 1, safe_pos = 0):
         assert int(use_lists) #0 is not an okay value either
         def _compare_val(pn):
             n = len(self.speaker_log.get(pn, ())) + 1
@@ -92,19 +92,21 @@ class SpeakerList(Persistent):
         compare_val = _compare_val(name)
         pos = len(self.speakers)
         for pn in reversed(self.speakers):
+            if pos == safe_pos:
+                break
             if compare_val >= _compare_val(pn):
                 break
             pos -= 1
         return pos
 
-    def add(self, name, use_lists = 1, override = False):
+    def add(self, name, use_lists = 1, safe_pos = 0, override = False):
         assert int(use_lists) #0 is not an okay value either
         if not override and self.state == u"closed":
             return
         name = int(name)
         if name in self.speakers:
             return
-        pos = self.get_expected_pos(name, use_lists = use_lists)
+        pos = self.get_expected_pos(name, use_lists = use_lists, safe_pos = safe_pos)
         self.speakers.insert(pos, name)
 
     def remove(self, name):

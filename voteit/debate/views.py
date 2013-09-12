@@ -127,7 +127,8 @@ class ManageSpeakerList(BaseView):
                 return Response() #No reason to bother...
             if pn in self.participant_numbers.number_to_userid:
                 use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-                self.active_list.add(pn, use_lists = use_lists, override = True)
+                safe_pos = self.api.meeting.get_field_value('safe_positions', 0)
+                self.active_list.add(pn, use_lists = use_lists, safe_pos = safe_pos, override = True)
                 return Response()
         return HTTPForbidden()
 
@@ -236,19 +237,21 @@ class UserSpeakerLists(BaseView):
         action = self.request.GET.get('action', None)
         pn = self.participant_numbers.userid_to_number.get(self.api.userid, None)
         use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
+        safe_pos = self.api.meeting.get_field_value('safe_positions', 0)
         if pn != None and action:
             list_name = self.request.GET.get('list_name', None)
             if list_name not in self.sl_handler.speaker_lists:
                 raise HTTPForbidden(_(u"Speaker list doesn't exist"))
             sl = self.sl_handler.speaker_lists[list_name]
             if action == u'add':
-                sl.add(pn, use_lists = use_lists)
+                sl.add(pn, use_lists = use_lists, safe_pos = safe_pos)
             if action == u'remove':
                 sl.remove(pn)
         self.response['speaker_lists'] = self.sl_handler.get_contextual_lists(self.context)
         self.response['active_list'] = self.sl_handler.get_active_list()
         self.response['pn'] = pn
         self.response['use_lists'] = use_lists
+        self.response['safe_pos'] = safe_pos
         return self.response
 
     @view_config(name = "speaker_statistics", context = IMeeting, permission = security.VIEW,
