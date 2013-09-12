@@ -22,6 +22,7 @@ function load_speaker_queue(success_callback) {
             //Success
             $(".promote_start_speaker").on("click", promote_start_speaker);
             $(".remove_speaker").on("click", remove_speaker);
+            $('img.spinner').remove();
             if (typeof success_callback !== "undefined") success_callback(event);
         }
         reload_timer = setInterval(load_speaker_queue, 4000);
@@ -223,4 +224,19 @@ function quickstart_next_speaker(event) {
     } else {
         finished_speaker(event, start_speaker);
     }
+}
+
+function shuffle_speakers(event) {
+    event.preventDefault();
+    var url = $(event.target).attr('href');
+    spinner().appendTo($(this));
+    $.get(url, function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry?
+            flash_message(voteit.translation['error_saving'], 'error', true);
+        } else {
+            //Success
+            //load_speaker_queue();
+        }
+    }).success(load_speaker_queue)
 }

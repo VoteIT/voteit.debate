@@ -1,3 +1,5 @@
+from random import shuffle
+
 from zope.interface import implements
 from zope.component import adapts
 from persistent import Persistent
@@ -140,6 +142,9 @@ class SpeakerList(Persistent):
 
     def get_state_title(self):
         return _POSSIBLE_STATES.get(self.state, u"")
+
+    def shuffle(self):
+        shuffle(self.speakers)
 
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))

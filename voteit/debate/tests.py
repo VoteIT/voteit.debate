@@ -179,3 +179,10 @@ class SpeakerListTests(unittest.TestCase):
         obj.current = 12
         obj.speaker_finished(4)
         self.assertEqual(set(obj.speaker_log[12]), set([4]))
+
+    def test_shuffle(self):
+        obj = self._cut('n')
+        ordered = range(0, 50)
+        obj.speakers.extend(ordered)
+        obj.shuffle()
+        self.assertNotEqual(ordered, obj.speakers) #Yes this is a bad test since it might fail :P

@@ -91,6 +91,9 @@ class ManageSpeakerList(BaseView):
             name = self.request.GET['name']
             state = self.request.GET['state']
             self.sl_handler.speaker_lists[name].set_state(state)
+        if action == 'shuffle':
+            name = self.request.GET['name']
+            self.sl_handler.speaker_lists[name].shuffle()
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
 
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
