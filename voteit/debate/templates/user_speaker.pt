@@ -26,6 +26,12 @@
                 </tal:in_list>
             </div>
             <div class="sl_stats">
+                <tal:stats condition="pn != None" define="(times, spokentime) sl.get_stats(pn)">
+                    <div class="meta">
+                        ${times} times
+                        <tal:totaltime condition="times">over ${spokentime}</tal:totaltime>
+                    </div>
+                </tal:stats>
                 <tal:not_in_list condition="pn != None and pn not in sl.speakers and sl.state == 'open'">
                     <div class="meta" i18n:translate="">
                         You will enter list att position

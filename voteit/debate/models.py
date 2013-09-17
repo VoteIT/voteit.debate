@@ -1,4 +1,5 @@
 from random import shuffle
+from datetime import timedelta
 
 from zope.interface import implements
 from zope.component import adapts
@@ -100,6 +101,14 @@ class SpeakerList(Persistent):
                 break
             pos -= 1
         return pos
+
+    def get_stats(self, name, format = True):
+        if name not in self.speaker_log:
+            return (0, 0)
+        time = sum(self.speaker_log[name])
+        if format:
+            time = unicode(timedelta(seconds = time))
+        return (len(self.speaker_log[name]), time)
 
     def add(self, name, use_lists = 1, safe_pos = 0, override = False):
         assert int(use_lists) #0 is not an okay value either

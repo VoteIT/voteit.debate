@@ -37,6 +37,11 @@ class ISpeakerList(Interface):
         """ Get the expected entry position for name. (Where name is participant number, an int)
         """
 
+    def get_stats(name, format = True):
+        """ Returns a tuple consisting of number of spoken times and total number of seconds spoken for 'name'.
+            If format is True, return a string instead -> HH:MM:SS.
+        """
+
     def add(name, use_lists = 1, safe_pos = 0, override = False):
         """ Add name to speakers. Name is the delegate number. (An int)
             use_lists is a setting to promote speakers that have spoken less than others,

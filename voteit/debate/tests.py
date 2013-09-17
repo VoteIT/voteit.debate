@@ -147,6 +147,16 @@ class SpeakerListTests(unittest.TestCase):
         self.assertEqual(obj.get_expected_pos(4, use_lists = 2, safe_pos = 0), 0)
         self.assertEqual(obj.get_expected_pos(4, use_lists = 2, safe_pos = 2), 2) #Starts with 0! :)
 
+    def test_get_stats_formated(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [3, 5, 2]
+        self.assertEqual(obj.get_stats(1), (3, u'0:00:10'))
+
+    def test_get_stats_int(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = [3, 5, 2]
+        self.assertEqual(obj.get_stats(1, format = None), (3, 10))
+
     def test_remove(self):
         obj = self._cut('n')
         obj.speakers.extend([1, 2, 3])
