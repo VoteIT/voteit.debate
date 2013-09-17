@@ -91,6 +91,9 @@ class ManageSpeakerList(BaseView):
             name = self.request.GET['name']
             state = self.request.GET['state']
             self.sl_handler.speaker_lists[name].set_state(state)
+        if action == 'undo':
+            name = self.request.GET['name']
+            self.sl_handler.speaker_lists[name].speaker_undo()
         if action == 'shuffle':
             name = self.request.GET['name']
             self.sl_handler.speaker_lists[name].shuffle()

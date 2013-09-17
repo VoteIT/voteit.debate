@@ -62,6 +62,10 @@ class ISpeakerList(Interface):
         """ The speaker set as current has finished speaking. Move item to log, and log number of seconds.
         """
 
+    def speaker_undo():
+        """ The ongoing speaker is removed and placed first in line. No time saved.
+        """
+
     def set_state(state):
         """ Set a state, either open or closed.
         """

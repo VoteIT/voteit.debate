@@ -136,6 +136,12 @@ class SpeakerList(Persistent):
         self.speaker_log[self.current].append(seconds)
         self.current = None
 
+    def speaker_undo(self):
+        if self.current == None:
+            return
+        self.speakers.insert(0, self.current)
+        self.current = None
+
     def set_state(self, state):
         assert state in _POSSIBLE_STATES
         self.state = state

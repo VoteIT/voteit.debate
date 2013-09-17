@@ -51,6 +51,8 @@
                class="buttonize" id="finished_speaker" i18n:translate="">Finished speaking</a>
             <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}"
                class="buttonize" id="quickstart_next_speaker" i18n:translate="">Quickstart next</a>
+            <a href="${request.resource_url(context, 'speaker_list_action', query = {'name': active_list.name, 'action': 'undo'})}"
+               class="buttonize" id="speaker_undo" i18n:translate="">Undo start</a>
             <a href="${request.resource_url(context, 'speaker_list_action', query = {'name': active_list.name, 'action': 'shuffle'})}"
                class="buttonize" id="shuffle_speakers" i18n:translate="">Shuffle</a>
         </tal:context_active>
@@ -86,6 +88,7 @@
                 $("#pause_speaker").on("click", pause_speaker);
                 $("#finished_speaker").on("click", finished_speaker);
                 $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
+                $("#speaker_undo").on("click", speaker_undo);
                 $("#shuffle_speakers").on("click", shuffle_speakers);
                 $("form#add_speaker").on("submit", add_speaker);
                 $("#clear_speaker_log").on("click", clear_speaker_log);

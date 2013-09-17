@@ -234,9 +234,25 @@ function shuffle_speakers(event) {
         if (status == "error") {
             //Sleep, retry?
             flash_message(voteit.translation['error_saving'], 'error', true);
-        } else {
-            //Success
-            //load_speaker_queue();
         }
     }).success(load_speaker_queue)
+}
+
+function speaker_undo(event) {
+    event.preventDefault();
+    if (timer != null) {
+        pause_speaker(event);
+    }
+    var url = $(event.target).attr('href');
+    spinner().appendTo($(this));
+    $.get(url, function(response, status, xhr) {
+        if (status == "error") {
+            //Sleep, retry?
+            flash_message(voteit.translation['error_saving'], 'error', true);
+        }
+    }).success(function() {
+        spoken_time = 0;
+        $('#speaker_active li').remove();
+        load_speaker_queue();
+    })
 }
