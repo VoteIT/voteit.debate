@@ -22,7 +22,11 @@ class SpeakerListSettingsSchema(colander.Schema):
     speaker_list_count = colander.SchemaNode(colander.Int(),
                                              title = _(u"Number of speaker lists to use"),
                                              description = _(u"speaker_lists_to_use_description",
-                                                             default = u""), #FIXME: Go Anders :)
+                                                             default = u"Using more than one speaker list will prioritise anyone who has spoken less than someone else, "
+                                                             u"but only up to number of lists. <br/><br/>"
+                                                             u"Example: When using 2 speaker lists, someone who hasn't spoken will get to speak before "
+                                                             u"everyone who's spoken 1 or more times. However, when entering the queue someone who's spoken "
+                                                             u"2 times and 4 will be treated equally."),
                                              widget = deform.widget.SelectWidget(values = _list_alts),
                                              default = u'1',)
     show_controls_for_participants = colander.SchemaNode(
