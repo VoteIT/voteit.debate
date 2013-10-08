@@ -26,6 +26,9 @@ class ISpeakerListHandler(Interface):
         """ Remove a speaker list, and unset it as active if it was.
         """
 
+    def get_expected_context_for(name):
+        """ Return the agenda item this list is expected to belong to. This is a computationally expensive thing. """
+
 
 class ISpeakerList(Interface):
     """ A persistent speaker list. """

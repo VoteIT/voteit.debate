@@ -45,3 +45,13 @@ class SpeakerListSettingsSchema(colander.Schema):
                             u"For instance, if 1 is entered here and 2 speaker lists are used, the next speaker "
                             u"in line will never be moved down regardless of what list they're on.")
     )
+
+
+class LogEntries(colander.SequenceSchema):
+    log = colander.SchemaNode(colander.Int())
+
+
+@schema_factory('EditSpeakerLogSchema')
+class EditSpeakerLogSchema(colander.Schema):
+    logs = LogEntries()
+

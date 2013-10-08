@@ -3,6 +3,7 @@ import unittest
 from pyramid import testing
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
+from voteit.core.models.agenda_item import AgendaItem
 from voteit.core.models.meeting import Meeting
 
 from .interfaces import ISpeakerList
@@ -70,6 +71,20 @@ class SpeakerListHandlerTests(unittest.TestCase):
         obj.add_contextual_list(meeting)
         obj.remove_list(meeting.uid)
         self.assertEqual(len(obj.speaker_lists), 0)
+
+    def test_get_expected_context_for(self):
+        meeting = Meeting()
+        obj = self._cut(meeting)
+        meeting['ai'] = AgendaItem()
+        meeting['ai2'] = AgendaItem()
+        obj.add_contextual_list(meeting['ai'])
+        obj.add_contextual_list(meeting['ai'])
+        obj.add_contextual_list(meeting['ai'])
+        obj.add_contextual_list(meeting['ai2'])
+        obj.add_contextual_list(meeting['ai2'])
+        self.assertEqual(obj.get_expected_context_for( meeting['ai'].uid ), meeting['ai'])
+        self.assertEqual(obj.get_expected_context_for( "%s/3" % meeting['ai'].uid ), meeting['ai'])
+        self.assertEqual(obj.get_expected_context_for( meeting['ai2'].uid ), meeting['ai2'])
 
 
 class SpeakerListTests(unittest.TestCase):

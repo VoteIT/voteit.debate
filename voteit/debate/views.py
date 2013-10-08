@@ -167,6 +167,35 @@ class ManageSpeakerList(BaseView):
         self.response['active_list'] = self.active_list
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
+    @view_config(name = "edit_speaker_log", context = IMeeting, permission = security.MODERATE_MEETING,
+                 renderer="voteit.core.views:templates/base_edit.pt")
+    def edit_speaker_log(self):
+        """ Edit log entries for a specific speaker. """
+        speaker_list_name = self.request.GET['speaker_list']
+        speaker_list = self.sl_handler.speaker_lists[speaker_list_name]
+        speaker = int(self.request.GET['speaker'])
+        schema = createSchema("EditSpeakerLogSchema")
+        add_csrf_token(self.context, self.request, schema)
+        schema = schema.bind(context = self.context, request = self.request, api = self.api)
+        form = deform.Form(schema, buttons = (deform.Button("save", _(u"Save")), deform.Button("cancel", _(u"Cancel"))))
+        post = self.request.POST
+        if self.request.method == 'POST':
+            if 'save' in post:
+                controls = post.items()
+                try:
+                    appstruct = form.validate(controls)
+                except ValidationFailure, e:
+                    self.response['form'] = e.render()
+                    return self.response
+                del speaker_list.speaker_log[speaker][:]
+                speaker_list.speaker_log[speaker].extend(appstruct['logs'])
+            ai = self.sl_handler.get_expected_context_for(speaker_list.name)
+            url = self.request.resource_url(ai, 'manage_speaker_list')
+            return HTTPFound(location = url)
+        appstruct = {'logs': speaker_list.speaker_log[speaker]}
+        self.response['form'] = form.render(appstruct = appstruct)
+        return self.response
+
 
 class SpeakerSettingsView(MeetingView):
 

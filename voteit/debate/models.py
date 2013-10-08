@@ -68,6 +68,12 @@ class SpeakerListHandler(object):
             self.set_active_list(None)
         del self.speaker_lists[name]
 
+    def get_expected_context_for(self, name):
+        uid = name.split("/")[0]
+        for obj in self.context.values():
+            if obj.uid == uid:
+                return obj
+
 
 _POSSIBLE_STATES = {u"open": _(u"Open"), u"closed": _(u"Closed")}
 
