@@ -281,10 +281,7 @@ class UserSpeakerLists(BaseView):
             try:
                 return int(round(Decimal(num) / maxval * 100))
             except:
-                import pdb;pdb.set_trace()
-#            try:
-#            except:
-#                return u"0%"
+                return u"0%"
 
         self.response['get_perc'] = _get_percentage
         return self.response
