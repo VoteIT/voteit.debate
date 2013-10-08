@@ -158,8 +158,19 @@ class SpeakerList(Persistent):
     def get_state_title(self):
         return _POSSIBLE_STATES.get(self.state, u"")
 
-    def shuffle(self):
-        shuffle(self.speakers)
+    def shuffle(self, use_lists = 1):
+        lists = {}
+        for speaker in self.speakers:
+            cmp_val = len(self.speaker_log.get(speaker, ())) + 1
+            if cmp_val > use_lists:
+                cmp_val = use_lists
+            cur = lists.setdefault(cmp_val, [])
+            cur.append(speaker)
+        del self.speakers[:]
+        for i in range(1, use_lists + 1):
+            if i in lists:
+                shuffle(lists[i])
+                self.speakers.extend(lists[i])
 
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))

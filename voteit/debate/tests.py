@@ -205,3 +205,14 @@ class SpeakerListTests(unittest.TestCase):
         obj.speakers.extend(ordered)
         obj.shuffle()
         self.assertNotEqual(ordered, obj.speakers) #Yes this is a bad test since it might fail :P
+
+    def test_shuffle_handle_serveral_lists(self):
+        obj = self._cut('n')
+        obj.speaker_log[1] = []
+        obj.speaker_log[2] = [1]
+        obj.speaker_log[3] = [1, 1]
+        obj.speaker_log[4] = [1, 1, 1]
+        obj.speaker_log[5] = [1, 1, 1, 1]
+        obj.speakers.extend([5, 4, 3, 2, 1])
+        obj.shuffle(use_lists = 5)
+        self.assertEqual(obj.speakers, [1, 2, 3, 4, 5])

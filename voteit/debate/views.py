@@ -96,7 +96,8 @@ class ManageSpeakerList(BaseView):
             self.sl_handler.speaker_lists[name].speaker_undo()
         if action == 'shuffle':
             name = self.request.GET['name']
-            self.sl_handler.speaker_lists[name].shuffle()
+            use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
+            self.sl_handler.speaker_lists[name].shuffle(use_lists = use_lists)
         return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
 
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
@@ -291,7 +292,7 @@ class UserSpeakerLists(BaseView):
     @view_config(name='speaker_statistics.csv', context=IMeeting, permission=security.VIEW)
     def export(self):
         output = StringIO.StringIO()
-        writer = csv.writer(output, delimiter=';' ,quotechar='"', quoting=csv.QUOTE_ALL)
+        writer = csv.writer(output, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
         writer.writerow([self.context.title.encode('utf-8')])
         writer.writerow([self.api.translate(_(u"Speaker statistics"))])
         writer.writerow(["#", self.api.translate(_(u"Seconds"))])

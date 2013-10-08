@@ -79,5 +79,5 @@ class ISpeakerList(Interface):
         """ Get a translatable title for the current state.
         """
 
-    def shuffle():
+    def shuffle(use_lists = 1):
         """ Randomize order of the speakers. """
