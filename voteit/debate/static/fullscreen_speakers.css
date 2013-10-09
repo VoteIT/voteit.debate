@@ -60,7 +60,7 @@ body {
     height: 62px;
 }
 #speaker-list-items .first .list-status span {
-    background: url(/debate_static/speaker.png) left top no-repeat;
+    background: url(/debate_static/img/speaker.png) left top no-repeat;
     border-color: transparent;
 }
 #speaker-list-items .list-status span {

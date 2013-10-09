@@ -5,6 +5,8 @@
 #speaker_list_controls .selected {
     border: 1px solid #ccc;
 }
+#speaker_list_controls .selected .icon.ongoing { background-image: url(/static/workflow_icons/ongoing_menu.png); }
+#speaker_list_controls .selected .icon.closed { background-image: url(/static/workflow_icons/closed_menu.png); }
 
 #speaker_active .speaker_controls a {
     display: none;
@@ -33,5 +35,12 @@
 .list_controls a {
     padding-left: 10px;
 }
-#speaker_list_controls .selected .icon.ongoing { background-image: url(/static/workflow_icons/ongoing_menu.png); }
-#speaker_list_controls .selected .icon.closed { background-image: url(/static/workflow_icons/closed_menu.png); }
+#speaker_controlbox {
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px #92928e solid;
+}
+#speaker_controlbox a {
+    display: block;
+    float: left;
+}

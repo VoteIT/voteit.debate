@@ -1,4 +1,5 @@
 var meeting_url = '';
+var active_list_action_url = '';
 var spoken_time = 0;
 var timer = null;
 var reload_timer = null;
@@ -112,8 +113,7 @@ function add_speaker(event) {
 function remove_speaker(event) {
     event.preventDefault();
     var speaker_to_be_removed = $(this).parents('li');
-    var url = $(event.target).attr('href');
-    url += '&action=remove';
+    var url = active_list_action_url + '&action=remove';
     spinner().appendTo($(this));
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
@@ -153,8 +153,7 @@ function start_speaker(event) {
     event.preventDefault();
     if ($('#speaker_active li').length == 0) {
         if ($('#speaker_queue li').length != 0) {
-            var url = $(event.target).attr('href');
-            url += '&action=active';
+            var url = active_list_action_url + '&action=active';
             $('#speaker_active').load(url, function(response, status, xhr) {
                 if (status == "error") {
                     //Sleep, retry
@@ -198,7 +197,7 @@ function finished_speaker(event, success_callback) {
         pause_speaker(event);
     }
     spoken_time = parse_spoken_time($('#speaker_active li .time_spoken').html());
-    var url = $(event.target).attr('href');
+    var url = active_list_action_url;
     url += '&action=finished';
     url += '&seconds=' + Math.round(spoken_time / 10);
     $.get(url, function(response, status, xhr) {
@@ -228,8 +227,7 @@ function quickstart_next_speaker(event) {
 
 function shuffle_speakers(event) {
     event.preventDefault();
-    var url = $(event.target).attr('href');
-    spinner().appendTo($(this));
+    var url = $(event.delegateTarget).attr('href');
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?
@@ -243,8 +241,8 @@ function speaker_undo(event) {
     if (timer != null) {
         pause_speaker(event);
     }
-    var url = $(event.target).attr('href');
-    spinner().appendTo($(this));
+    var url = $(event.delegateTarget).attr('href');
+    console.log(url);
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?

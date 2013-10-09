@@ -9,7 +9,7 @@
 }
 #user_speaker_lists .inner_wrapper {
     padding-left: 50px;
-    background: url(/debate_static/speaker.png) left top no-repeat;
+    background: url(/debate_static/img/speaker.png) left top no-repeat;
 }
 #user_speaker_lists .inner_wrapper h4 {
     padding: 0px;
