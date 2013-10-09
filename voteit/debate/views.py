@@ -348,7 +348,7 @@ def meeting_context_menu_item(context, request, va, **kw):
     url = "%s%s" % (api.meeting_url, va.kwargs['link'])
     return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
 
-@view_action('context_actions', 'manage_speaker_list', title = _(u"Speaker lists"),
+@view_action('context_actions', 'manage_speaker_list', title = _(u"Manage speaker list"),
              interface = IAgendaItem)
 def manage_speaker_list_menu(context, request, va, **kw):
     api = kw['api']
