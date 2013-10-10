@@ -44,3 +44,34 @@
     display: block;
     float: left;
 }
+#speaker_log li {
+    border: solid 1px #92928e;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    display: block;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+#speaker_log .namefield {
+    float: left;
+    width: 70%;
+    overflow: hidden;
+}
+#speaker_log .log_edit {
+    float: left;
+    width: 30%;
+}
+#speaker_log .editpen {
+    float: right;
+}
+#speaker_log .total_time {
+    float: right;
+    padding-right: 10px;
+}
+.editpen {
+    display: block;
+    width: 27px;
+    height: 23px;
+    background: url(/debate_static/img/editpen.png) no-repeat left top;
+}

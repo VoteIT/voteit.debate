@@ -1,6 +1,7 @@
 import csv
 import StringIO
 from decimal import Decimal
+from datetime import timedelta
 
 import deform
 from pyramid.view import view_config
@@ -158,6 +159,7 @@ class ManageSpeakerList(BaseView):
             else:
                 number_to_profile_tag[pn] = pn
         self.response['number_to_profile_tag'] = number_to_profile_tag
+        self.response['format_secs'] = self.format_seconds
         return self.response
 
     def speaker_item(self, pn):
@@ -195,6 +197,13 @@ class ManageSpeakerList(BaseView):
         appstruct = {'logs': speaker_list.speaker_log[speaker]}
         self.response['form'] = form.render(appstruct = appstruct)
         return self.response
+
+    def format_seconds(self, secs):
+        val = str(timedelta(seconds=int(secs)))
+        try:
+            return ":".join([x for x in val.split(':') if int(x)])
+        except ValueError:
+            return val
 
 
 class SpeakerSettingsView(MeetingView):

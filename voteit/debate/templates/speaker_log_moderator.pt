@@ -4,15 +4,16 @@
       i18n:domain="voteit.debate">
 <tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
     <li>
-        <div>
+        <div class="namefield">
             <span>${pn}:</span>
             <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
         </div>
-        <div>
-            <b>${len(timelog)}</b> - ${sum(timelog)} <span i18n:translate="">sec</span>
-            <a href="${request.resource_url(context, 'edit_speaker_log',
-                                           query = {'speaker_list': active_list.name, 'speaker': pn})}">edit</a>
+        <div class="log_edit">
+            <a class="editpen"
+               href="${request.resource_url(context, 'edit_speaker_log', query = {'speaker_list': active_list.name, 'speaker': pn})}">&nbsp;</a>
+            <span class="total_time">${format_secs(sum(timelog))}</span>
         </div>
+        <div class="clear"><!-- --></div>
     </li>
 </tal:iterate>
 </tal:main>
