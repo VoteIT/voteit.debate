@@ -15,11 +15,6 @@
                     <div id="left" tal:condition="context_active">
                          <tal:context_active tal:condition="context_active">
                             <tal:form replace="structure add_form">Participant number add form</tal:form>
-                            <div class="meta"><span class="state">
-                                <span tal:attributes="class active_list.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
-                                    ${active_list.get_state_title()}
-                                </span>
-                            </span></div>
                             <div id="speaker_controlbox">
                                 <a id="start_speaker">
                                     <img src="/debate_static/img/speaker_controls_play.png" title="Start" i18n:attributes="title" />
