@@ -147,6 +147,7 @@ class ManageSpeakerList(BaseView):
         self.response['active_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
         self.response['use_lists'] = self.api.meeting.get_field_value('speaker_list_count', 1)
+        self.response['safe_pos'] = self.api.meeting.get_field_value('safe_positions', 0)
         return self.response
 
     @view_config(name = "_speaker_log_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
@@ -164,7 +165,7 @@ class ManageSpeakerList(BaseView):
         self.response['format_secs'] = self.format_seconds
         return self.response
 
-    def speaker_item(self, pn, use_lists = None):
+    def speaker_item(self, pn, use_lists = None, safe_pos = 0):
         if use_lists == None:
             use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
         self.response['pn'] = pn
@@ -172,6 +173,7 @@ class ManageSpeakerList(BaseView):
         self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
         self.response['active_list'] = self.active_list
         self.response['use_lists'] = use_lists
+        self.response['safe_pos'] = safe_pos
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
     @view_config(name = "edit_speaker_log", context = IMeeting, permission = security.MODERATE_MEETING,

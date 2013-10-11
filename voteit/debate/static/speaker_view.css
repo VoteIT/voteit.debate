@@ -87,6 +87,12 @@
     width: 40px;
     height: 40px;
 }
+.list-status span.is_locked {
+    background: url(/debate_static/img/speaker_locked.png) left top no-repeat;
+    border-width: 0px;
+    width: 40px;
+    height: 40px;
+}
 .speaker_item {
     border: solid 1px #92928e;
     border-radius: 5px;

@@ -3,10 +3,16 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 <li class="speaker_item">
-    <div class="list-status">
+    <div class="list-status"
+         tal:define="is_active pn == active_list.current;
+                     is_locked pn in active_list.speakers and active_list.speakers.index(pn) < safe_pos;">
         <!-- This will cause active speaker, if in list too, to tidsplay an empty circle... -->
-        <span tal:condition="pn != active_list.current and pn in active_list.speakers">${active_list.get_list_number_for(pn, use_lists = use_lists)}</span>
-        <span tal:condition="pn == active_list.current">&nbsp;</span>
+        <tal:>
+        <span tal:condition="not is_active and not is_locked and pn in active_list.speakers">
+            ${active_list.get_list_number_for(pn, use_lists = use_lists)}
+        </span>
+        <span tal:condition="is_locked" class="is_locked">&nbsp;</span>
+        <span tal:condition="is_active">&nbsp;</span>
     </div>
     <div class="speaker_name">
         <span class="delegate_number">${pn}:</span>
