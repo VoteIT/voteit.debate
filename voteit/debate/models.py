@@ -178,5 +178,9 @@ class SpeakerList(Persistent):
                 shuffle(lists[i])
                 self.speakers.extend(lists[i])
 
+    def get_list_number_for(self, name, use_lists = 1):
+        cmp_val = len(self.speaker_log.get(name, ())) + 1 #1 log entry means secondary speaker list - a val of 2
+        return cmp_val <= use_lists and cmp_val or use_lists
+
     def __repr__(self):
         return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))

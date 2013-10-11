@@ -2,18 +2,24 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-<li>
+<li class="speaker_item">
+    <div class="list-status">
+        <!-- This will cause active speaker, if in list too, to tidsplay an empty circle... -->
+        <span tal:condition="pn != active_list.current and pn in active_list.speakers">${active_list.get_list_number_for(pn, use_lists = use_lists)}</span>
+        <span tal:condition="pn == active_list.current">&nbsp;</span>
+    </div>
     <div class="speaker_name">
-        <span tal:content="'%s:' % pn">Number</span>
+        <span class="delegate_number">${pn}:</span>
         <span tal:content="structure user_info">Name and userid</span>
+        <div class="time_spoken"></div>
     </div>
     <div class="speaker_controls">
-        <span class="time_spoken"></span>
         <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn})}"
-           class="promote_start_speaker" i18n:translate="">start</a>
+           class="promote_start_speaker">&nbsp;</a>
         <a class="remove_speaker"
-           href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn})}">remove</a>
+           href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'name': pn, 'action': 'remove'})}">&nbsp;</a>
     </div>
     <input type="hidden" name="speaker_id" value="${pn}" />
+    <div class="clear"><!-- --></div>
 </li>
 </tal:main>

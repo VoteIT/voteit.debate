@@ -45,6 +45,12 @@ class SpeakerListSettingsSchema(colander.Schema):
                             u"For instance, if 1 is entered here and 2 speaker lists are used, the next speaker "
                             u"in line will never be moved down regardless of what list they're on.")
     )
+    reload_manager_interface = colander.SchemaNode(
+        colander.Int(),
+        default = 4,
+        title = _(u"Managers speaker list reload interval"),
+        description = _(u"In seconds. After this timeout the list will be updated."),
+    )
 
 
 class LogEntries(colander.SequenceSchema):

@@ -3,6 +3,7 @@ var active_list_action_url = '';
 var spoken_time = 0;
 var timer = null;
 var reload_timer = null;
+var reload_interval = 4000;
 
 //Init js code in template!
 
@@ -26,7 +27,7 @@ function load_speaker_queue(success_callback) {
             $('img.spinner').remove();
             if (typeof success_callback !== "undefined") success_callback(event);
         }
-        reload_timer = setInterval(load_speaker_queue, 4000);
+        reload_timer = setInterval(load_speaker_queue, reload_interval);
     })
 }
 
@@ -113,15 +114,13 @@ function add_speaker(event) {
 function remove_speaker(event) {
     event.preventDefault();
     var speaker_to_be_removed = $(this).parents('li');
-    var url = active_list_action_url + '&action=remove';
-    spinner().appendTo($(this));
+    var url = $(event.delegateTarget).attr('href');
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
             flash_message(voteit.translation['error_saving'], 'error', true); 
         } else {
             //Success
-            $('img.spinner').remove();
             speaker_to_be_removed.remove();
         }
     })
@@ -136,7 +135,6 @@ function update_timer() {
     spoken_time += 1;
     $('#timer').html(Math.floor(spoken_time / 600) + ':' + Math.floor((spoken_time % 600) / 10) + '.' + (spoken_time % 10));
 }
-
 
 function start_timer() {
     $('#speaker_active li .time_spoken').attr('id', 'timer');

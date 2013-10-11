@@ -104,6 +104,7 @@ class ManageSpeakerList(BaseView):
     @view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING)
     def speaker_action(self):
         action = self.request.GET['action']
+        #FIXME: This should work on inactive lists too!
         if self.request.GET['list_name'] != self.active_list.name:
             return HTTPForbidden()
         if action == 'active':
@@ -145,6 +146,7 @@ class ManageSpeakerList(BaseView):
     def speaker_queue_moderator(self):
         self.response['active_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
+        self.response['use_lists'] = self.api.meeting.get_field_value('speaker_list_count', 1)
         return self.response
 
     @view_config(name = "_speaker_log_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
@@ -162,11 +164,14 @@ class ManageSpeakerList(BaseView):
         self.response['format_secs'] = self.format_seconds
         return self.response
 
-    def speaker_item(self, pn):
+    def speaker_item(self, pn, use_lists = None):
+        if use_lists == None:
+            use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
         self.response['pn'] = pn
         userid = self.participant_numbers.number_to_userid[int(pn)]
         self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
         self.response['active_list'] = self.active_list
+        self.response['use_lists'] = use_lists
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
     @view_config(name = "edit_speaker_log", context = IMeeting, permission = security.MODERATE_MEETING,

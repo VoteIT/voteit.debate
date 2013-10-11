@@ -14,7 +14,7 @@
                     <!-- FIXME: Limit to context_active might not be what we want. Editing other inactive lists is a good idea -->
                     <div id="left">
                         <tal:form replace="structure add_form">Participant number add form</tal:form>
-                        <div id="speaker_controlbox">
+                        <div id="speaker_controlbox" tal:condition="context_active">
                             <a id="start_speaker">
                                 <img src="/debate_static/img/speaker_controls_play.png" title="Start" i18n:attributes="title" />
                             </a>
@@ -35,13 +35,11 @@
                             </a>
                             <div class="clear"><!-- --></div>
                         </div>
-             
-                        <h3 i18n:translate="">Active</h3>
-                        <ul id="speaker_active">
+
+                        <ul id="speaker_active" class="speaker_queue">
                             <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />
                         </ul>
-                        <h3 i18n:translate="">Queue</h3>
-                        <ul id="speaker_queue"></ul>
+                        <ul id="speaker_queue" class="speaker_queue"></ul>
                     </div>
                     <div id="right">
             
@@ -88,6 +86,8 @@
                 //Load initial data
                 meeting_url = '${api.meeting_url}';
                 active_list_action_url = "${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}";
+                reload_interval = ${api.meeting.get_field_value('reload_manager_interface', 4) * 1000}; //seconds -> miliseconds!
+                //Load templates
                 load_speaker_queue();
                 load_speaker_log();
                 //Bind events to controls
