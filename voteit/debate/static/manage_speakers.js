@@ -47,8 +47,9 @@ function load_speaker_log() {
 
 function rename_speaker_show(event) {
     event.preventDefault();
-    var form = $(event.target).siblings('.rename_form');
-    form.show();
+    var sl_item = $(event.target).parents('li');
+    sl_item.children('.sl_title').hide();
+    sl_item.children('.rename_form').show();
 }
 
 function rename_speaker_submit(event) {
@@ -62,7 +63,8 @@ function rename_speaker_submit(event) {
             flash_message(voteit.translation['error_saving'], 'error', true);
         } else {
             //Success
-            form.parents('li').children('.sl_title').html(response);
+            // FIXME: This selector is stupid. Watch out!
+            form.parents('li').children('.sl_title').show().children('span').html(response);
         }
         $('img.spinner').remove();
         form.hide()

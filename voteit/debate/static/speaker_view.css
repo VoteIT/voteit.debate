@@ -3,7 +3,7 @@
 }
 
 #speaker_list_controls .selected {
-    border: 1px solid #ccc;
+    border: solid 1px #92928e;
 }
 #speaker_list_controls .selected .icon.ongoing { background-image: url(/static/workflow_icons/ongoing_menu.png); }
 #speaker_list_controls .selected .icon.closed { background-image: url(/static/workflow_icons/closed_menu.png); }
@@ -11,29 +11,31 @@
 #speaker_active .speaker_controls a {
     display: none;
 }
-
-#clear_speaker_log {
+#speaker_list_controls .editpen {
     float: right;
+    margin-right: 5px;
 }
-.list_controls {
+#speaker_list_controls .selected .editpen {
+    background-image: url(/debate_static/img/editpen_menu.png);
+}
+#speaker_list_controls li {
+    border: solid 1px #92928e;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    display: block;
+    padding: 5px;
+    margin-bottom: 5px;
+    font-size: 17px;
+}
+#right .buttonize {
     float: right;
+    clear:both;
 }
-.sl_title {
-    float: left;
-    border: 1px solid #5c5a5d;
-    background-color: #F2F2F2;
-    padding: 10px;
-    margin-bottom: 10px;
-    clear: both;
-    width: 400px;
-    font-size: 20px;
-}
-.sl_title.selected {
+.selected,
+.selected a {
     color: #fff;
-    background: #5c5a5d;
-}
-.list_controls a {
-    padding-left: 10px;
+    background-color: #92928e;
 }
 #speaker_controlbox {
     padding-bottom: 10px;
