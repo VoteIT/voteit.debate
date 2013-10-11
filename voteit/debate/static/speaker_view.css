@@ -1,5 +1,20 @@
+#add_speaker {
+    margin-bottom: 10px;
+    border-bottom: 1px #92928e solid;
+    text-align: right;
+}
 #add_speaker li {
     display: inline;
+}
+#add_speaker label.desc {
+    display: none;
+}
+#add_speakeradd {
+    background-image: url(/static/buttons/button_small_bg.png);
+    height: 25px;
+    line-height: 25px;
+    border: 1px solid #968c89;
+    color: #000;
 }
 
 #speaker_list_controls .selected {
