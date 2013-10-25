@@ -32,7 +32,8 @@ class SpeakerListSettingsSchema(colander.Schema):
     show_controls_for_participants = colander.SchemaNode(
         colander.Bool(),
         title = _(u"Show user controls for speaker list statuses"),
-        description = _(u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
+        description = _(u"show_controls_participants_description",
+                        default = u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
         default = False,
     )
     safe_positions = colander.SchemaNode(

@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-04 14:58+0200\n"
+"POT-Creation-Date: 2013-10-25 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 0.9.6\n"
+"Generated-By: Babel 1.3\n"
 
 #: voteit/debate/__init__.py:22
 msgid "Nothing to start"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Speaker already in this list"
 msgstr ""
 
-#: voteit/debate/models.py:69
+#: voteit/debate/models.py:78
 msgid "Open"
 msgstr ""
 
-#: voteit/debate/models.py:69
+#: voteit/debate/models.py:78
 msgid "Closed"
 msgstr ""
 
@@ -41,42 +41,84 @@ msgstr ""
 msgid "Number of speaker lists to use"
 msgstr ""
 
-#. Default:
+#. Default: Using more than one speaker list will prioritise anyone who has spoken
+#. less than someone else, but only up to number of lists. <br/><br/>Example: When
+#. using 2 speaker lists, someone who hasn't spoken will get to speak before
+#. everyone who's spoken 1 or more times. However, when entering the queue someone
+#. who's spoken 2 times and 4 will be treated equally.
 #: voteit/debate/schemas.py:24
 msgid "speaker_lists_to_use_description"
 msgstr ""
 
-#: voteit/debate/schemas.py:30
+#: voteit/debate/schemas.py:34
 msgid "Show user controls for speaker list statuses"
 msgstr ""
 
-#: voteit/debate/views.py:54
+#. Default: Users will need participant numbers to add themselves to the speakers
+#. list. This includes administrators too!
+#: voteit/debate/schemas.py:35
+msgid "show_controls_participants_description"
+msgstr ""
+
+#: voteit/debate/schemas.py:43
+msgid "Safe positions"
+msgstr ""
+
+#. Default: Don't move down users from this position even if they should loose
+#. their place. For instance, if 1 is entered here and 2 speaker lists are used,
+#. the next speaker in line will never be moved down regardless of what list
+#. they're on.
+#: voteit/debate/schemas.py:44
+msgid "safe_positions_description"
+msgstr ""
+
+#: voteit/debate/schemas.py:52
+msgid "Managers speaker list reload interval"
+msgstr ""
+
+#: voteit/debate/schemas.py:53
+msgid "In seconds. After this timeout the list will be updated."
+msgstr ""
+
+#: voteit/debate/views.py:55
 msgid "Add"
 msgstr ""
 
-#: voteit/debate/views.py:242
+#: voteit/debate/views.py:176
+msgid "(No user associated)"
+msgstr ""
+
+#: voteit/debate/views.py:193
+msgid "Save"
+msgstr ""
+
+#: voteit/debate/views.py:193
+msgid "Cancel"
+msgstr ""
+
+#: voteit/debate/views.py:301
 msgid "Speaker list doesn't exist"
 msgstr ""
 
-#: voteit/debate/views.py:287 voteit/debate/views.py:306
+#: voteit/debate/views.py:344 voteit/debate/views.py:363
 #: voteit/debate/templates/speaker_statistics.pt:14
 msgid "Speaker statistics"
 msgstr ""
 
-#: voteit/debate/views.py:288
+#: voteit/debate/views.py:345
 msgid "Seconds"
 msgstr ""
 
-#: voteit/debate/views.py:304
+#: voteit/debate/views.py:361
 msgid "Speaker list for projectors"
 msgstr ""
 
-#: voteit/debate/views.py:308
+#: voteit/debate/views.py:365
 msgid "Speaker list settings"
 msgstr ""
 
-#: voteit/debate/views.py:315
-msgid "Speaker lists"
+#: voteit/debate/views.py:372
+msgid "Manage speaker list"
 msgstr ""
 
 #: voteit/debate/templates/fullscreen_list.pt:44
@@ -96,68 +138,60 @@ msgstr ""
 msgid "Meeting logo"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:10
-msgid "Manage speaker list"
+#: voteit/debate/templates/manage_speaker_list.pt:17
+msgid "(Activate list to show controls)"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:25
-msgid "Close list"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:27
-msgid "Open list"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:29
-msgid "Rename"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:31
-msgid "Delete"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:36
-msgid "Add a new list"
-msgstr ""
-
-#: voteit/debate/templates/manage_speaker_list.pt:47
+#: voteit/debate/templates/manage_speaker_list.pt:21
 msgid "Start"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:49
+#: voteit/debate/templates/manage_speaker_list.pt:24
 msgid "Pause"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:50
-msgid "Finished speaking"
+#: voteit/debate/templates/manage_speaker_list.pt:27
+msgid "Finished"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:52
+#: voteit/debate/templates/manage_speaker_list.pt:30
 msgid "Quickstart next"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:60
-msgid "Active"
+#: voteit/debate/templates/manage_speaker_list.pt:33
+msgid "Undo start"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:64
-msgid "Queue"
+#: voteit/debate/templates/manage_speaker_list.pt:36
+msgid "Shuffle queue"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:68
-msgid "Clear"
+#: voteit/debate/templates/manage_speaker_list.pt:59
+msgid "Close list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:61
+msgid "Open list"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:65
+msgid "Delete"
 msgstr ""
 
 #: voteit/debate/templates/manage_speaker_list.pt:70
-msgid "Log"
+msgid "rename"
 msgstr ""
 
-#: voteit/debate/templates/speaker_item.pt:12
-msgid "start"
+#: voteit/debate/templates/manage_speaker_list.pt:85
+msgid "New"
 msgstr ""
 
-#: voteit/debate/templates/speaker_log_moderator.pt:11
-msgid "sec"
+#: voteit/debate/templates/manage_speaker_list.pt:89
+msgid "Speaker log"
+msgstr ""
+
+#: voteit/debate/templates/manage_speaker_list.pt:91
+msgid "Clear"
 msgstr ""
 
 #: voteit/debate/templates/speaker_statistics.pt:16
@@ -192,11 +226,11 @@ msgstr ""
 msgid "Remove yourself"
 msgstr ""
 
-#: voteit/debate/templates/user_speaker.pt:30
+#: voteit/debate/templates/user_speaker.pt:36
 msgid "You will enter list att position ${num} if you wish to speak"
 msgstr ""
 
-#: voteit/debate/templates/user_speaker.pt:37
+#: voteit/debate/templates/user_speaker.pt:43
 msgid "${num} speakers before you"
 msgstr ""
 

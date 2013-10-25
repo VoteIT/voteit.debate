@@ -176,7 +176,8 @@ class ManageSpeakerList(BaseView):
             self.response['user_info'] = _(u"(No user associated)")
         self.response['active_list'] = self.active_list
         self.response['use_lists'] = use_lists
-        self.response['safe_pos'] = safe_pos
+        self.response['is_active'] = pn == self.active_list.current
+        self.response['is_locked'] = pn in self.active_list.speakers and self.active_list.speakers.index(pn) < safe_pos
         return render("templates/speaker_item.pt", self.response, request = self.request)
 
     @view_config(name = "edit_speaker_log", context = IMeeting, permission = security.MODERATE_MEETING,
