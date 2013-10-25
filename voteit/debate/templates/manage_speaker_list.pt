@@ -13,6 +13,9 @@
                 <div class="section">
                     <!-- FIXME: Limit to context_active might not be what we want. Editing other inactive lists is a good idea -->
                     <div id="left">
+                        <tal:not_active condition="not context_active">
+                            <h3 i18n:translate="">(Activate list to show controls)</h3>
+                        </tal:not_active>
                         <div id="speaker_controlbox" tal:condition="context_active">
                             <a id="start_speaker">
                                 <img src="/debate_static/img/speaker_controls_play.png" title="Start" i18n:attributes="title" />
@@ -33,10 +36,11 @@
                                 <img src="/debate_static/img/speaker_controls_shuffle.png" title="Shuffle queue" i18n:attributes="title" />
                             </a>
                             <div class="clear"><!-- --></div>
+
+                            <tal:form replace="structure add_form">Participant number add form</tal:form>
+                            <div class="clear"><!-- --></div>
                         </div>
 
-                        <tal:form replace="structure add_form">Participant number add form</tal:form>
-                        <div class="clear"><!-- --></div>
 
                         <ul id="speaker_active" class="speaker_queue">
                             <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />

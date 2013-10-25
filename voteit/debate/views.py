@@ -169,8 +169,11 @@ class ManageSpeakerList(BaseView):
         if use_lists == None:
             use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
         self.response['pn'] = pn
-        userid = self.participant_numbers.number_to_userid[int(pn)]
-        self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
+        userid = self.participant_numbers.number_to_userid.get(int(pn))
+        if userid:
+            self.response['user_info'] = self.api.get_creators_info([userid], portrait = False)
+        else:
+            self.response['user_info'] = _(u"(No user associated)")
         self.response['active_list'] = self.active_list
         self.response['use_lists'] = use_lists
         self.response['safe_pos'] = safe_pos
@@ -255,8 +258,9 @@ class FullscreenSpeakerList(object):
             active_speaker = None
         speaker_profiles = []
         for num in active_list.speakers:
-            userid = participant_numbers.number_to_userid[num]
-            speaker_profiles.append(root.users[userid])
+            userid = participant_numbers.number_to_userid.get(num)
+            if userid:
+                speaker_profiles.append(root.users[userid])
 
         def _get_user_list_number(userid):
             num = participant_numbers.userid_to_number[userid]
