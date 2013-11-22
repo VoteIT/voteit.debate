@@ -52,6 +52,18 @@ class SpeakerListSettingsSchema(colander.Schema):
         title = _(u"Managers speaker list reload interval"),
         description = _(u"In seconds. After this timeout the list will be updated."),
     )
+    reload_speaker_in_queue = colander.SchemaNode(
+        colander.Int(),
+        default = 5,
+        title = _(u"Reload interval for spekers in queue"),
+        description = _(u"In seconds. After this timeout the list will be updated."),
+    )
+    reload_speaker_not_in_queue = colander.SchemaNode(
+        colander.Int(),
+        default = 15,
+        title = _(u"Reload interval for anyone not in queue"),
+        description = _(u"In seconds. After this timeout the list will be updated."),
+    )
 
 
 class LogEntries(colander.SequenceSchema):

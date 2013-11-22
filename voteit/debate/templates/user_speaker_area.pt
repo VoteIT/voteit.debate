@@ -6,6 +6,8 @@
 <script language="javascript" type="text/javascript">
     var user_speaker_list_url = "${request.resource_url(context, '_user_speaker_lists')}";
     $(document).ready(function () {
+        reload_speaker_in_queue = ${api.meeting.get_field_value('reload_speaker_in_queue', 5) * 1000};
+        reload_speaker_not_in_queue = ${api.meeting.get_field_value('reload_speaker_not_in_queue', 15) * 1000};
         load_user_speaker_lists();
     });
 </script>

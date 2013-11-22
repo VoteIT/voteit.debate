@@ -3,7 +3,7 @@ var active_list_action_url = '';
 var spoken_time = 0;
 var timer = null;
 var reload_timer = null;
-var reload_interval = 4000;
+//reload_interval var is part of init
 
 //Init js code in template!
 
@@ -28,7 +28,7 @@ function load_speaker_queue(success_callback) {
             if (typeof success_callback !== "undefined") success_callback(event);
         }
         reload_timer = setInterval(load_speaker_queue, reload_interval);
-    })
+    });
 }
 
 function load_speaker_log() {
@@ -41,7 +41,7 @@ function load_speaker_log() {
             } else {
             }
             $('img.spinner').remove();
-        })
+        });
     }
 }
 
@@ -68,7 +68,7 @@ function rename_speaker_submit(event) {
         }
         $('img.spinner').remove();
         form.hide()
-    })
+    });
 }
 
 function clear_speaker_log(event) {
@@ -84,7 +84,7 @@ function clear_speaker_log(event) {
             $("#speaker_log").empty();
         }
         $('img.spinner').remove();
-    })
+    });
 }
 
 function add_speaker(event) {
@@ -109,7 +109,7 @@ function add_speaker(event) {
     .fail(function(data) {
         $('img.spinner').remove();
         flash_message(voteit.translation['error_saving'], 'error', true);
-    })
+    });
     $("[name='pn']").val("");
 }
 
@@ -125,7 +125,7 @@ function remove_speaker(event) {
             //Success
             speaker_to_be_removed.remove();
         }
-    })
+    });
 }
 
 function promote_start_speaker(event) {
@@ -233,7 +233,7 @@ function shuffle_speakers(event) {
             //Sleep, retry?
             flash_message(voteit.translation['error_saving'], 'error', true);
         }
-    }).success(load_speaker_queue)
+    }).success(load_speaker_queue);
 }
 
 function speaker_undo(event) {
@@ -252,5 +252,5 @@ function speaker_undo(event) {
         spoken_time = 0;
         $('#speaker_active li').remove();
         load_speaker_queue();
-    })
+    });
 }

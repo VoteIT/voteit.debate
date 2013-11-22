@@ -101,7 +101,7 @@
                 //Load initial data
                 meeting_url = '${api.meeting_url}';
                 active_list_action_url = "${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}";
-                reload_interval = ${api.meeting.get_field_value('reload_manager_interface', 4) * 1000}; //seconds -> miliseconds!
+                reload_interval = ${api.meeting.get_field_value('reload_manager_interface', 4) * 1000}; //seconds -> miliseconds! - make sure it's global
                 //Load templates
                 load_speaker_queue();
                 load_speaker_log();
