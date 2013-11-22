@@ -48,7 +48,6 @@
                         <ul id="speaker_queue" class="speaker_queue"></ul>
                     </div>
                     <div id="right">
-            
                         <ul id="speaker_list_controls">
                             <li tal:repeat="sl context_lists"
                                 tal:attributes="class (active_list and sl.name == active_list.name) and 'selected' or ''">
@@ -83,7 +82,7 @@
                             </li>
                         </ul>
                         <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'add'})}"
-                           tal:condition="active_list" class="buttonize small" i18n:translate="">New</a>
+                           class="buttonize small" i18n:translate="">New list</a>
                         <div class="clear"><!-- --></div>
 
                         <h3 i18n:translate="">Speaker log</h3>
@@ -95,19 +94,23 @@
                 </div><!-- section -->
             </div>
         </div>
-        
-        <script language="javascript" type="text/javascript" tal:condition="context_active">
+        <script language="javascript" type="text/javascript">
             $(document).ready(function () {
                 //Load initial data
                 meeting_url = '${api.meeting_url}';
+                //Bind events
+                $(".rename_sl").live("click", rename_speaker_show);
+                $(".rename_form").on("submit", rename_speaker_submit);
+            });
+        </script>
+        <script language="javascript" type="text/javascript" tal:condition="context_active">
+            $(document).ready(function () {
                 active_list_action_url = "${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}";
                 reload_interval = ${api.meeting.get_field_value('reload_manager_interface', 4) * 1000}; //seconds -> miliseconds! - make sure it's global
                 //Load templates
                 load_speaker_queue();
                 load_speaker_log();
                 //Bind events to controls
-                $(".rename_sl").live("click", rename_speaker_show);
-                $(".rename_form").on("submit", rename_speaker_submit);
                 $("#start_speaker").on("click", start_speaker);
                 $("#pause_speaker").on("click", pause_speaker);
                 $("#finished_speaker").on("click", finished_speaker);
