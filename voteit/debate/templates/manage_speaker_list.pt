@@ -88,7 +88,7 @@
                         <h3 i18n:translate="">Speaker log</h3>
                         <ul id="speaker_log"></ul>
                         <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'clear', 'name': active_list.name})}"
-                           tal:condition="active_list" class="buttonize small" id="clear_speaker_log" i18n:translate="">Clear</a>
+                           tal:condition="context_active" class="buttonize small" id="clear_speaker_log" i18n:translate="">Clear</a>
                     </div>
 
                 </div><!-- section -->
