@@ -56,20 +56,27 @@ class SpeakerListHandlerTests(unittest.TestCase):
     def test_add_contextual_list(self):
         meeting = Meeting()
         obj = self._cut(meeting)
-        obj.add_contextual_list(meeting)
-        self.assertEqual(len(obj.speaker_lists), 1)
-        obj.add_contextual_list(meeting)
-        self.assertEqual(len(obj.speaker_lists), 2)
-        obj.add_contextual_list(meeting)
-        self.assertEqual(len(obj.speaker_lists), 3)
-        results = obj.get_contextual_lists(meeting)
-        self.assertEqual(results[-1].name, "%s/3" % meeting.uid)
+        for i in range(1, 12):
+            obj.add_contextual_list(meeting)
+        self.assertEqual(len(obj.speaker_lists), 11)
+        self.assertIn("%s/1" % meeting.uid, obj.speaker_lists)
+        self.assertIn("%s/11" % meeting.uid, obj.speaker_lists)
+
+    def test_get_contexual_list_names_sorts_correctly(self):
+        meeting = Meeting()
+        obj = self._cut(meeting)
+        for i in range(1, 12):
+            obj.add_contextual_list(meeting)
+        result = obj.get_contexual_list_names(meeting)
+        self.assertEqual(len(result), 11)
+        self.assertEqual("%s/1" % meeting.uid, result[0])
+        self.assertEqual("%s/11" % meeting.uid, result[10])
 
     def test_remove_list(self):
         meeting = Meeting()
         obj = self._cut(meeting)
         obj.add_contextual_list(meeting)
-        obj.remove_list(meeting.uid)
+        obj.remove_list("%s/1" % meeting.uid)
         self.assertEqual(len(obj.speaker_lists), 0)
 
     def test_get_expected_context_for(self):
@@ -181,7 +188,7 @@ class SpeakerListTests(unittest.TestCase):
     def test_set(self):
         obj = self._cut('n')
         obj.speakers.extend([1, 2, 3])
-        obj.set([1, 2 ,3])
+        obj.set([1, 2, 3])
         self.assertEqual((1, 2, 3,), tuple(obj.speakers))
 
     def test_speaker_active(self):

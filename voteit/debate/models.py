@@ -40,25 +40,30 @@ class SpeakerListHandler(object):
     def get_active_list(self):
         return self.speaker_lists.get(self.speaker_list_name, None)
 
-    def get_contextual_lists(self, context):
+    def get_contexual_list_names(self, context):
         results = []
         for name in self.speaker_lists:
-            if name == context.uid or name.startswith("%s/" % context.uid):
+            if context.uid in name:
                 results.append(name)
-        return [self.speaker_lists[x] for x in sorted(results)]
+        def _sorter(obj):
+            try:
+                return int(obj.split("/")[1])
+            except IndexError:
+                return 0 #b/c compat
+        return sorted(results, key = _sorter)
+
+    def get_contextual_lists(self, context):
+        return [self.speaker_lists[x] for x in self.get_contexual_list_names(context)]
 
     def add_contextual_list(self, context):
-        existing = self.get_contextual_lists(context)
+        existing = self.get_contexual_list_names(context)
         if not existing:
-            name = context.uid
+            name = "%s/1" % context.uid
             title = context.title
         else:
             last_list = existing[-1]
-            items = last_list.name.split("/")
-            if len(items) == 1:
-                i = 2
-            else:
-                i = int(items[1]) + 1
+            items = last_list.split("/")
+            i = int(items[1]) + 1
             name = "%s/%s" % (context.uid, i)
             title = "%s - %s" % (context.title, i)
         self.speaker_lists[name] = SpeakerList(name, title = title)

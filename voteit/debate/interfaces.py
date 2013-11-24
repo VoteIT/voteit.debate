@@ -14,6 +14,9 @@ class ISpeakerListHandler(Interface):
     def get_active_list():
         """ Return the currently active list, or None. """
 
+    def get_contexual_list_names(context):
+        """ Return all speaker list names for a specific context - sorted. """
+
     def get_contextual_lists(context):
         """ Return all speaker lists for a specific context - sorted. """
 
