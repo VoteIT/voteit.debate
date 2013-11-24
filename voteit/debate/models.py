@@ -63,7 +63,10 @@ class SpeakerListHandler(object):
         else:
             last_list = existing[-1]
             items = last_list.split("/")
-            i = int(items[1]) + 1
+            try:
+                i = int(items[1]) + 1
+            except IndexError:
+                i = 1 #b/c compat
             name = "%s/%s" % (context.uid, i)
             title = "%s - %s" % (context.title, i)
         self.speaker_lists[name] = SpeakerList(name, title = title)
