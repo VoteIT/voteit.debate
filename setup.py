@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
+CONTRIBUTORS = open(os.path.join(here, 'CONTRIBUTORS.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 requires = ('voteit.core',
@@ -18,7 +19,7 @@ requires = ('voteit.core',
 setup(name='voteit.debate',
       version='0.1dev',
       description='Plenary debate tools for VoteIT',
-      long_description=README + '\n\n' +  CHANGES,
+      long_description=README + '\n\n' +  CONTRIBUTORS + '\n\n' + CHANGES,
       classifiers=[
         "Programming Language :: Python",
         "Framework :: Pylons",
