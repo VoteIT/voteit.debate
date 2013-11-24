@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-25 10:38+0200\n"
+"POT-Creation-Date: 2013-11-24 10:56+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,11 +25,11 @@ msgstr ""
 msgid "Speaker already in this list"
 msgstr ""
 
-#: voteit/debate/models.py:78
+#: voteit/debate/models.py:83
 msgid "Open"
 msgstr ""
 
-#: voteit/debate/models.py:78
+#: voteit/debate/models.py:83
 msgid "Closed"
 msgstr ""
 
@@ -76,8 +76,17 @@ msgstr ""
 msgid "Managers speaker list reload interval"
 msgstr ""
 
-#: voteit/debate/schemas.py:53
+#: voteit/debate/schemas.py:53 voteit/debate/schemas.py:59
+#: voteit/debate/schemas.py:65
 msgid "In seconds. After this timeout the list will be updated."
+msgstr ""
+
+#: voteit/debate/schemas.py:58
+msgid "Reload interval for spekers in queue"
+msgstr ""
+
+#: voteit/debate/schemas.py:64
+msgid "Reload interval for anyone not in queue"
 msgstr ""
 
 #: voteit/debate/views.py:55
@@ -166,31 +175,31 @@ msgstr ""
 msgid "Shuffle queue"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:59
+#: voteit/debate/templates/manage_speaker_list.pt:58
 msgid "Close list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:61
+#: voteit/debate/templates/manage_speaker_list.pt:60
 msgid "Open list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:65
+#: voteit/debate/templates/manage_speaker_list.pt:64
 msgid "Delete"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:70
+#: voteit/debate/templates/manage_speaker_list.pt:69
 msgid "rename"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:85
-msgid "New"
+#: voteit/debate/templates/manage_speaker_list.pt:84
+msgid "New list"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:89
+#: voteit/debate/templates/manage_speaker_list.pt:88
 msgid "Speaker log"
 msgstr ""
 
-#: voteit/debate/templates/manage_speaker_list.pt:91
+#: voteit/debate/templates/manage_speaker_list.pt:90
 msgid "Clear"
 msgstr ""
 
@@ -226,11 +235,11 @@ msgstr ""
 msgid "Remove yourself"
 msgstr ""
 
-#: voteit/debate/templates/user_speaker.pt:36
+#: voteit/debate/templates/user_speaker.pt:30
 msgid "You will enter list att position ${num} if you wish to speak"
 msgstr ""
 
-#: voteit/debate/templates/user_speaker.pt:43
+#: voteit/debate/templates/user_speaker.pt:37
 msgid "${num} speakers before you"
 msgstr ""
 
