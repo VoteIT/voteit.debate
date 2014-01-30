@@ -46,6 +46,13 @@ class SpeakerListSettingsSchema(colander.Schema):
                             u"For instance, if 1 is entered here and 2 speaker lists are used, the next speaker "
                             u"in line will never be moved down regardless of what list they're on.")
     )
+    max_times_in_list = colander.SchemaNode(
+        colander.Int(),
+        default = 0,
+        title = _(u"Maximum times allowed to speak per list"),
+        description = _(u"max_times_in_list_description",
+                        default = u"If anything else than '0', users aren't able to add themselves to the list when they've "
+                        u"spoken more times that this number."))
     reload_manager_interface = colander.SchemaNode(
         colander.Int(),
         default = 4,

@@ -16,9 +16,15 @@
                 </span>
             </div>
             <div class="sl_controls">
-                <tal:not_in_list condition="pn != None and sl.state == 'open' and pn not in sl.speakers">
-                    <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
+                <tal:not_in_list condition="pn and show_add(sl, pn)|False">
+                    <a tal:condition="not over_limit(sl, pn)"
+                        href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
                        class="buttonize add" i18n:translate="">Add yourself</a>
+                    <span class="meta" tal:condition="over_limit(sl, pn)"
+                          i18n:translate="over_limit_notice">
+                          You've already spoken
+                          <tal:num i18n:name="count" tal:content="max_times_in_list">2</tal:num> times.
+                    </span>
                 </tal:not_in_list>
                 <tal:in_list condition="pn in sl.speakers">
                     <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'remove', 'list_name': sl.name})}"

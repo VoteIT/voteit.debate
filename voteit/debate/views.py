@@ -295,12 +295,15 @@ class UserSpeakerLists(BaseView):
         pn = self.participant_numbers.userid_to_number.get(self.api.userid, None)
         use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
         safe_pos = self.api.meeting.get_field_value('safe_positions', 0)
+        max_times_in_list = self.api.meeting.get_field_value('max_times_in_list', 0)
+        def _over_limit(sl, pn):
+            return max_times_in_list and len(sl.speaker_log.get(pn, ())) >= max_times_in_list
         if pn != None and action:
             list_name = self.request.GET.get('list_name', None)
             if list_name not in self.sl_handler.speaker_lists:
                 raise HTTPForbidden(_(u"Speaker list doesn't exist"))
             sl = self.sl_handler.speaker_lists[list_name]
-            if action == u'add':
+            if action == u'add' and not _over_limit(sl, pn):
                 sl.add(pn, use_lists = use_lists, safe_pos = safe_pos)
             if action == u'remove':
                 sl.remove(pn)
@@ -309,6 +312,12 @@ class UserSpeakerLists(BaseView):
         self.response['pn'] = pn
         self.response['use_lists'] = use_lists
         self.response['safe_pos'] = safe_pos
+        self.response['over_limit'] = _over_limit
+        self.response['max_times_in_list'] = max_times_in_list
+        if pn != None:
+            def _show_add(sl, pn):
+                return pn != None and sl.state == 'open' and pn not in sl.speakers
+            self.response['show_add'] = _show_add
         return self.response
 
     @view_config(name = "speaker_statistics", context = IMeeting, permission = security.VIEW,
