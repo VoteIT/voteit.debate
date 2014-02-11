@@ -5,7 +5,7 @@ from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
 from voteit.irl.schemas import deferred_existing_participant_number_validator
 
 from . import DebateTSF as _
-from .interfaces import ISpeakerListHandler
+
 
 @schema_factory('AddSpeakerSchema')
 class AddSpeakerSchema(colander.Schema):
@@ -80,4 +80,3 @@ class LogEntries(colander.SequenceSchema):
 @schema_factory('EditSpeakerLogSchema')
 class EditSpeakerLogSchema(colander.Schema):
     logs = LogEntries()
-
