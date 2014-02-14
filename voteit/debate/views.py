@@ -114,6 +114,9 @@ class ManageSpeakerList(BaseView):
 
             message
                 A string, will be displayed if set
+            
+            active_speaker
+                Rendered html for the active speaker
         
         """
         action = self.request.GET['action']
@@ -128,7 +131,7 @@ class ManageSpeakerList(BaseView):
                 else:
                     return {'success': False, 'message': _(u"No speakers to start")}
             self.active_list.speaker_active(speaker_name)
-            return Response(self.speaker_item(speaker_name))
+            return {'success': True, 'active_speaker': self.speaker_item(speaker_name)}
         if action == 'finished':
             seconds = int(self.request.GET['seconds'])
             self.active_list.speaker_finished(seconds)

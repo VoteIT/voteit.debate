@@ -17,7 +17,8 @@
                             <h3 i18n:translate="">(Activate list to show controls)</h3>
                         </tal:not_active>
                         <div id="speaker_controlbox" tal:condition="context_active">
-                            <a id="start_speaker">
+                            <a id="start_speaker"
+                               href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'active'})}">
                                 <img src="/debate_static/img/speaker_controls_play.png" title="Start" i18n:attributes="title" />
                             </a>
                             <a id="pause_speaker">

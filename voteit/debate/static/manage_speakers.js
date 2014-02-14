@@ -11,11 +11,11 @@ $(window).on('beforeunload', function() {
     if (($('#speaker_active li .time_spoken').length > 0) && ($('#speaker_active li .time_spoken').html() !== "")) return "Unsaved changes";
 });
 
-function load_speaker_queue(success_callback) {
+function load_speaker_queue() {
     if (reload_timer != null) {
         reload_timer = clearInterval(reload_timer);
     }
-    $('#speaker_queue').load(voteit.cfg['meeting_url'] + '_speaker_queue_moderator', function(response, status, xhr) {
+    return $('#speaker_queue').load(voteit.cfg['meeting_url'] + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
             $('#status').show();
@@ -24,7 +24,6 @@ function load_speaker_queue(success_callback) {
             $(".promote_start_speaker").on("click", promote_start_speaker);
             $(".remove_speaker").on("click", remove_speaker);
             $('img.spinner').remove();
-            if (typeof success_callback !== "undefined") success_callback(event);
         }
         reload_timer = setInterval(load_speaker_queue, reload_interval);
     });
@@ -132,8 +131,10 @@ function remove_speaker(event) {
 }
 
 function promote_start_speaker(event) {
+    //Important, clicked event must be with the same url as start, 
+    //but with and added participant numer
     event.preventDefault();
-    finished_speaker(event, start_speaker);
+    $.when( finished_speaker(event) ).done( start_speaker(event) );
 }
 
 function update_timer() {
@@ -156,16 +157,15 @@ function start_speaker(event) {
     event.preventDefault();
     if ($('#speaker_active li').length == 0) {
         if ($('#speaker_queue li').length != 0) {
-            //FIXME: Events url, not list url!
-            var url = active_list_action_url + '&action=active';
-            $('#speaker_active').load(url, function(response, status, xhr) {
+            var url = $(event.delegateTarget).attr('href');
+            return $.get(url, function(data, status, xhr) {
                 if (status == "error") {
-                    //Sleep, retry
+                    //Sleep, retry?
                     flash_message(voteit.translation['error_loading'], 'error', true); 
-                    //flash_message(voteit.translation['nothing_to_start_error'], 'error', true); 
                     return false;
                 } else {
                     //Success
+                    $('#speaker_active').html(data['active_speaker']);
                     start_timer();
                     load_speaker_queue();
                 }
@@ -191,10 +191,9 @@ function pause_speaker(event) {
     timer = null;
 }
 
-function finished_speaker(event, success_callback) {
+function finished_speaker(event) {
     event.preventDefault();
     if ($('#speaker_active li').length == 0) {
-        if (typeof success_callback !== "undefined") success_callback(event);
         return false;
     }
     if (timer != null) {
@@ -204,7 +203,7 @@ function finished_speaker(event, success_callback) {
     var url = active_list_action_url;
     url += '&action=finished';
     url += '&seconds=' + Math.round(spoken_time / 10);
-    $.get(url, function(response, status, xhr) {
+    return $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?
             flash_message(voteit.translation['error_saving'], 'error', true); 
@@ -215,18 +214,14 @@ function finished_speaker(event, success_callback) {
             $('#speaker_active li').remove();
             load_speaker_log();
             load_speaker_queue();
-            if (typeof success_callback !== "undefined") success_callback(event);
         }
     });
 }
 
 function quickstart_next_speaker(event) {
     event.preventDefault();
-    if (timer == null) {
-        start_speaker(event);
-    } else {
-        finished_speaker(event, start_speaker);
-    }
+    $.when( finished_speaker(event) )
+    .done( $('#start_speaker').click() );
 }
 
 function shuffle_speakers(event) {
