@@ -1,4 +1,3 @@
-var meeting_url = '';
 var active_list_action_url = '';
 var spoken_time = 0;
 var timer = null;
@@ -16,7 +15,7 @@ function load_speaker_queue(success_callback) {
     if (reload_timer != null) {
         reload_timer = clearInterval(reload_timer);
     }
-    $('#speaker_queue').load(meeting_url + '_speaker_queue_moderator', function(response, status, xhr) {
+    $('#speaker_queue').load(voteit.cfg['meeting_url'] + '_speaker_queue_moderator', function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry
             $('#status').show();
@@ -34,7 +33,7 @@ function load_speaker_queue(success_callback) {
 function load_speaker_log() {
     if ($('#speaker_log').length > 0) {
         spinner().appendTo('#speaker_log');
-        $('#speaker_log').load(meeting_url + '_speaker_log_moderator', function(response, status, xhr) {
+        $('#speaker_log').load(voteit.cfg['meeting_url'] + '_speaker_log_moderator', function(response, status, xhr) {
             if (status == "error") {
                 //Sleep, retry?
                 flash_message(voteit.translation['error_loading'], 'error', true);
@@ -67,7 +66,7 @@ function rename_speaker_submit(event) {
             form.parents('li').children('.sl_title').show().children('span').html(response);
         }
         $('img.spinner').remove();
-        form.hide()
+        form.hide();
     });
 }
 
@@ -94,21 +93,25 @@ function add_speaker(event) {
     var speaker_id = $("[name='pn']").attr('value');
     // Does this speaker exist already?
     if ($("#speaker_queue [value='" + speaker_id + "']").length > 0) {
-        flash_message(voteit.translation['speaker_already_in_list'], 'error', true);
+        flash_message(voteit.translation['speaker_already_in_list'], 'error', true, 3, true);
         $("[name='pn']").val("");
         return false;
     }
     link = form.attr('action');
     $.post(link, form.serialize(), function(data, textStatus, jqXHR) {
-        //
+        if (data['success'] == true) {
+            load_speaker_queue();
+        }
+        if ('message' in data) {
+            var msg_cls = data['success'] == true ? 'info' : 'error';
+            flash_message(data['message'], msg_cls, true, 5, true);
+        }
     })
-    .done(function() { 
-        $('img.spinner').remove();
-        load_speaker_queue(); //FIXME: Should be returned by view instead
+    .fail(function(jqXHR) {
+        flash_message(jqXHR.status + ' ' + jqXHR.statusText, 'error', true, 3, true);
     })
-    .fail(function(data) {
+    .always(function() {
         $('img.spinner').remove();
-        flash_message(voteit.translation['error_saving'], 'error', true);
     });
     $("[name='pn']").val("");
 }
@@ -153,6 +156,7 @@ function start_speaker(event) {
     event.preventDefault();
     if ($('#speaker_active li').length == 0) {
         if ($('#speaker_queue li').length != 0) {
+            //FIXME: Events url, not list url!
             var url = active_list_action_url + '&action=active';
             $('#speaker_active').load(url, function(response, status, xhr) {
                 if (status == "error") {
@@ -209,11 +213,11 @@ function finished_speaker(event, success_callback) {
             $('img.spinner').remove();
             spoken_time = 0;
             $('#speaker_active li').remove();
-            $('#speaker_log').html(response);
+            load_speaker_log();
             load_speaker_queue();
             if (typeof success_callback !== "undefined") success_callback(event);
         }
-    })
+    });
 }
 
 function quickstart_next_speaker(event) {

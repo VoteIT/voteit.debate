@@ -96,8 +96,6 @@
         </div>
         <script language="javascript" type="text/javascript">
             $(document).ready(function () {
-                //Load initial data
-                meeting_url = '${api.meeting_url}';
                 //Bind events
                 $(".rename_sl").live("click", rename_speaker_show);
                 $(".rename_form").on("submit", rename_speaker_submit);
