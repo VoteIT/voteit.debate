@@ -5,9 +5,10 @@ from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
 from voteit.irl.schemas import deferred_existing_participant_number_validator
 
 from . import DebateTSF as _
+from .models import get_speaker_list_plugins
 
 
-@schema_factory('AddSpeakerSchema')
+@schema_factory()
 class AddSpeakerSchema(colander.Schema):
     pn = colander.SchemaNode(colander.Int(),
                              title = _(u"Add speaker"),
@@ -17,7 +18,32 @@ class AddSpeakerSchema(colander.Schema):
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 4)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 
-@schema_factory('SpeakerListSettingsSchema')
+
+@colander.deferred
+def deferred_speaker_list_plugin_widget(node, kw):
+    """ Return a radio choice widget or a hidden widget if it's the default one. """
+    context = kw['context']
+    request = kw['request']
+    values = get_speaker_list_plugins(context, request)
+    if len(values) > 1:
+        return deform.widget.RadioChoiceWidget(values = values)
+    return deform.widget.HiddenWidget()
+
+
+@schema_factory()
+class SpeakerListPluginSchema(colander.Schema):
+    speaker_list_plugin = colander.SchemaNode(
+        colander.String(),
+        default = u"",
+        title = _(u"Plugin to handle speaker lists"),
+        description = _(u"speaker_list_functionality_description",
+                        default = u"If you've registered anything esle as a plugin capable of adjusting speaker list behaviour. "),
+        widget = deferred_speaker_list_plugin_widget,
+        missing = u"",
+    )
+
+
+@schema_factory()
 class SpeakerListSettingsSchema(colander.Schema):
     speaker_list_count = colander.SchemaNode(colander.Int(),
                                              title = _(u"Number of speaker lists to use"),
@@ -77,6 +103,6 @@ class LogEntries(colander.SequenceSchema):
     log = colander.SchemaNode(colander.Int())
 
 
-@schema_factory('EditSpeakerLogSchema')
+@schema_factory()
 class EditSpeakerLogSchema(colander.Schema):
     logs = LogEntries()
