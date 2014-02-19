@@ -134,7 +134,7 @@ function promote_start_speaker(event) {
     //Important, clicked event must be with the same url as start, 
     //but with and added participant numer
     event.preventDefault();
-    $.when( finished_speaker(event) ).done( start_speaker(event) );
+    $.when( $('#finished_speaker').click() ).done( start_speaker(event) );
 }
 
 function update_timer() {
@@ -200,8 +200,8 @@ function finished_speaker(event) {
         pause_speaker(event);
     }
     spoken_time = parse_spoken_time($('#speaker_active li .time_spoken').html());
-    var url = active_list_action_url;
-    url += '&action=finished';
+    //var url = active_list_action_url;
+    var url = $(event.delegateTarget).attr('href');
     url += '&seconds=' + Math.round(spoken_time / 10);
     return $.get(url, function(response, status, xhr) {
         if (status == "error") {
@@ -220,7 +220,7 @@ function finished_speaker(event) {
 
 function quickstart_next_speaker(event) {
     event.preventDefault();
-    $.when( finished_speaker(event) )
+    $.when( $('#finished_speaker').click() )
     .done( $('#start_speaker').click() );
 }
 
@@ -241,7 +241,6 @@ function speaker_undo(event) {
         pause_speaker(event);
     }
     var url = $(event.delegateTarget).attr('href');
-    console.log(url);
     $.get(url, function(response, status, xhr) {
         if (status == "error") {
             //Sleep, retry?

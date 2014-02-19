@@ -56,14 +56,14 @@ class SpeakerListsTests(unittest.TestCase):
         res = obj.get('404', default)
         self.assertEqual(res, default)
 
-    def test_active_list(self):
+    def test_active_list_name(self):
         meeting = Meeting()
         obj = self._cut(meeting)
         obj['hello'] = self._sl('hello', title = "1")
-        obj.active_list = 'hello'
-        self.assertEqual(obj.active_list, 'hello')
+        obj.active_list_name = 'hello'
+        self.assertEqual(obj.active_list_name, 'hello')
         try:
-            obj.active_list = '404'
+            obj.active_list_name = '404'
             self.fail("KeyError not raised")
         except KeyError:
             pass
@@ -94,9 +94,9 @@ class SpeakerListsTests(unittest.TestCase):
         meeting = Meeting()
         obj = self._cut(meeting)
         obj['hello'] = self._sl('hello', title = "1")
-        obj.active_list = 'hello'
+        obj.active_list_name = 'hello'
         del obj['hello']
-        self.assertEqual(obj.active_list, None)
+        self.assertEqual(obj.active_list_name, None)
         self.assertFalse('hello' in obj)
 
     def test_len(self):

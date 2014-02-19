@@ -13,7 +13,7 @@ class ISpeakerLists(Interface):
     """
     speaker_list_plugin = Attribute("Name of the plugin to wrap speaker list objects in. This is the same as the adapter name.")
     speaker_lists = Attribute("Storage for all speaker lists.")
-    active_list = Attribute("Get or set the name of the active list. Must be either None or a list that exists.")
+    active_list_name = Attribute("Get or set the name of the active list. Must be either None or a list that exists.")
 
     def add(key, value, parent = None):
         """ Add speaker list (value). It will also add an AgendaItem as parent, which
@@ -35,7 +35,8 @@ class ISpeakerLists(Interface):
 
 class ISpeakerListPlugin(Interface):
     """ pn is short for participant number. """
-    name = Attribute("Name of this adapter.")
+    name = Attribute("The name of the wrapped list - not the name of the adapter!")
+    plugin_name = Attribute("Same as the adapters name")
     plugin_title = Attribute("Title used when selecting this plugin.")
     plugin_description = Attribute("Description of the plugin.")
     title = Attribute("Title of the wrapped object")

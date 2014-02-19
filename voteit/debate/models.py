@@ -49,11 +49,11 @@ class SpeakerLists(object):
             return self.context.__speaker_lists__
 
     @property
-    def active_list(self, default = None):
+    def active_list_name(self, default = None):
         return getattr(self.context, '__active_speaker_list__', default)
 
-    @active_list.setter
-    def active_list(self, key):
+    @active_list_name.setter
+    def active_list_name(self, key):
         if key in self.speaker_lists or key is None:
             self.context.__active_speaker_list__ = key
             return key
@@ -113,8 +113,8 @@ class SpeakerLists(object):
         return self.add(key, value)
 
     def __delitem__(self, key): #dict api
-        if self.active_list == key:
-            self.active_list = None
+        if self.active_list_name == key:
+            self.active_list_name = None
         del self.speaker_lists[key]
 
     def __len__(self): #dict api
@@ -131,7 +131,7 @@ _POSSIBLE_STATES = {u"open": _(u"Open"), u"closed": _(u"Closed")}
 @adapter(ISpeakerList)
 class SpeakerListPlugin(object):
     """ See .interfaces.ISpeakerListPlugin """
-    name = u""
+    plugin_name = u''
     plugin_title = _(u"Default list handler")
     plugin_description = u""
     __parent__ = None
@@ -140,9 +140,20 @@ class SpeakerListPlugin(object):
         self.context = context
         self.__parent__ = context.__parent__
 
+    def __eq__(self, other):
+        return self.plugin_name == getattr(other, 'plugin_name', None) and self.name == getattr(other, 'name', None)
+
+    @property
+    def name(self):
+        return self.context.name
+
     @property
     def title(self):
         return self.context.title
+
+    @title.setter
+    def title(self, value):
+        self.context.title = value
 
     @property
     def speakers(self):
@@ -238,6 +249,7 @@ class SpeakerListPlugin(object):
         if pn in self.speakers:
             self.current = pn
             self.speakers.remove(pn)
+            return pn
 
     def speaker_finished(self, pn, seconds):
         assert isinstance(pn, int)
@@ -248,12 +260,15 @@ class SpeakerListPlugin(object):
             self.speaker_log[self.current] = PersistentList()
         self.speaker_log[self.current].append(seconds)
         self.current = None
+        return pn
 
     def speaker_undo(self):
         if self.current == None:
             return
         self.speakers.insert(0, self.current)
+        pn = self.current
         self.current = None
+        return pn
 
     def get_state_title(self):
         return _POSSIBLE_STATES.get(self.state, u"")
