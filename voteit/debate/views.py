@@ -422,8 +422,8 @@ class FullscreenSpeakerList(object):
 class UserSpeakerLists(BaseView):
 
     @reify
-    def sl_handler(self):
-        return self.request.registry.getAdapter(self.api.meeting, ISpeakerListHandler)
+    def slists(self):
+        return self.request.registry.getAdapter(self.api.meeting, ISpeakerLists)
 
     @reify
     def participant_numbers(self):
@@ -441,15 +441,16 @@ class UserSpeakerLists(BaseView):
             return max_times_in_list and len(sl.speaker_log.get(pn, ())) >= max_times_in_list
         if pn != None and action:
             list_name = self.request.GET.get('list_name', None)
-            if list_name not in self.sl_handler.speaker_lists:
+            if list_name not in self.slists.speaker_lists:
                 raise HTTPForbidden(_(u"Speaker list doesn't exist"))
-            sl = self.sl_handler.speaker_lists[list_name]
+            sl = self.slists[list_name]
             if action == u'add' and not _over_limit(sl, pn):
-                sl.add(pn, use_lists = use_lists, safe_pos = safe_pos)
+                sl.add(pn)
             if action == u'remove':
-                sl.remove(pn)
-        self.response['speaker_lists'] = self.sl_handler.get_contextual_lists(self.context)
-        self.response['active_list'] = self.sl_handler.get_active_list()
+                if pn in sl.speakers:
+                    sl.speakers.remove(pn)
+        self.response['speaker_lists'] = self.slists.get_contextual_lists(self.context)
+        self.response['active_list'] = self.slists.get(self.slists.active_list_name)
         self.response['pn'] = pn
         self.response['use_lists'] = use_lists
         self.response['safe_pos'] = safe_pos
@@ -465,10 +466,9 @@ class UserSpeakerLists(BaseView):
                  renderer = "templates/speaker_statistics.pt")
     def speaker_statistics_view(self):
         self.response['number_to_userid'] = self.participant_numbers.number_to_userid
-        #self.response['speaker_lists'] = self.sl_handler.speaker_lists.values()
         results = {}
         maxval = 0
-        for sl in self.sl_handler.speaker_lists.values():
+        for sl in self.slists.speaker_lists.values():
             for (pn, entries) in sl.speaker_log.items():
                 current = results.setdefault(pn, [])
                 current.extend(entries)
@@ -493,7 +493,7 @@ class UserSpeakerLists(BaseView):
         writer.writerow([self.context.title.encode('utf-8')])
         writer.writerow([self.api.translate(_(u"Speaker statistics"))])
         writer.writerow(["#", self.api.translate(_(u"Seconds"))])
-        for sl in self.sl_handler.speaker_lists.values():
+        for sl in self.slists.speaker_lists.values():
             if not len(sl.speaker_log):
                 continue
             writer.writerow([""])

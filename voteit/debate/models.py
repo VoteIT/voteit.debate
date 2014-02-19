@@ -294,7 +294,7 @@ class SpeakerList(Persistent):
         self.state = state
 
     def __repr__(self): # pragma : no cover
-        return "<SpeakerList> '%s' with %s speakers" % (self.title, len(self.speakers))
+        return "<SpeakerList> '%s' with %s speakers" % (self.title.encode('utf-8'), len(self.speakers))
 
 
 def get_speaker_list_plugins(context, request):

@@ -33,7 +33,7 @@
                 <tal:speakers repeat="(pn, spoken_list) results">
                 <tr>
                     <td tal:content="pn">1</td>
-                    <td tal:content="structure api.get_creators_info([number_to_userid[pn]], portrait = False)">Hen Henysson</td>
+                    <td tal:content="structure api.get_creators_info([number_to_userid[pn]], portrait = False)| 'error'">Hen Henysson</td>
                     <td tal:content="len(spoken_list)">3</td>
                     <td tal:content="sum(spoken_list)">60</td>
                     <td>
