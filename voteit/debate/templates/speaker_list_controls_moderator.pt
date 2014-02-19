@@ -1,0 +1,45 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+<a href="${request.resource_url(context, '_speaker_lists_moderator')}" id="reload_slists_js" i18n:translate="">Reload</a>
+<ul id="speaker_list_controls" >
+<li tal:repeat="sl context_lists"
+    tal:attributes="class (active_list and sl.name == active_list.name) and 'selected' or ''">
+    <span class="action_menu dropdown_menu cogwheel">
+        <a class="menu_header" href="#">Moderator_menu</a>
+        <ul class="menu_body">
+            <li>
+                <a href="${request.resource_url(api.meeting, 'speaker_list_action',
+                                                query = {'action': 'set_state', 'list_name': sl.name, 'state': 'closed', 'ai_name': context.__name__})}"
+                   class="list_state" tal:condition="sl.state != u'closed'" i18n:translate="">Close list</a>
+                <a href="${request.resource_url(api.meeting, 'speaker_list_action',
+                                                query = {'action': 'set_state', 'list_name': sl.name, 'state': 'open', 'ai_name': context.__name__})}"
+                   class="list_state" tal:condition="sl.state != u'open'" i18n:translate="">Open list</a>
+            </li>
+            <li>
+                <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'delete', 'list_name': sl.name, 'ai_name': context.__name__})}"
+                   i18n:translate="">Delete</a>
+            </li>
+        </ul>
+    </span>
+    <a class="editpen rename_sl" title="rename" i18n:attributes="title">&nbsp;</a>
+    <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'active', 'list_name': sl.name, 'ai_name': context.__name__})}"
+       class="sl_title">
+       <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
+       ${sl.title}
+       </span>
+    </a>
+    <form action="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'rename', 'list_name': sl.name})}"
+        method="GET" class="rename_form" style="display: none;">
+        <input name="list_title_rename" value="${sl.title}" />
+    </form>
+    <div class="clear"><!-- --></div>
+</li>
+</ul>
+<script language="javascript" type="text/javascript">
+    //$("#speaker_list_controls a").on("click", generic_speaker_list_get_actions);
+    $(".rename_sl").on("click", rename_speaker_show);
+    $(".rename_form").on("submit", rename_speaker_submit);
+</script>
+</tal:main>

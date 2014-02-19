@@ -79,6 +79,11 @@ class BaseActionView(object):
 @view_defaults(context = IMeeting, name = "speaker_list_action", permission = security.MODERATE_MEETING, renderer = 'json')
 class ListActions(BaseActionView):
 
+    def _tmp_redirect_url(self):
+        #FIXME: Remove this, all functions should load via js / json
+        url = self.request.resource_url(self.context, self.ai_name, 'manage_speaker_list')
+        return HTTPFound(location = url)
+
     @view_config(request_param = "action=add")
     def add(self):
         ai = self.get_ai()
@@ -89,17 +94,21 @@ class ListActions(BaseActionView):
 
     @view_config(request_param = "action=set_state")
     def set_state(self):
+        #FIXME: proper js function
         state = self.request.params.get('state')
         if state:
             self.action_list.state = state
             self.success()
+        return self._tmp_redirect_url()
         return self.response
 
     @view_config(request_param = "action=delete")
     def delete(self):
+        #FIXME: proper js function
         if self.list_name in self.slists:
             del self.slists[self.list_name]
             self.success()
+        return self._tmp_redirect_url()
         return self.response
 
     @view_config(request_param = "action=rename")
@@ -108,13 +117,16 @@ class ListActions(BaseActionView):
         if new_name:
             self.action_list.title = new_name
             self.success()
+        return self._tmp_redirect_url()
         return self.response
 
     @view_config(request_param = "action=active")
     def active(self):
+        #FIXME: proper js function
         if self.list_name in self.slists:
             self.slists.active_list_name = self.list_name
             self.success()
+        return self._tmp_redirect_url()
         return self.response
 
     @view_config(request_param = "action=undo")
@@ -126,6 +138,12 @@ class ListActions(BaseActionView):
     @view_config(request_param = "action=shuffle")
     def shuffle(self):
         self.action_list.shuffle()
+        self.success()
+        return self.response
+
+    @view_config(request_param = "action=clear")
+    def clear(self):
+        self.action_list.speaker_log.clear()
         self.success()
         return self.response
 
@@ -215,6 +233,15 @@ def speaker_item_moderator(pn, api, slist, userid = None):
     response['is_locked'] = pn in slist.speakers and slist.speakers.index(pn) < safe_positions
     return render("templates/speaker_item.pt", response, request = api.request)
 
+def speaker_list_controls_moderator(api, slists, context):
+    assert IAgendaItem.providedBy(context)
+    response = {}
+    response['api'] = api
+    response['context'] = context
+    response['active_list'] = slists.get(slists.active_list_name)
+    response['context_lists'] = slists.get_contextual_lists(context)
+    return render("templates/speaker_list_controls_moderator.pt", response, request = api.request)
+
 
 @view_defaults(context = IMeeting, permission = security.MODERATE_MEETING)
 class ManageSpeakerList(BaseView):
@@ -243,104 +270,11 @@ class ManageSpeakerList(BaseView):
             self.response['add_form'] = self.get_add_form().render()
         else:
             self.response['add_form'] = u""
-        self.response['context_lists'] = self.slists.get_contextual_lists(self.context)
-        active_list = self.slists.get(self.slists.active_list_name)
-        self.response['context_active'] = active_list in self.response['context_lists']
-        self.response['active_list'] = active_list
+        self.response['context_active'] = self.slists.active_list_name in self.slists.get_contexual_list_names(self.context)
+        self.response['active_list'] = self.slists.get(self.slists.active_list_name)
         self.response['speaker_item'] = self.speaker_item
+        self.response['speaker_list_controls'] = speaker_list_controls_moderator(self.api, self.slists, self.api.context)
         return self.response
-
-    #@view_config(name = "speaker_list_action", context = IAgendaItem, permission = security.MODERATE_MEETING)
-    def list_action(self):
-        #FIXME: This view is up for refactoring.
-        action = self.request.GET['action']
-        if action == 'add':
-            self.sl_handler.add_contextual_list(self.context)
-        if action == 'remove':
-            name = self.request.GET['name']
-            self.sl_handler.remove_list(name)
-        if action == 'set':
-            name = self.request.GET['name']
-            self.sl_handler.set_active_list(name)
-        if action == 'clear':
-            name = self.request.GET['name']
-            self.active_list.speaker_log.clear()
-        if action == 'rename':
-            name = self.request.GET['name']
-            #FIXME: Escape title?
-            self.sl_handler.speaker_lists[name].title = self.request.GET['list_title_rename']
-            return Response(self.request.GET['list_title_rename'])
-        if action == 'set_state':
-            name = self.request.GET['name']
-            state = self.request.GET['state']
-            self.sl_handler.speaker_lists[name].set_state(state)
-        if action == 'undo':
-            name = self.request.GET['name']
-            self.sl_handler.speaker_lists[name].speaker_undo()
-        if action == 'shuffle':
-            name = self.request.GET['name']
-            use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-            self.sl_handler.speaker_lists[name].shuffle(use_lists = use_lists)
-        return HTTPFound(location = self.request.resource_url(self.context, "manage_speaker_list"))
-
-    #@view_config(name = "speaker_action", context = IMeeting, permission = security.MODERATE_MEETING,
-    #             renderer = 'json')
-    def speaker_action(self):
-        """ Return a json object with status and result.
-        
-            returned params
-            
-            success
-                True / False
-
-            message
-                A string, will be displayed if set
-            
-            active_speaker
-                Rendered html for the active speaker
-        
-        """
-        action = self.request.GET['action']
-        #FIXME: This should work on inactive lists too!
-        if self.request.GET['list_name'] != self.active_list.name:
-            return HTTPForbidden()
-        if action == 'active':
-            speaker_name = self.request.GET.get('name', None) #Specific speaker, or simply top of the list
-            if speaker_name == None:
-                if self.active_list.speakers:
-                    speaker_name = self.active_list.speakers[0]
-                else:
-                    return {'success': False, 'message': _(u"No speakers to start")}
-            self.active_list.speaker_active(speaker_name)
-            return {'success': True, 'active_speaker': self.speaker_item(speaker_name)}
-        if action == 'finished':
-            seconds = int(self.request.GET['seconds'])
-            self.active_list.speaker_finished(seconds)
-            return {'success': True}
-        if action == 'remove':
-            speaker_name = int(self.request.GET['name'])
-            self.active_list.remove(speaker_name)
-            return {'success': True}
-        if action == 'add':
-            form = self.get_add_form()
-            controls = self.request.POST.items()
-            try:
-                appstruct = form.validate(controls)
-            except deform.ValidationFailure, e:
-                #There's only one field with validation. Change otherwise
-                return {'success': False, 'message': self.api.translate(e.field['pn'].errormsg)}
-            pn = appstruct['pn']
-            if pn in self.active_list.speakers:
-                #Shouldn't happen since js handles this
-                return {'success': False, 'message': _(u"Already in list")}
-            if pn in self.participant_numbers.number_to_userid:
-                use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-                safe_pos = self.api.meeting.get_field_value('safe_positions', 0)
-                self.active_list.add(pn, use_lists = use_lists, safe_pos = safe_pos, override = True)
-                return {'success': True}
-            else:
-                return {'success': False, 'message': _("No user with that number")}
-        return {'success': False, 'message': _("Not a valid action")}
 
     @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")
@@ -365,6 +299,13 @@ class ManageSpeakerList(BaseView):
         self.response['number_to_profile_tag'] = number_to_profile_tag
         self.response['format_secs'] = self.format_seconds
         return self.response
+
+    @view_config(name = "_speaker_lists_moderator", context = IAgendaItem, permission = security.MODERATE_MEETING)
+    def speaker_lists(self):
+        if self.request.is_xhr:
+            return Response(speaker_list_controls_moderator(self.api, self.slists, self.api.context))
+        #Fallback in case of js error
+        return HTTPFound(location = self.request.resource_url(self.context, 'manage_speaker_list'))
 
     def speaker_item(self, pn):
         userid = self.participant_numbers.number_to_userid.get(int(pn))

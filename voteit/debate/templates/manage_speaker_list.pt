@@ -49,59 +49,20 @@
                         <ul id="speaker_queue" class="speaker_queue"></ul>
                     </div>
                     <div id="right">
-                        <ul id="speaker_list_controls">
-                            <li tal:repeat="sl context_lists"
-                                tal:attributes="class (active_list and sl.name == active_list.name) and 'selected' or ''">
-                                <span class="action_menu dropdown_menu cogwheel">
-                                    <a class="menu_header" href="#">Moderator_menu</a>
-                                    <ul class="menu_body">
-                                        <li>
-                                            <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'set_state', 'list_name': sl.name, 'state': 'closed'})}"
-                                               class="list_state" tal:condition="sl.state != u'closed'" i18n:translate="">Close list</a>
-                                            <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'set_state', 'list_name': sl.name, 'state': 'open'})}"
-                                               class="list_state" tal:condition="sl.state != u'open'" i18n:translate="">Open list</a>
-                                        </li>
-                                        <li>
-                                            <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'delete', 'list_name': sl.name})}"
-                                               i18n:translate="">Delete</a>
-                                        </li>
-                                    </ul>
-                                </span>
-                                <a class="editpen rename_sl" title="rename" i18n:attributes="title"
-                                   href="javascript:">&nbsp;</a>
-                                <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'active', 'list_name': sl.name})}"
-                                   class="sl_title">
-                                   <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
-                                   ${sl.title}
-                                   </span>
-                                </a>
-                                <form action="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'rename', 'list_name': sl.name})}"
-                                    method="GET" class="rename_form" style="display: none;">
-                                    <input name="list_title_rename" value="${sl.title}" />
-                                </form>
-                                <div class="clear"><!-- --></div>
-                            </li>
-                        </ul>
+                        <div id="slists" tal:content="structure speaker_list_controls"></div>
                         <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'add', 'ai_name': context.__name__})}"
-                           class="buttonize small" i18n:translate="">New list</a>
+                           class="buttonize small" id="new_speaker_list" i18n:translate="">New list</a>
                         <div class="clear"><!-- --></div>
 
                         <h3 i18n:translate="">Speaker log</h3>
                         <ul id="speaker_log"></ul>
-                        <a href="${request.resource_url(context, 'speaker_list_action', query = {'action': 'clear', 'name': active_list.name})}"
+                        <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'clear', 'list_name': active_list.name})}"
                            tal:condition="context_active" class="buttonize small" id="clear_speaker_log" i18n:translate="">Clear</a>
                     </div>
 
                 </div><!-- section -->
             </div>
         </div>
-        <script language="javascript" type="text/javascript">
-            $(document).ready(function () {
-                //Bind events
-                $(".rename_sl").live("click", rename_speaker_show);
-                $(".rename_form").on("submit", rename_speaker_submit);
-            });
-        </script>
         <script language="javascript" type="text/javascript" tal:condition="context_active">
             $(document).ready(function () {
                 active_list_action_url = "${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': active_list.name})}";
