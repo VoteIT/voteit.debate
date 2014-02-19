@@ -167,7 +167,8 @@ class SpeakerActions(BaseActionView):
             appstruct = form.validate(controls)
         except deform.ValidationFailure, e:
             #There's only one field with validation. Change otherwise
-            self.response['message'] = self.api.translate(e.field['pn'].errormsg)
+            api = self._api()
+            self.response['message'] = api.translate(e.field['pn'].errormsg)
             return self.response
         pn = appstruct['pn']
         if pn in self.action_list.speakers:
@@ -207,7 +208,6 @@ class SpeakerActions(BaseActionView):
         if self.action_list.speaker_finished(pn, seconds) is not None:
             self.success()
         return self.response
-
 
 
 def get_add_speaker_form(api, list_name):
