@@ -388,10 +388,10 @@ class FullscreenSpeakerList(object):
     @view_config(name = "_fullscreen_list", context = IMeeting, permission = security.MODERATE_MEETING,
                  renderer = "templates/fullscreen_list.pt")
     def fullscreen_list(self):
-        sl_handler = self.request.registry.getAdapter(self.context, ISpeakerListHandler)
+        slists = self.request.registry.getAdapter(self.context, ISpeakerLists)
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
         root = self.context.__parent__
-        active_list = sl_handler.get_active_list()
+        active_list = slists.get(slists.active_list_name)
         num_lists = self.context.get_field_value('speaker_list_count', 1)
         if active_list.current != None: #Note could be int 0!
             userid = participant_numbers.number_to_userid[active_list.current]
@@ -405,9 +405,8 @@ class FullscreenSpeakerList(object):
                 speaker_profiles.append(root.users[userid])
 
         def _get_user_list_number(userid):
-            num = participant_numbers.userid_to_number[userid]
-            spoken_times = len(active_list.speaker_log.get(num, ())) + 1
-            return spoken_times <= num_lists and spoken_times or num_lists
+            pn = participant_numbers.userid_to_number[userid]
+            return active_list.get_number_for(pn)
 
         response = dict(
             active_list = active_list,
