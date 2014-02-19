@@ -11,11 +11,11 @@ from pyramid.renderers import render
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.traversal import find_interface
 from betahaus.pyracont.factories import createSchema
 from betahaus.viewcomponent import view_action
 from voteit.irl.models.interfaces import IParticipantNumbers
 from voteit.core.views.base_view import BaseView
-from voteit.core.views.base_edit import BaseEdit
 from voteit.core.views.meeting import MeetingView
 from voteit.core.views.api import APIView
 from voteit.core.models.interfaces import IAgendaItem
@@ -316,7 +316,7 @@ class ManageSpeakerList(BaseView):
     def edit_speaker_log(self):
         """ Edit log entries for a specific speaker. """
         speaker_list_name = self.request.GET['speaker_list']
-        speaker_list = self.sl_handler.speaker_lists[speaker_list_name]
+        speaker_list = self.slists.speaker_lists[speaker_list_name]
         speaker = int(self.request.GET['speaker'])
         schema = createSchema("EditSpeakerLogSchema")
         add_csrf_token(self.context, self.request, schema)
@@ -328,12 +328,12 @@ class ManageSpeakerList(BaseView):
                 controls = post.items()
                 try:
                     appstruct = form.validate(controls)
-                except ValidationFailure, e:
+                except deform.ValidationFailure, e:
                     self.response['form'] = e.render()
                     return self.response
                 del speaker_list.speaker_log[speaker][:]
                 speaker_list.speaker_log[speaker].extend(appstruct['logs'])
-            ai = self.sl_handler.get_expected_context_for(speaker_list.name)
+            ai = find_interface(speaker_list, IAgendaItem)
             url = self.request.resource_url(ai, 'manage_speaker_list')
             return HTTPFound(location = url)
         appstruct = {'logs': speaker_list.speaker_log[speaker]}
