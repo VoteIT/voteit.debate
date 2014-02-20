@@ -22,9 +22,8 @@ _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 @colander.deferred
 def deferred_speaker_list_plugin_widget(node, kw):
     """ Return a radio choice widget or a hidden widget if it's the default one. """
-    context = kw['context']
     request = kw['request']
-    values = get_speaker_list_plugins(context, request)
+    values = get_speaker_list_plugins(request)
     if len(values) > 1:
         return deform.widget.RadioChoiceWidget(values = values)
     return deform.widget.HiddenWidget()

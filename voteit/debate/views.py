@@ -549,5 +549,5 @@ def manage_speaker_lists_tabs(context, request, va, **kw):
 @view_action('manage_speaker_lists', 'speaker_list_plugin', title = _(u"Speaker list plugin"),
              permission = security.MODERATE_MEETING, link = 'speaker_list_plugin')
 def speaker_list_handlers_menu_item(context, request, va, **kw):
-    if len(get_speaker_list_plugins(context, request)) > 1:
+    if len(get_speaker_list_plugins(request)) > 1:
         return generic_tab_any_querystring(context, request, va, **kw)

@@ -131,7 +131,7 @@ _POSSIBLE_STATES = {u"open": _(u"Open"), u"closed": _(u"Closed")}
 @adapter(ISpeakerList)
 class SpeakerListPlugin(object):
     """ See .interfaces.ISpeakerListPlugin """
-    plugin_name = u''
+    plugin_name = u'default'
     plugin_title = _(u"Default list handler")
     plugin_description = u""
     __parent__ = None
@@ -202,15 +202,12 @@ class SpeakerListPlugin(object):
     def get_position(self, pn):
         use_lists = self.settings.get('speaker_list_count')
         safe_pos = self.settings.get('safe_positions')
-        def _compare_val(pn):
-            n = len(self.speaker_log.get(pn, ())) + 1
-            return n < use_lists and n or use_lists
-        compare_val = _compare_val(pn)
+        compare_val = self.get_number_for(pn)
         pos = len(self.speakers)
         for pn in reversed(self.speakers):
             if pos == safe_pos:
                 break
-            if compare_val >= _compare_val(pn):
+            if compare_val >= self.get_number_for(pn):
                 break
             pos -= 1
         return pos
@@ -274,7 +271,7 @@ class SpeakerListPlugin(object):
         return _POSSIBLE_STATES.get(self.state, u"")
 
     def __repr__(self): # pragma : no cover
-        return "<SpeakerListPlugin> named '%s' adapting %s" % (self.name, self.context.__repr__())
+        return "<%s> named '%s' adapting %s" % (self.__class__.__name__, self.name, self.context.__repr__())
 
 
 @implementer(ISpeakerList)
@@ -297,9 +294,8 @@ class SpeakerList(Persistent):
         return "<SpeakerList> '%s' with %s speakers" % (self.title.encode('utf-8'), len(self.speakers))
 
 
-def get_speaker_list_plugins(context, request):
-    meeting = find_interface(context, IMeeting)
-    return [(name, plugin.plugin_title) for (name, plugin) in request.registry.getAdapters([meeting], ISpeakerListPlugin)]
+def get_speaker_list_plugins(request):
+    return [(x.name, x.factory.plugin_title) for x in request.registry.registeredAdapters() if x.provided == ISpeakerListPlugin]
 
 def includeme(config):
     config.registry.registerAdapter(SpeakerLists)
