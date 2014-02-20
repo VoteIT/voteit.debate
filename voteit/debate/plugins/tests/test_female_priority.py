@@ -153,3 +153,10 @@ class FemalePrioritySLTests(unittest.TestCase):
         obj.speakers.extend([1, 11, 2, 12, 3, 4, 5])
         obj.add(13)
         self.assertEqual(obj.speakers, [1, 11, 2, 12, 3, 13, 4, 5])
+
+    def test_female_last_not_bypassed(self):
+        lists = self._fixture(safe_positions = 1)
+        obj = lists['uid/1']
+        obj.speakers.extend([1, 11])
+        obj.add(12)
+        self.assertEqual(obj.speakers, [1, 11, 12])

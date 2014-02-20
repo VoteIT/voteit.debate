@@ -67,6 +67,8 @@ class FemalePrioritySL(SpeakerListPlugin):
                 #In that case, break
                 if pn not in females:
                     break
+                if speaker in females:
+                    break
                 cur_iter_pos = self.speakers.index(speaker)
                 if cur_iter_pos > 0:
                     before_pn = self.speakers[cur_iter_pos-1]
