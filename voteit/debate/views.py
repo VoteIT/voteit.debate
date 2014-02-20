@@ -117,7 +117,6 @@ class ListActions(BaseActionView):
         if new_name:
             self.action_list.title = new_name
             self.success()
-        return self._tmp_redirect_url()
         return self.response
 
     @view_config(request_param = "action=active")
