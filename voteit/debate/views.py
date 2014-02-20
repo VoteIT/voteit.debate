@@ -391,17 +391,17 @@ class FullscreenSpeakerList(object):
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
         root = self.context.__parent__
         active_list = slists.get(slists.active_list_name)
-        num_lists = self.context.get_field_value('speaker_list_count', 1)
-        if active_list.current != None: #Note could be int 0!
-            userid = participant_numbers.number_to_userid[active_list.current]
-            active_speaker = root.users[userid]
-        else:
-            active_speaker = None
+        active_speaker = None
         speaker_profiles = []
-        for num in active_list.speakers:
-            userid = participant_numbers.number_to_userid.get(num)
-            if userid:
-                speaker_profiles.append(root.users[userid])
+        num_lists = self.context.get_field_value('speaker_list_count', 1)
+        if active_list:
+            if active_list.current != None: #Note could be int 0!
+                userid = participant_numbers.number_to_userid[active_list.current]
+                active_speaker = root.users[userid]
+            for num in active_list.speakers:
+                userid = participant_numbers.number_to_userid.get(num)
+                if userid:
+                    speaker_profiles.append(root.users[userid])
 
         def _get_user_list_number(userid):
             pn = participant_numbers.userid_to_number[userid]

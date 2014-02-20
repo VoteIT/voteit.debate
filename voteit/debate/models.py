@@ -131,7 +131,7 @@ _POSSIBLE_STATES = {u"open": _(u"Open"), u"closed": _(u"Closed")}
 @adapter(ISpeakerList)
 class SpeakerListPlugin(object):
     """ See .interfaces.ISpeakerListPlugin """
-    plugin_name = u'default'
+    plugin_name = u''
     plugin_title = _(u"Default list handler")
     plugin_description = u""
     __parent__ = None
@@ -204,10 +204,10 @@ class SpeakerListPlugin(object):
         safe_pos = self.settings.get('safe_positions')
         compare_val = self.get_number_for(pn)
         pos = len(self.speakers)
-        for pn in reversed(self.speakers):
+        for speaker in reversed(self.speakers):
             if pos == safe_pos:
                 break
-            if compare_val >= self.get_number_for(pn):
+            if compare_val >= self.get_number_for(speaker):
                 break
             pos -= 1
         return pos
