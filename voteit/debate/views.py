@@ -36,6 +36,7 @@ from .fanstaticlib import voteit_debate_user_speaker_css
 
 from .interfaces import ISpeakerLists
 from .models import get_speaker_list_plugins
+from .models import populate_from_proposals
 from . import DebateTSF as _
 
 
@@ -100,7 +101,6 @@ class ListActions(BaseActionView):
             self.action_list.state = state
             self.success()
         return self._tmp_redirect_url()
-        return self.response
 
     @view_config(request_param = "action=delete")
     def delete(self):
@@ -109,7 +109,6 @@ class ListActions(BaseActionView):
             del self.slists[self.list_name]
             self.success()
         return self._tmp_redirect_url()
-        return self.response
 
     @view_config(request_param = "action=rename")
     def rename(self):
@@ -126,7 +125,6 @@ class ListActions(BaseActionView):
             self.slists.active_list_name = self.list_name
             self.success()
         return self._tmp_redirect_url()
-        return self.response
 
     @view_config(request_param = "action=undo")
     def undo(self):
@@ -145,6 +143,18 @@ class ListActions(BaseActionView):
         self.action_list.speaker_log.clear()
         self.success()
         return self.response
+
+    @view_config(request_param = "action=populate_from_proposals")
+    def populate_from_proposals(self):
+        result = populate_from_proposals(self.action_list)
+        msg = _(u"Added ${count} speakers from published proposals in this context.",
+                                     mapping = {'count': result})
+        self.response['message'] = msg
+        self.success()
+        #FIXME: Remove this
+        api = self._api()
+        api.flash_messages.add(msg)
+        return self._tmp_redirect_url()
 
 
 @view_defaults(context = IMeeting, name = "speaker_action", permission = security.MODERATE_MEETING, renderer = "json")

@@ -6,8 +6,13 @@ from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.agenda_item import AgendaItem
 from voteit.core.models.meeting import Meeting
+from voteit.core.models.proposal import Proposal
+from voteit.core.models.user import User
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
+from voteit.core.testing_helpers import bootstrap_and_fixture
+from voteit.core.security import unrestricted_wf_transition_to
+from voteit.irl.models.interfaces import IParticipantNumbers
 
 from .interfaces import ISpeakerList
 from .interfaces import ISpeakerLists
@@ -364,3 +369,71 @@ class SpeakerListTests(unittest.TestCase):
 
     def test_verify_object(self):
         self.failUnless(verifyObject(ISpeakerList, self._cut('Hello world')))
+
+
+class PopulateFromProposalsTests(unittest.TestCase):
+
+    def setUp(self):
+        self.config = testing.setUp(request = testing.DummyRequest())
+
+    def tearDown(self):
+        testing.tearDown()
+
+    @property
+    def _fut(self):
+        from .models import populate_from_proposals
+        return populate_from_proposals
+
+    def _fixture(self, **kw):
+        self.config.include('voteit.debate')
+        root = bootstrap_and_fixture(self.config)
+        root['m'] = meeting = Meeting()
+        meeting.set_field_appstruct(kw)
+        _add_pn_users(self.config, meeting)
+        meeting['ai'] = ai = AgendaItem()
+        ai.uid = 'uid'
+        for i in range(1, 4):
+            for j in range(1, 3):
+                ai['p_%s_%s' % (i, j)] = Proposal(creators = ['user_%s' % i])
+        request = testing.DummyRequest()
+        lists = request.registry.getAdapter(meeting, ISpeakerLists)
+        lists.add_contextual_list(ai)
+        return lists
+
+    def test_included(self):
+        lists = self._fixture()
+        sl = lists['uid/1']
+        res = self._fut(sl)
+        self.assertEqual(res, 3)
+        self.assertEqual(sl.speakers, [1, 2, 3])
+
+    def test_some_in_list(self):
+        lists = self._fixture()
+        sl = lists['uid/1']
+        sl.speakers.append(2)
+        res = self._fut(sl)
+        self.assertEqual(res, 2)
+        self.assertEqual(sl.speakers, [2, 1, 3])
+
+    def test_only_published(self):
+        lists = self._fixture()
+        sl = lists['uid/1']
+        ai = sl.__parent__
+        for i in range(1, 3):
+            unrestricted_wf_transition_to(ai['p_1_%s' % i], 'voting')
+        res = self._fut(sl)
+        self.assertEqual(res, 2)
+        self.assertEqual(sl.speakers, [2, 3])
+
+
+def _add_pn_users(config, meeting):
+    config.include('voteit.irl.models.participant_numbers')
+    root = meeting.__parent__
+    participant_numbers = config.registry.getAdapter(meeting, IParticipantNumbers)
+    participant_numbers.new_tickets('admin', 1, 6)
+    participant_numbers.token_to_number.clear()
+    for i in range(1, 6):
+        root.users['user_%s' % i] = User()
+        participant_numbers.token_to_number[str(i)] = i
+        participant_numbers.claim_ticket('user_%s' % i, str(i))
+    

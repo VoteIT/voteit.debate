@@ -14,6 +14,7 @@ from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
+from voteit.irl.models.interfaces import IParticipantNumbers
 
 from .interfaces import ISpeakerList
 from .interfaces import ISpeakerLists
@@ -293,6 +294,29 @@ class SpeakerList(Persistent):
     def __repr__(self): # pragma : no cover
         return "<SpeakerList> '%s' with %s speakers" % (self.title.encode('utf-8'), len(self.speakers))
 
+
+def populate_from_proposals(sl, request = None):
+    if request is None:
+        request = get_current_request()
+    ai = find_interface(sl, IAgendaItem)
+    assert ai
+    meeting = find_interface(sl, IMeeting)
+    assert meeting
+    participant_numbers = request.registry.getAdapter(meeting, IParticipantNumbers)
+    #participant_numbers.userid_to_number
+    handled_userids = set()
+    found = 0
+    for prop in ai.get_content(content_type = 'Proposal', states = ['published'], sort_on = 'created'):
+        userid = prop.creators[0]
+        if userid in handled_userids:
+            continue
+        handled_userids.add(userid)
+        pn = participant_numbers.userid_to_number.get(userid, None)
+        if not pn or pn in sl.speakers:
+            continue
+        sl.add(pn, override = True)
+        found += 1
+    return found
 
 def get_speaker_list_plugins(request):
     return [(x.name, x.factory.plugin_title) for x in request.registry.registeredAdapters() if x.provided == ISpeakerListPlugin]

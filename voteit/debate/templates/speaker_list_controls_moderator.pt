@@ -21,6 +21,10 @@
                 <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'delete', 'list_name': sl.name, 'ai_name': context.__name__})}"
                    i18n:translate="">Delete</a>
             </li>
+            <li>
+                <a href="${request.resource_url(api.meeting, 'speaker_list_action', query = {'action': 'populate_from_proposals', 'list_name': sl.name, 'ai_name': context.__name__})}"
+                   i18n:translate="">Populate from proposals</a>
+            </li>
         </ul>
     </span>
     <a class="editpen rename_sl" title="rename" i18n:attributes="title">&nbsp;</a>
