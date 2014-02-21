@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-11-24 10:56+0100\n"
-"PO-Revision-Date: 2013-11-24 10:57+0100\n"
+"POT-Creation-Date: 2014-02-21 11:36+0100\n"
+"PO-Revision-Date: 2014-02-21 11:40+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -27,19 +27,36 @@ msgstr "Inget att starta"
 msgid "Speaker already in this list"
 msgstr "Talaren redan i listan"
 
-#: voteit/debate/models.py:83
+#: voteit/debate/models.py:127
 msgid "Open"
 msgstr "Öppen"
 
-#: voteit/debate/models.py:83
+#: voteit/debate/models.py:127
 msgid "Closed"
 msgstr "Stängd"
 
-#: voteit/debate/schemas.py:13
+#: voteit/debate/models.py:135
+msgid "Default list handler"
+msgstr "Normal listhanterare"
+
+#: voteit/debate/schemas.py:14
 msgid "Add speaker"
 msgstr "Lägg till talare"
 
-#: voteit/debate/schemas.py:23
+#: voteit/debate/schemas.py:37
+#| msgid "Manage speaker list"
+msgid "Plugin to handle speaker lists"
+msgstr "Plugin som ska hantera talarlista"
+
+#. Default: If you've registered anything esle as a plugin capable of adjusting
+#. speaker list behaviour.
+#: voteit/debate/schemas.py:38
+#| msgid "speaker_lists_to_use_description"
+msgid "speaker_list_functionality_description"
+msgstr ""
+"Om du har registrerat någonting som kan justera betéendet hos talarlistorna."
+
+#: voteit/debate/schemas.py:48
 msgid "Number of speaker lists to use"
 msgstr "Antal talarlistor att använda"
 
@@ -51,7 +68,7 @@ msgstr "Antal talarlistor att använda"
 #. everyone who's spoken 1 or more times. However, when entering the queue
 #. someone
 #. who's spoken 2 times and 4 will be treated equally.
-#: voteit/debate/schemas.py:24
+#: voteit/debate/schemas.py:49
 msgid "speaker_lists_to_use_description"
 msgstr ""
 "Med fler talarlistor prioriteras de som har pratat mindre än någon annan, "
@@ -59,20 +76,20 @@ msgstr ""
 "någon som inte ha pratat få prata före alla som har pratat förut. Men någon "
 "som har pratat 2 gånger får inte gå före någon som pratat 4 gånger."
 
-#: voteit/debate/schemas.py:34
+#: voteit/debate/schemas.py:59
 msgid "Show user controls for speaker list statuses"
 msgstr "Visa användarkontroller för talarlistor"
 
 #. Default: Users will need participant numbers to add themselves to the
 #. speakers
 #. list. This includes administrators too!
-#: voteit/debate/schemas.py:35
+#: voteit/debate/schemas.py:60
 msgid "show_controls_participants_description"
 msgstr ""
 "Användare behöver deltagarnummer för att lägga till sig som talare. Detta "
 "gäller administratörer också!"
 
-#: voteit/debate/schemas.py:43
+#: voteit/debate/schemas.py:68
 msgid "Safe positions"
 msgstr "Säkra positioner"
 
@@ -81,70 +98,106 @@ msgstr "Säkra positioner"
 #. used,
 #. the next speaker in line will never be moved down regardless of what list
 #. they're on.
-#: voteit/debate/schemas.py:44
+#: voteit/debate/schemas.py:69
 msgid "safe_positions_description"
 msgstr ""
 "Flytta inte ner användare från denna position även om de borde förlora sin "
 "plats. Exempel, om 1 skrivs här och 2 talarlistor används så kommer "
 "nästkommande talare aldrig flyttas ner oavsett vilken talarlista de är i."
 
-#: voteit/debate/schemas.py:52
+#: voteit/debate/schemas.py:77
+msgid "Maximum times allowed to speak per list"
+msgstr "Max tillåtet antal gånger att prata per lista"
+
+#. Default: If anything else than '0', users aren't able to add themselves to
+#. the
+#. list when they've spoken more times that this number.
+#: voteit/debate/schemas.py:78
+#| msgid "safe_positions_description"
+msgid "max_times_in_list_description"
+msgstr ""
+"Om något annat än '0' så tillåts användare inte sätta upp sig på talarlistan "
+"när de pratat fler gånger än detta nummer."
+
+#: voteit/debate/schemas.py:84
 msgid "Managers speaker list reload interval"
 msgstr "Intervall för omladdning av administratörers talarlista"
 
-#: voteit/debate/schemas.py:53 voteit/debate/schemas.py:59
-#: voteit/debate/schemas.py:65
+#: voteit/debate/schemas.py:85 voteit/debate/schemas.py:91
+#: voteit/debate/schemas.py:97
 msgid "In seconds. After this timeout the list will be updated."
 msgstr "I sekunder. Efter denna timeout kommer listan uppdateras."
 
-#: voteit/debate/schemas.py:58
+#: voteit/debate/schemas.py:90
 msgid "Reload interval for spekers in queue"
 msgstr "Omladdningsintervall för talare i kö"
 
-#: voteit/debate/schemas.py:64
+#: voteit/debate/schemas.py:96
 msgid "Reload interval for anyone not in queue"
 msgstr "Omladdningsintervall för alla som inte är i kön"
 
-#: voteit/debate/views.py:55
+#: voteit/debate/views.py:175
+#| msgid "Speaker already in this list"
+msgid "Already in list"
+msgstr "Talaren redan i listan"
+
+#: voteit/debate/views.py:181
+msgid "No user with that number"
+msgstr "Ingen användare med det numret"
+
+#: voteit/debate/views.py:217
 msgid "Add"
 msgstr "Lägg till"
 
-#: voteit/debate/views.py:176
+#: voteit/debate/views.py:227
 msgid "(No user associated)"
 msgstr "(Ingen användare associerad)"
 
-#: voteit/debate/views.py:193
+#: voteit/debate/views.py:323
 msgid "Save"
 msgstr "Spara"
 
-#: voteit/debate/views.py:193
+#: voteit/debate/views.py:323
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: voteit/debate/views.py:301
+#: voteit/debate/views.py:443
 msgid "Speaker list doesn't exist"
 msgstr "Talarlistan existerar inte"
 
-#: voteit/debate/views.py:344 voteit/debate/views.py:363
+#: voteit/debate/views.py:492 voteit/debate/views.py:511
 #: voteit/debate/templates/speaker_statistics.pt:14
 msgid "Speaker statistics"
 msgstr "Talarstatistik"
 
-#: voteit/debate/views.py:345
+#: voteit/debate/views.py:493
 msgid "Seconds"
 msgstr "Sekunder"
 
-#: voteit/debate/views.py:361
+#: voteit/debate/views.py:509
 msgid "Speaker list for projectors"
 msgstr "Talarlista för projektor"
 
-#: voteit/debate/views.py:365
+#: voteit/debate/views.py:513
 msgid "Speaker list settings"
 msgstr "Talarlistinställningar"
 
-#: voteit/debate/views.py:372
+#: voteit/debate/views.py:520
 msgid "Manage speaker list"
 msgstr "Hantera talarlista"
+
+#: voteit/debate/views.py:545
+msgid "Settings"
+msgstr "Inställningar"
+
+#: voteit/debate/views.py:549
+#| msgid "Speaker list settings"
+msgid "Speaker list plugin"
+msgstr "Plugin för talarlistor"
+
+#: voteit/debate/plugins/female_priority.py:49
+msgid "Females get to pass men every 2nd time"
+msgstr "Kvinnor får gå förbi män var annan gång"
 
 #: voteit/debate/templates/fullscreen_list.pt:44
 msgid "No list currently active"
@@ -167,57 +220,61 @@ msgstr "Möteslogo"
 msgid "(Activate list to show controls)"
 msgstr "(Aktivera lista för att visa kontroller)"
 
-#: voteit/debate/templates/manage_speaker_list.pt:21
+#: voteit/debate/templates/manage_speaker_list.pt:22
 msgid "Start"
 msgstr "Start"
 
-#: voteit/debate/templates/manage_speaker_list.pt:24
+#: voteit/debate/templates/manage_speaker_list.pt:25
 msgid "Pause"
 msgstr "Paus"
 
-#: voteit/debate/templates/manage_speaker_list.pt:27
+#: voteit/debate/templates/manage_speaker_list.pt:29
 msgid "Finished"
 msgstr "Avslutad"
 
-#: voteit/debate/templates/manage_speaker_list.pt:30
+#: voteit/debate/templates/manage_speaker_list.pt:32
 msgid "Quickstart next"
 msgstr "Snabbstarta nästa"
 
-#: voteit/debate/templates/manage_speaker_list.pt:33
+#: voteit/debate/templates/manage_speaker_list.pt:35
 msgid "Undo start"
 msgstr "Ångra start"
 
-#: voteit/debate/templates/manage_speaker_list.pt:36
+#: voteit/debate/templates/manage_speaker_list.pt:38
 msgid "Shuffle queue"
 msgstr "Blanda kön"
 
-#: voteit/debate/templates/manage_speaker_list.pt:58
-msgid "Close list"
-msgstr "Stäng lista"
-
-#: voteit/debate/templates/manage_speaker_list.pt:60
-msgid "Open list"
-msgstr "Öppna lista"
-
-#: voteit/debate/templates/manage_speaker_list.pt:64
-msgid "Delete"
-msgstr "Radera"
-
-#: voteit/debate/templates/manage_speaker_list.pt:69
-msgid "rename"
-msgstr "byt namn"
-
-#: voteit/debate/templates/manage_speaker_list.pt:84
+#: voteit/debate/templates/manage_speaker_list.pt:53
 msgid "New list"
 msgstr "Ny lista"
 
-#: voteit/debate/templates/manage_speaker_list.pt:88
+#: voteit/debate/templates/manage_speaker_list.pt:57
 msgid "Speaker log"
 msgstr "Talarlogg"
 
-#: voteit/debate/templates/manage_speaker_list.pt:90
+#: voteit/debate/templates/manage_speaker_list.pt:59
 msgid "Clear"
 msgstr "Rensa"
+
+#: voteit/debate/templates/speaker_list_controls_moderator.pt:5
+msgid "Reload"
+msgstr "Ladda om"
+
+#: voteit/debate/templates/speaker_list_controls_moderator.pt:13
+msgid "Close list"
+msgstr "Stäng lista"
+
+#: voteit/debate/templates/speaker_list_controls_moderator.pt:16
+msgid "Open list"
+msgstr "Öppna lista"
+
+#: voteit/debate/templates/speaker_list_controls_moderator.pt:21
+msgid "Delete"
+msgstr "Radera"
+
+#: voteit/debate/templates/speaker_list_controls_moderator.pt:26
+msgid "rename"
+msgstr "byt namn"
 
 #: voteit/debate/templates/speaker_statistics.pt:16
 msgid "Back"
@@ -247,14 +304,19 @@ msgstr "i kö"
 msgid "Add yourself"
 msgstr "Sätt upp dig"
 
-#: voteit/debate/templates/user_speaker.pt:24
+#. Default: You've already spoken ${count} times.
+#: voteit/debate/templates/user_speaker.pt:23
+msgid "over_limit_notice"
+msgstr "Duhar redan pratat ${count} gånger."
+
+#: voteit/debate/templates/user_speaker.pt:30
 msgid "Remove yourself"
 msgstr "Stryk dig"
 
-#: voteit/debate/templates/user_speaker.pt:30
+#: voteit/debate/templates/user_speaker.pt:36
 msgid "You will enter list att position ${num} if you wish to speak"
 msgstr "Om du begär ordet hamnar du på position ${num}"
 
-#: voteit/debate/templates/user_speaker.pt:37
+#: voteit/debate/templates/user_speaker.pt:43
 msgid "${num} speakers before you"
 msgstr "${num} talare före dig"
