@@ -292,7 +292,7 @@ class SpeakerList(Persistent):
         self.state = state
 
     def __repr__(self): # pragma : no cover
-        return "<SpeakerList> '%s' with %s speakers" % (self.title.encode('utf-8'), len(self.speakers))
+        return "<%s> '%s' with %s speakers" % (self.__class__.__name__, self.name, len(self.speakers))
 
 
 def populate_from_proposals(sl, request = None):
