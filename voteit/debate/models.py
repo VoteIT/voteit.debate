@@ -55,7 +55,7 @@ class SpeakerLists(object):
 
     @active_list_name.setter
     def active_list_name(self, key):
-        if key in self.speaker_lists or key is None:
+        if key is None or key in self.speaker_lists:
             self.context.__active_speaker_list__ = key
             return key
         raise KeyError("No list named '%s'" % key)
