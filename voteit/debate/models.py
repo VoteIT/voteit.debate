@@ -72,7 +72,9 @@ class SpeakerLists(object):
         return key
 
     def get(self, key, default = None):
-        return key in self and self[key] or default
+        if key and key in self:
+            return self[key]
+        return default
 
     def get_contexual_list_names(self, context):
         results = []
