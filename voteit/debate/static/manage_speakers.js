@@ -22,7 +22,7 @@ $(document).ready(function () {
     $("form#add_speaker").on("submit", add_speaker);
     $("#clear_speaker_log").on("click", clear_speaker_log);
     //Focus
-    $("name=[pn]").focus();
+    $('[name="pn"]').focus();
 });
 
 function do_request(url, options) {
@@ -30,12 +30,12 @@ function do_request(url, options) {
     if (typeof(options) !== 'undefined') $.extend(settings, options);
     var request = $.ajax(settings);
     request.fail(function(jqXHR) {
-        flash_message(jqXHR.status + ' ' + jqXHR.statusText, 'error', true, 3, true);
+        arche.create_flash_message(jqXHR.status + ' ' + jqXHR.statusText, {type: 'danger', 'auto_destruct': true});
     });
     request.done(function(data, textStatus, jqXHR) {
         if (typeof(data) === 'object' && 'message' in data) {
             var msg_cls = data['success'] == true ? 'info' : 'error';
-            flash_message(data['message'], msg_cls, true, 5, true);
+            arche.create_flash_message(data['message']);
         }
     });
     return request;
@@ -57,7 +57,7 @@ function load_speaker_queue() {
     request.done(function() {
         $(".promote_start_speaker").on("click", promote_start_speaker);
         $(".remove_speaker").on("click", remove_speaker);
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
     });
     request.always(function() {
         reload_timer = setInterval(load_speaker_queue, reload_interval);
@@ -66,10 +66,10 @@ function load_speaker_queue() {
 
 function load_speaker_log() {
     if ($('#speaker_log').length > 0) {
-        spinner().appendTo('#speaker_log');
+        //spinner().appendTo('#speaker_log');
         var request = load_request(voteit.cfg['meeting_url'] + '_speaker_log_moderator', '#speaker_log', {async: true});
         request.always(function() {
-            $('img.spinner').remove();
+            //$('img.spinner').remove();
         });
     }
 }
@@ -77,17 +77,17 @@ function load_speaker_log() {
 function load_speaker_lists(event) {
     event.preventDefault();
     var url = $(event.delegateTarget).attr('href');
-    spinner().appendTo('#reload_slists_js');
+    //spinner().appendTo('#reload_slists_js');
     var request = load_request(url, '#slists');
     request.done(function() {
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
         $("#reload_slists_js").on("click", load_speaker_lists);
     });
 }
 
 function rename_speaker_show(event) {
     event.preventDefault();
-    var sl_item = $(event.target).parents('li');
+    var sl_item = $(event.target).parents('.list-group-item');
     sl_item.children('.sl_title').hide();
     sl_item.children('.rename_form').show();
 }
@@ -105,23 +105,23 @@ function rename_speaker_submit(event) {
 
 function clear_speaker_log(event) {
     event.preventDefault();
-    spinner().appendTo($(event.target));
+    //spinner().appendTo($(event.target));
     var url = $(event.target).attr('href');
     var request = do_request(url);
     request.done(function() {
         $("#speaker_log").empty();
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
     });
 }
 
 function add_speaker(event) {
     event.preventDefault();
-    spinner().appendTo("input");
+    //spinner().appendTo("input");
     var form = $(this);
     var speaker_id = $("[name='pn']").attr('value');
     // Does this speaker exist already?
     if ($("#speaker_queue [value='" + speaker_id + "']").length > 0) {
-        flash_message(voteit.translation['speaker_already_in_list'], 'error', true, 3, true);
+        arche.create_flash_message(voteit.translation['speaker_already_in_list'], {type: 'danger', auto_destruct: true});
         $("[name='pn']").val("");
         return false;
     }
@@ -132,7 +132,7 @@ function add_speaker(event) {
         load_speaker_queue();
     });
     request.always(function() {
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
     });
 }
 
@@ -220,7 +220,7 @@ function finished_speaker(event, reload_queue) {
     var request = do_request(url);
     request.done(function() {
         //Success
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
         spoken_time = 0;
         $('#speaker_active li').remove();
         load_speaker_log();
@@ -262,7 +262,7 @@ function generic_speaker_list_get_actions(event) {
     event.preventDefault();
     var url = $(event.delegateTarget).attr('href');
     if (typeof(url) === 'undefined') return;
-    spinner().appendTo(event.target);
+    //spinner().appendTo(event.target);
     var request = do_request(url);
     request.done(function(data) {
         if (data['success'] == true) {

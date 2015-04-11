@@ -17,10 +17,10 @@
         <div class="time_spoken"></div>
     </div>
     <div class="speaker_controls">
-        <a href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'active'})}"
+        <a href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'active'})}"
            class="promote_start_speaker">&nbsp;</a>
         <a class="remove_speaker"
-           href="${request.resource_url(api.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'remove'})}">&nbsp;</a>
+           href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'remove'})}">&nbsp;</a>
     </div>
     <input type="hidden" name="speaker_id" value="${pn}" />
     <div class="clear"><!-- --></div>

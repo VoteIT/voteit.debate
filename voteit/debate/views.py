@@ -206,7 +206,7 @@ class SpeakerActions(BaseActionView):
         if pn is not None and self.action_list.speaker_active(pn) is not None:
             self.success()
             userid = self.participant_numbers.number_to_userid.get(pn)
-            self.response['active_speaker'] = speaker_item_moderator(pn, self._api(), self.action_list, userid = userid)
+            self.response['active_speaker'] = speaker_item_moderator(pn, self, self.action_list, userid = userid)
         return self.response
 
     @view_config(request_param = "action=remove")
@@ -226,29 +226,28 @@ class SpeakerActions(BaseActionView):
         return self.response
 
 
-def get_add_speaker_form(view, list_name):
-    schema = get_content_schemas(view.request.registry)['SpeakerLists']['add_speaker']()
-    objectEventNotify(SchemaCreatedEvent(schema))
-    schema = schema.bind(context = view.context, request = view.request, view = view)
-    action_url = view.request.resource_url(view.request.meeting, 'speaker_action',
-                                           query = {'action': 'add', 'list_name': list_name})
-    return deform.Form(schema, action = action_url, buttons = (button_add,), formid = "add_speaker")
+# def get_add_speaker_form(view, list_name):
+#     schema = get_content_schemas(view.request.registry)['SpeakerLists']['add_speaker']()
+#     objectEventNotify(SchemaCreatedEvent(schema))
+#     schema = schema.bind(context = view.context, request = view.request, view = view)
+#     action_url = view.request.resource_url(view.request.meeting, 'speaker_action',
+#                                            query = {'action': 'add', 'list_name': list_name})
+#     return deform.Form(schema, action = action_url, buttons = (button_add,), formid = "add_speaker")
 
 
-def speaker_item_moderator(pn, api, slist, userid = None):
+def speaker_item_moderator(pn, view, slist, userid = None):
     use_lists = slist.settings['speaker_list_count']
     safe_positions = slist.settings['safe_positions']
     response = {}
     if userid:
-        response['user_info'] = api.get_creators_info([userid], portrait = False)
+        response['user_info'] = view.request.creators_info([userid], portrait = False)
     else:
         response['user_info'] = _(u"(No user associated)")
     response['slist'] = slist
-    response['api'] = api
     response['pn'] = pn
     response['is_active'] = pn == slist.current
     response['is_locked'] = pn in slist.speakers and slist.speakers.index(pn) < safe_positions
-    return render("templates/speaker_item.pt", response, request = api.request)
+    return render("voteit.debate:templates/speaker_item.pt", response, request = view.request)
 
 def speaker_list_controls_moderator(view, slists, ai):
     assert IAgendaItem.providedBy(ai)
@@ -275,8 +274,8 @@ class ManageSpeakerList(BaseView):
     def active_list(self):
         return self.slists.get(self.slists.active_list_name)
 
-    def get_add_form(self):
-        return get_add_speaker_form(self, self.slists.active_list_name)
+   # def get_add_form(self):
+   #     return get_add_speaker_form(self, self.slists.active_list_name)
 
     @view_config(name = "manage_speaker_list",
                  permission = security.MODERATE_MEETING,
@@ -286,50 +285,50 @@ class ManageSpeakerList(BaseView):
         voteit_debate_manage_speakers_js.need()
         voteit_debate_speaker_view_styles.need()
         response = {}
-        if self.active_list:
-            response['add_form'] = self.get_add_form().render()
-        else:
-            response['add_form'] = u""
         response['context_active'] = self.slists.active_list_name in self.slists.get_contexual_list_names(self.context)
         response['active_list'] = self.slists.get(self.slists.active_list_name)
         response['speaker_item'] = self.speaker_item
         response['speaker_list_controls'] = speaker_list_controls_moderator(self, self.slists, self.context)
         return response
 
-    @view_config(name = "_speaker_queue_moderator", permission = security.MODERATE_MEETING,
-                 renderer = "templates/speaker_queue_moderator.pt")
+    @view_config(name = "_speaker_queue_moderator",
+                 permission = security.MODERATE_MEETING,
+                 renderer = "voteit.debate:templates/speaker_queue_moderator.pt")
     def speaker_queue_moderator(self):
-        self.response['active_list'] = self.active_list
-        self.response['speaker_item'] = self.speaker_item
-        self.response['use_lists'] = self.request.meeting.get_field_value('speaker_list_count', 1)
-        self.response['safe_pos'] = self.request.meeting.get_field_value('safe_positions', 0)
-        return self.response
+        response = {}
+        response['active_list'] = self.active_list
+        response['speaker_item'] = self.speaker_item
+        response['use_lists'] = self.request.meeting.get_field_value('speaker_list_count', 1)
+        response['safe_pos'] = self.request.meeting.get_field_value('safe_positions', 0)
+        return response
 
-    @view_config(name = "_speaker_log_moderator", permission = security.MODERATE_MEETING,
-                 renderer = "templates/speaker_log_moderator.pt")
+    @view_config(name = "_speaker_log_moderator",
+                 permission = security.MODERATE_MEETING,
+                 renderer = "voteit.debate:templates/speaker_log_moderator.pt")
     def speaker_log_moderator(self):
-        self.response['active_list'] = self.active_list
+        response = {}
+        response['active_list'] = self.active_list
         number_to_profile_tag = {}
         for pn in self.active_list.speaker_log.keys():
             if pn in self.participant_numbers.number_to_userid:
                 userid = self.participant_numbers.number_to_userid[pn]
-                number_to_profile_tag[pn] = self.api.get_creators_info([userid], portrait = False)
+                number_to_profile_tag[pn] = self.request.creators_info([userid], portrait = False)
             else:
                 number_to_profile_tag[pn] = pn
-        self.response['number_to_profile_tag'] = number_to_profile_tag
-        self.response['format_secs'] = self.format_seconds
-        return self.response
+        response['number_to_profile_tag'] = number_to_profile_tag
+        response['format_secs'] = self.format_seconds
+        return response
 
     @view_config(name = "_speaker_lists_moderator", context = IAgendaItem, permission = security.MODERATE_MEETING)
     def speaker_lists(self):
         if self.request.is_xhr:
-            return Response(speaker_list_controls_moderator(self.api, self.slists, self.api.context))
+            return Response(speaker_list_controls_moderator(self, self.slists, self.context))
         #Fallback in case of js error
         return HTTPFound(location = self.request.resource_url(self.context, 'manage_speaker_list'))
 
     def speaker_item(self, pn):
         userid = self.participant_numbers.number_to_userid.get(int(pn))
-        return speaker_item_moderator(pn, self.api, self.active_list, userid = userid)
+        return speaker_item_moderator(pn, self, self.active_list, userid = userid)
 
     @view_config(name = "edit_speaker_log",
                  permission = security.MODERATE_MEETING,

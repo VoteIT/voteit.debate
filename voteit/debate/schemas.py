@@ -1,18 +1,18 @@
 import colander
 import deform
 from betahaus.pyracont.decorators import schema_factory
-from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
-from voteit.irl.schemas import deferred_existing_participant_number_validator
+#from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
+#from voteit.irl.schemas import deferred_existing_participant_number_validator
 
 from voteit.debate import _
 from voteit.debate.models import get_speaker_list_plugins
 
 
-class AddSpeakerSchema(colander.Schema):
-    pn = colander.SchemaNode(colander.Int(),
-                             title = _(u"Add speaker"),
-                             widget = deferred_autocompleting_participant_number_widget,
-                             validator = deferred_existing_participant_number_validator,)
+# class AddSpeakerSchema(colander.Schema):
+#     pn = colander.SchemaNode(colander.Int(),
+#                              title = _(u"Add speaker"),
+#                              widget = deferred_autocompleting_participant_number_widget,
+#                              validator = deferred_existing_participant_number_validator,)
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
@@ -106,4 +106,4 @@ class EditSpeakerLogSchema(colander.Schema):
 
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
-    config.add_content_schema('SpeakerLists', AddSpeakerSchema, 'add_speaker')
+#    config.add_content_schema('SpeakerLists', AddSpeakerSchema, 'add_speaker')

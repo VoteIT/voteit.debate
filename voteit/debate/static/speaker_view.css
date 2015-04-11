@@ -1,3 +1,8 @@
+#slists .sl_title {
+  font-size: 120%;
+}
+
+/*
 #add_speaker {
     margin-bottom: 10px;
     border-bottom: 1px #92928e solid;
@@ -16,7 +21,8 @@
     border: 1px solid #968c89;
     color: #000;
 }
-
+*/
+/*
 #speaker_list_controls .selected {
     border: solid 1px #92928e;
 }
@@ -30,9 +36,11 @@
     float: right;
     margin-right: 5px;
 }
+*/
 #speaker_list_controls .selected .editpen {
     background-image: url(/debate_static/img/editpen_menu.png);
 }
+/*
 #speaker_list_controls li {
     border: solid 1px #92928e;
     border-radius: 5px;
@@ -43,6 +51,8 @@
     margin-bottom: 5px;
     font-size: 17px;
 }
+*/
+/*
 #right .buttonize {
     float: right;
     clear:both;
@@ -52,6 +62,8 @@
     color: #fff;
     background-color: #92928e;
 }
+*/
+/*
 #speaker_controlbox {
     padding-bottom: 10px;
     margin-bottom: 10px;
@@ -86,13 +98,14 @@
     float: right;
     padding-right: 10px;
 }
+*/
 .editpen {
     display: block;
     width: 27px;
     height: 23px;
     background: url(/debate_static/img/editpen.png) no-repeat left top;
 }
-
+/*
 #speaker_active .speaker_item,
 #speaker_active .speaker_item a {
     background-color: #928885;
@@ -160,3 +173,4 @@
     height: 23px;
     display: block;
 }
+*/

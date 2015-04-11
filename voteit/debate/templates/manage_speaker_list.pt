@@ -8,42 +8,74 @@
 <body>
 
 <div metal:fill-slot="main-content" class="row">
+  <script type="text/javascript">
+  //FIXME: Refactor
+  voteit.cfg = {};
+  voteit.cfg['meeting_url'] = '${request.resource_url(request.meeting)}';
+  </script>
       <!-- FIXME: Limit to context_active might not be what we want. Editing other inactive lists is a good idea -->
       <div class="col-xs-6" id="left">
-          <tal:not_active condition="not context_active">
-              <h3 i18n:translate="">(Activate list to show controls)</h3>
-          </tal:not_active>
-          <div id="speaker_controlbox" tal:condition="context_active">
-              <a id="start_speaker"
-                 href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'active'})}">
-                  <img src="/debate_static/img/speaker_controls_play.png" title="Start" i18n:attributes="title" />
-              </a>
-              <a id="pause_speaker">
-                  <img src="/debate_static/img/speaker_controls_pause.png" title="Pause" i18n:attributes="title" />
-              </a>
-              <a id="finished_speaker"
-                 href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'finished'})}">
-                  <img src="/debate_static/img/speaker_controls_stop.png" title="Finished" i18n:attributes="title" />
-              </a>
-              <a id="quickstart_next_speaker">
-                  <img src="/debate_static/img/speaker_controls_next.png" title="Quickstart next" i18n:attributes="title" />
-              </a>
-              <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'list_name': active_list.name, 'action': 'undo'})}" id="speaker_undo">
-                  <img src="/debate_static/img/speaker_controls_undo.png" title="Undo start" i18n:attributes="title" />
-              </a>
-              <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'list_name': active_list.name, 'action': 'shuffle'})}" id="shuffle_speakers">
-                  <img src="/debate_static/img/speaker_controls_shuffle.png" title="Shuffle queue" i18n:attributes="title" />
-              </a>
-              <div class="clear"><!-- --></div>
+        <tal:not_active condition="not context_active">
+            <h3 i18n:translate="">(Activate list to show controls)</h3>
+        </tal:not_active>
+        <div id="speaker_controlbox" class="btn-group btn-group-justified btn-group-lg" role="group" tal:condition="context_active">
+          <a id="start_speaker"
+            class="btn btn-default"
+            title="Start" i18n:attributes="title"
+            href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'active'})}">
+            <span class="glyphicon glyphicon-play"></span>
+          </a>
+          <a id="pause_speaker" class="btn btn-default" title="Pause" i18n:attributes="title">
+            <span class="glyphicon glyphicon-pause"></span>
+          </a>
+          <a id="finished_speaker"
+             title="Finished" i18n:attributes="title"
+             class="btn btn-default"
+             href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'finished'})}">
+            <span class="glyphicon glyphicon-stop"></span>
+          </a>
+          <a id="quickstart_next_speaker" class="btn btn-default" title="Quickstart next" i18n:attributes="title">
+            <span class="glyphicon glyphicon-step-forward"></span>
+          </a>
+          <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'list_name': active_list.name, 'action': 'undo'})}"
+            id="speaker_undo"
+            class="btn btn-default"
+            title="Undo start" i18n:attributes="title">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+          </a>
+          <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'list_name': active_list.name, 'action': 'shuffle'})}"
+            class="btn btn-default"
+            id="shuffle_speakers"
+            title="Shuffle queue" i18n:attributes="title">
+            <span class="glyphicon glyphicon-random"></span>
+          </a>
 
-              <tal:form replace="structure add_form">Participant number add form</tal:form>
-              <div class="clear"><!-- --></div>
+        </div>
+
+        <div class="well">
+        <form tal:condition="context_active"
+          id="add_speaker" method="POST"
+          enctype="multipart/form-data"
+          accept-charset="utf-8"
+          action="${request.resource_url(request.meeting, 'speaker_action', query = {'action': 'add', 'list_name': active_list.name})}">
+          <div class="row">
+            <div class="col-xs-6">
+              <input type="text" name="pn" class="form-control" placeholder="Add number" i18n:attributes="placeholder;">
+            </div>
+            <div class="col-xs-6">
+              <button id="add_speakeradd" name="add"
+                type="submit" class="btn btn-primary btn-block"
+                value="add"
+                i18n:translate="">Add</button>
+            </div>
           </div>
+        </form>
+        </div>
 
-          <ul id="speaker_active" class="speaker_queue">
-              <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />
-          </ul>
-          <ul id="speaker_queue" class="speaker_queue"></ul>
+        <ul id="speaker_active" class="speaker_queue">
+            <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />
+        </ul>
+        <ul id="speaker_queue" class="speaker_queue"></ul>
       </div>
       <div id="right" class="col-xs-6">
           <div id="slists" tal:content="structure speaker_list_controls"></div>
