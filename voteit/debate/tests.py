@@ -14,9 +14,9 @@ from voteit.core.testing_helpers import bootstrap_and_fixture
 from voteit.core.security import unrestricted_wf_transition_to
 from voteit.irl.models.interfaces import IParticipantNumbers
 
-from .interfaces import ISpeakerList
-from .interfaces import ISpeakerLists
-from .interfaces import ISpeakerListPlugin
+from voteit.debate.interfaces import ISpeakerList
+from voteit.debate.interfaces import ISpeakerLists
+from voteit.debate.interfaces import ISpeakerListPlugin
 
 
 class SpeakerListsTests(unittest.TestCase):
@@ -25,6 +25,7 @@ class SpeakerListsTests(unittest.TestCase):
         request = testing.DummyRequest()
         request.context = AgendaItem()
         self.config = testing.setUp(request = request)
+        self.config.include('arche.testing')
 
     def tearDown(self):
         testing.tearDown()
@@ -156,6 +157,7 @@ class SpeakerListPluginTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp(request = testing.DummyRequest())
+        self.config.include('arche.testing')
 
     def tearDown(self):
         testing.tearDown()
@@ -375,6 +377,7 @@ class PopulateFromProposalsTests(unittest.TestCase):
 
     def setUp(self):
         self.config = testing.setUp(request = testing.DummyRequest())
+        self.config.include('arche.testing')
 
     def tearDown(self):
         testing.tearDown()

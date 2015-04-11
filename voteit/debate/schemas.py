@@ -4,18 +4,17 @@ from betahaus.pyracont.decorators import schema_factory
 from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
 from voteit.irl.schemas import deferred_existing_participant_number_validator
 
-from . import DebateTSF as _
-from .models import get_speaker_list_plugins
+from voteit.debate import _
+from voteit.debate.models import get_speaker_list_plugins
 
 
-@schema_factory()
 class AddSpeakerSchema(colander.Schema):
     pn = colander.SchemaNode(colander.Int(),
                              title = _(u"Add speaker"),
                              widget = deferred_autocompleting_participant_number_widget,
                              validator = deferred_existing_participant_number_validator,)
 
-_list_alts = [(unicode(x), unicode(x)) for x in range(1, 4)]
+_list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 
 
@@ -29,20 +28,6 @@ def deferred_speaker_list_plugin_widget(node, kw):
     return deform.widget.HiddenWidget()
 
 
-@schema_factory()
-class SpeakerListPluginSchema(colander.Schema):
-    speaker_list_plugin = colander.SchemaNode(
-        colander.String(),
-        default = u"",
-        title = _(u"Plugin to handle speaker lists"),
-        description = _(u"speaker_list_functionality_description",
-                        default = u"If you've registered anything esle as a plugin capable of adjusting speaker list behaviour. "),
-        widget = deferred_speaker_list_plugin_widget,
-        missing = u"",
-    )
-
-
-@schema_factory()
 class SpeakerListSettingsSchema(colander.Schema):
     speaker_list_count = colander.SchemaNode(colander.Int(),
                                              title = _(u"Number of speaker lists to use"),
@@ -53,7 +38,7 @@ class SpeakerListSettingsSchema(colander.Schema):
                                                              u"everyone who's spoken 1 or more times. However, when entering the queue someone who's spoken "
                                                              u"2 times and 4 will be treated equally."),
                                              widget = deform.widget.SelectWidget(values = _list_alts),
-                                             default = u'1',)
+                                             default = 3)
     show_controls_for_participants = colander.SchemaNode(
         colander.Bool(),
         title = _(u"Show user controls for speaker list statuses"),
@@ -64,7 +49,7 @@ class SpeakerListSettingsSchema(colander.Schema):
     safe_positions = colander.SchemaNode(
         colander.Int(),
         widget = deform.widget.SelectWidget(values = _safe_pos_list_alts),
-        default = u'0',
+        default = 1,
         title = _(u"Safe positions"),
         description = _(u"safe_positions_description",
                         default = u"Don't move down users from this position even if they should loose their place. "
@@ -83,19 +68,31 @@ class SpeakerListSettingsSchema(colander.Schema):
         default = 4,
         title = _(u"Managers speaker list reload interval"),
         description = _(u"In seconds. After this timeout the list will be updated."),
+        tab = 'advanced',
     )
     reload_speaker_in_queue = colander.SchemaNode(
         colander.Int(),
         default = 5,
         title = _(u"Reload interval for spekers in queue"),
         description = _(u"In seconds. After this timeout the list will be updated."),
+        tab = 'advanced',
     )
     reload_speaker_not_in_queue = colander.SchemaNode(
         colander.Int(),
         default = 15,
         title = _(u"Reload interval for anyone not in queue"),
         description = _(u"In seconds. After this timeout the list will be updated."),
+        tab = 'advanced',
     )
+    speaker_list_plugin = colander.SchemaNode(
+        colander.String(),
+        default = u"",
+        title = _(u"Plugin to handle speaker lists"),
+        description = _(u"speaker_list_functionality_description",
+                        default = u"If you've registered anything esle as a plugin capable of adjusting speaker list behaviour. "),
+        widget = deferred_speaker_list_plugin_widget,
+        missing = u"",
+        tab = 'advanced')
 
 
 class LogEntries(colander.SequenceSchema):
@@ -105,3 +102,8 @@ class LogEntries(colander.SequenceSchema):
 @schema_factory()
 class EditSpeakerLogSchema(colander.Schema):
     logs = LogEntries()
+
+
+def includeme(config):
+    config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
+    config.add_content_schema('SpeakerLists', AddSpeakerSchema, 'add_speaker')

@@ -12,32 +12,36 @@ from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.traversal import find_interface
-from betahaus.pyracont.factories import createSchema
+#from betahaus.pyracont.factories import createSchema
 from betahaus.viewcomponent import view_action
 from voteit.irl.models.interfaces import IParticipantNumbers
-from voteit.core.views.base_view import BaseView
 from voteit.core.views.meeting import MeetingView
-from voteit.core.views.api import APIView
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
-from voteit.core.schemas.common import add_csrf_token
 from voteit.core import security
-from voteit.core.fanstaticlib import (voteit_main_css,
-                                      jquery_deform)
-from voteit.core.views.components.tabs_menu import render_tabs_menu
-from voteit.core.views.components.tabs_menu import generic_tab_any_querystring
+from voteit.core.fanstaticlib import voteit_main_css
+from arche.views.base import BaseView
+from arche.utils import get_content_schemas
+#from voteit.core.fanstaticlib import jquery_deform
 
-from .fanstaticlib import voteit_debate_manage_speakers_js
-from .fanstaticlib import voteit_debate_speaker_view_styles
-from .fanstaticlib import voteit_debate_fullscreen_speakers_js
-from .fanstaticlib import voteit_debate_fullscreen_speakers_css
-from .fanstaticlib import voteit_debate_user_speaker_js
-from .fanstaticlib import voteit_debate_user_speaker_css
+#from voteit.core.views.components.tabs_menu import render_tabs_menu
+#from voteit.core.views.components.tabs_menu import generic_tab_any_querystring
 
-from .interfaces import ISpeakerLists
-from .models import get_speaker_list_plugins
-from .models import populate_from_proposals
-from . import DebateTSF as _
+from voteit.debate.fanstaticlib import voteit_debate_manage_speakers_js
+from voteit.debate.fanstaticlib import voteit_debate_speaker_view_styles
+from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_js
+from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_css
+from voteit.debate.fanstaticlib import voteit_debate_user_speaker_js
+from voteit.debate.fanstaticlib import voteit_debate_user_speaker_css
+
+from voteit.debate.interfaces import ISpeakerLists
+from voteit.debate.models import get_speaker_list_plugins
+from voteit.debate.models import populate_from_proposals
+from voteit.debate import _
+from arche.views.base import DefaultEditForm
+from arche.events import SchemaCreatedEvent
+from zope.component.event import objectEventNotify
+from arche.views.base import button_add
 
 
 class BaseActionView(object):
@@ -77,7 +81,10 @@ class BaseActionView(object):
         return APIView(self.context, self.request)
 
 
-@view_defaults(context = IMeeting, name = "speaker_list_action", permission = security.MODERATE_MEETING, renderer = 'json')
+@view_defaults(context = IMeeting,
+               name = "speaker_list_action",
+               permission = security.MODERATE_MEETING,
+               renderer = 'json')
 class ListActions(BaseActionView):
 
     def _tmp_redirect_url(self):
@@ -219,12 +226,13 @@ class SpeakerActions(BaseActionView):
         return self.response
 
 
-def get_add_speaker_form(api, list_name):
-    schema = createSchema('AddSpeakerSchema')
-    schema = schema.bind(context = api.context, request = api.request, api = api)
-    action_url = api.request.resource_url(api.meeting, 'speaker_action',
-                                          query = {'action': 'add', 'list_name': list_name})
-    return deform.Form(schema, action = action_url, buttons = (deform.Button('add', _(u"Add")),), formid = "add_speaker")
+def get_add_speaker_form(view, list_name):
+    schema = get_content_schemas(view.request.registry)['SpeakerLists']['add_speaker']()
+    objectEventNotify(SchemaCreatedEvent(schema))
+    schema = schema.bind(context = view.context, request = view.request, view = view)
+    action_url = view.request.resource_url(view.request.meeting, 'speaker_action',
+                                           query = {'action': 'add', 'list_name': list_name})
+    return deform.Form(schema, action = action_url, buttons = (button_add,), formid = "add_speaker")
 
 
 def speaker_item_moderator(pn, api, slist, userid = None):
@@ -242,59 +250,62 @@ def speaker_item_moderator(pn, api, slist, userid = None):
     response['is_locked'] = pn in slist.speakers and slist.speakers.index(pn) < safe_positions
     return render("templates/speaker_item.pt", response, request = api.request)
 
-def speaker_list_controls_moderator(api, slists, context):
-    assert IAgendaItem.providedBy(context)
+def speaker_list_controls_moderator(view, slists, ai):
+    assert IAgendaItem.providedBy(ai)
     response = {}
-    response['api'] = api
-    response['context'] = context
+    response['context'] = ai
     response['active_list'] = slists.get(slists.active_list_name)
-    response['context_lists'] = slists.get_contextual_lists(context)
-    return render("templates/speaker_list_controls_moderator.pt", response, request = api.request)
+    response['context_lists'] = slists.get_contextual_lists(ai)
+    return render("templates/speaker_list_controls_moderator.pt", response, request = view.request)
 
 
-@view_defaults(context = IMeeting, permission = security.MODERATE_MEETING)
+@view_defaults(context = IMeeting,
+               permission = security.MODERATE_MEETING)
 class ManageSpeakerList(BaseView):
 
     @reify
     def slists(self):
-        return self.request.registry.getAdapter(self.api.meeting, ISpeakerLists)
+        return self.request.registry.getAdapter(self.request.meeting, ISpeakerLists)
 
     @reify
     def participant_numbers(self):
-        return self.request.registry.getAdapter(self.api.meeting, IParticipantNumbers)
+        return self.request.registry.getAdapter(self.request.meeting, IParticipantNumbers)
 
     @reify
     def active_list(self):
         return self.slists.get(self.slists.active_list_name)
 
     def get_add_form(self):
-        return get_add_speaker_form(self.api, self.slists.active_list_name)
+        return get_add_speaker_form(self, self.slists.active_list_name)
 
-    @view_config(name = "manage_speaker_list", context = IAgendaItem, permission = security.MODERATE_MEETING,
-                 renderer = "templates/manage_speaker_list.pt")
+    @view_config(name = "manage_speaker_list",
+                 permission = security.MODERATE_MEETING,
+                 context = IAgendaItem,
+                 renderer = "voteit.debate:templates/manage_speaker_list.pt")
     def manage_speaker_list_view(self):
         voteit_debate_manage_speakers_js.need()
         voteit_debate_speaker_view_styles.need()
+        response = {}
         if self.active_list:
-            self.response['add_form'] = self.get_add_form().render()
+            response['add_form'] = self.get_add_form().render()
         else:
-            self.response['add_form'] = u""
-        self.response['context_active'] = self.slists.active_list_name in self.slists.get_contexual_list_names(self.context)
-        self.response['active_list'] = self.slists.get(self.slists.active_list_name)
-        self.response['speaker_item'] = self.speaker_item
-        self.response['speaker_list_controls'] = speaker_list_controls_moderator(self.api, self.slists, self.api.context)
-        return self.response
+            response['add_form'] = u""
+        response['context_active'] = self.slists.active_list_name in self.slists.get_contexual_list_names(self.context)
+        response['active_list'] = self.slists.get(self.slists.active_list_name)
+        response['speaker_item'] = self.speaker_item
+        response['speaker_list_controls'] = speaker_list_controls_moderator(self, self.slists, self.context)
+        return response
 
-    @view_config(name = "_speaker_queue_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
+    @view_config(name = "_speaker_queue_moderator", permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_queue_moderator.pt")
     def speaker_queue_moderator(self):
         self.response['active_list'] = self.active_list
         self.response['speaker_item'] = self.speaker_item
-        self.response['use_lists'] = self.api.meeting.get_field_value('speaker_list_count', 1)
-        self.response['safe_pos'] = self.api.meeting.get_field_value('safe_positions', 0)
+        self.response['use_lists'] = self.request.meeting.get_field_value('speaker_list_count', 1)
+        self.response['safe_pos'] = self.request.meeting.get_field_value('safe_positions', 0)
         return self.response
 
-    @view_config(name = "_speaker_log_moderator", context = IMeeting, permission = security.MODERATE_MEETING,
+    @view_config(name = "_speaker_log_moderator", permission = security.MODERATE_MEETING,
                  renderer = "templates/speaker_log_moderator.pt")
     def speaker_log_moderator(self):
         self.response['active_list'] = self.active_list
@@ -320,7 +331,8 @@ class ManageSpeakerList(BaseView):
         userid = self.participant_numbers.number_to_userid.get(int(pn))
         return speaker_item_moderator(pn, self.api, self.active_list, userid = userid)
 
-    @view_config(name = "edit_speaker_log", context = IMeeting, permission = security.MODERATE_MEETING,
+    @view_config(name = "edit_speaker_log",
+                 permission = security.MODERATE_MEETING,
                  renderer="voteit.core.views:templates/base_edit.pt")
     def edit_speaker_log(self):
         """ Edit log entries for a specific speaker. """
@@ -357,25 +369,22 @@ class ManageSpeakerList(BaseView):
             return val
 
 
-class SpeakerSettingsView(MeetingView):
+@view_config(context = IMeeting,
+             name = "speaker_list_settings",
+             renderer = "arche:templates/form.pt",
+             permission = security.MODERATE_MEETING)
+class SpeakerListSettingsForm(DefaultEditForm):
+    schema_name = 'settings'
+    type_name = 'SpeakerLists'
+    title = _("Speaker list settings")
 
-    @view_config(context=IMeeting, name="speaker_list_settings", renderer="voteit.core.views:templates/base_edit.pt",
-                 permission=security.MODERATE_MEETING)
-    def speaker_list_settings(self):
-        schema = createSchema("SpeakerListSettingsSchema")
-        add_csrf_token(self.context, self.request, schema)
-        schema = schema.bind(context=self.context, request=self.request, api = self.api)
-        self.response['tabs'] = self.api.render_single_view_component(self.context, self.request, 'tabs', 'manage_speaker_lists')
-        return self.form(schema)
+    def appstruct(self):
+        return self.context.get_field_appstruct(self.schema)
 
-    @view_config(context=IMeeting, name="speaker_list_plugin", renderer="voteit.core.views:templates/base_edit.pt",
-                 permission=security.MODERATE_MEETING)
-    def speaker_list_plugin(self):
-        schema = createSchema("SpeakerListPluginSchema")
-        add_csrf_token(self.context, self.request, schema)
-        schema = schema.bind(context=self.context, request=self.request, api = self.api)
-        self.response['tabs'] = self.api.render_single_view_component(self.context, self.request, 'tabs', 'manage_speaker_lists')
-        return self.form(schema)
+    def save_success(self, appstruct):
+        self.context.set_field_appstruct(appstruct)
+        self.flash_messages.add(self.default_success, type="success")
+        return HTTPFound(location = self.request.resource_url(self.context))
 
 
 class FullscreenSpeakerList(object):
@@ -431,20 +440,20 @@ class UserSpeakerLists(BaseView):
 
     @reify
     def slists(self):
-        return self.request.registry.getAdapter(self.api.meeting, ISpeakerLists)
+        return self.request.registry.getAdapter(self.request.meeting, ISpeakerLists)
 
     @reify
     def participant_numbers(self):
-        return self.request.registry.getAdapter(self.api.meeting, IParticipantNumbers)
+        return self.request.registry.getAdapter(self.request.meeting, IParticipantNumbers)
 
     @view_config(name = "_user_speaker_lists", context = IAgendaItem, permission = security.VIEW,
                  renderer = "templates/user_speaker.pt")
     def view(self):
         action = self.request.GET.get('action', None)
         pn = self.participant_numbers.userid_to_number.get(self.api.userid, None)
-        use_lists = self.api.meeting.get_field_value('speaker_list_count', 1)
-        safe_pos = self.api.meeting.get_field_value('safe_positions', 0)
-        max_times_in_list = self.api.meeting.get_field_value('max_times_in_list', 0)
+        use_lists = self.request.meeting.get_field_value('speaker_list_count', 1)
+        safe_pos = self.request.meeting.get_field_value('safe_positions', 0)
+        max_times_in_list = self.request.meeting.get_field_value('max_times_in_list', 0)
         def _over_limit(sl, pn):
             return max_times_in_list and len(sl.speaker_log.get(pn, ())) >= max_times_in_list
         if pn != None and action:
@@ -511,52 +520,36 @@ class UserSpeakerLists(BaseView):
                     writer.writerow([pn, entry])
         contents = output.getvalue()
         output.close()
-        response = Response(content_type='text/csv',
-                            body=contents)
-        return response
+        return Response(content_type = 'text/csv', body = contents)
 
 
-@view_action('meeting', 'fullscreen_speaker_list', title = _(u"Speaker list for projectors"),
-             permission = security.MODERATE_MEETING, link = 'fullscreen_speaker_list')
-@view_action('meeting', 'speaker_statistics', title = _(u"Speaker statistics"),
-             permission = security.VIEW, link = 'speaker_statistics')
-@view_action('settings_menu', 'speaker_list_settings', title = _(u"Speaker list settings"),
-             permission = security.MODERATE_MEETING, link = 'speaker_list_settings')
-def meeting_context_menu_item(context, request, va, **kw):
-    api = kw['api']
-    url = "%s%s" % (api.meeting_url, va.kwargs['link'])
-    return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
+@view_action('meeting', 'debate_menu')
+def debate_menu(context, request, va, **kw):
+    return render('voteit.debate:templates/menu.pt', {}, request = request)
 
-@view_action('context_actions', 'manage_speaker_list', title = _(u"Manage speaker list"),
-             interface = IAgendaItem)
-def manage_speaker_list_menu(context, request, va, **kw):
-    api = kw['api']
-    url = u"%s%s" % (request.resource_url(context), 'manage_speaker_list')
-    return """<li><a href="%s">%s</a></li>""" % (url, api.translate(va.title))
+# @view_action('agenda_item_top', 'user_speaker_list')
+# def user_speaker_list(context, request, *args, **kw):
+#     api = kw['api']
+#     if not api.meeting.get_field_value('show_controls_for_participants', False):
+#         return u""
+#     if context.get_workflow_state() not in (u'upcoming', u'ongoing'):
+#         return u""
+#     response = dict()
+#     response.update(kw)
+#     voteit_debate_user_speaker_js.need()
+#     voteit_debate_user_speaker_css.need()
+#     return render("templates/user_speaker_area.pt", response, request = request)
 
-@view_action('agenda_item_top', 'user_speaker_list')
-def user_speaker_list(context, request, *args, **kw):
-    api = kw['api']
-    if not api.meeting.get_field_value('show_controls_for_participants', False):
-        return u""
-    if context.get_workflow_state() not in (u'upcoming', u'ongoing'):
-        return u""
-    response = dict()
-    response.update(kw)
-    voteit_debate_user_speaker_js.need()
-    voteit_debate_user_speaker_css.need()
-    return render("templates/user_speaker_area.pt", response, request = request)
-
-@view_action('tabs', 'manage_speaker_lists', permission = security.MODERATE_MEETING)
-def render_tabs_menu_sl(context, request, va, **kw):
-    return render_tabs_menu(context, request, va, **kw)
-
-@view_action('manage_speaker_lists', 'speaker_list_settings', permission = security.MODERATE_MEETING,
-             title = _(u"Settings"), link = u'speaker_list_settings')
-def manage_speaker_lists_tabs(context, request, va, **kw):
-    return generic_tab_any_querystring(context, request, va, **kw)
-
-@view_action('manage_speaker_lists', 'speaker_list_plugin', title = _(u"Speaker list plugin"),
-             permission = security.MODERATE_MEETING, link = 'speaker_list_plugin')
-def speaker_list_handlers_menu_item(context, request, va, **kw):
-    return generic_tab_any_querystring(context, request, va, **kw)
+# @view_action('tabs', 'manage_speaker_lists', permission = security.MODERATE_MEETING)
+# def render_tabs_menu_sl(context, request, va, **kw):
+#     return render_tabs_menu(context, request, va, **kw)
+# 
+# @view_action('manage_speaker_lists', 'speaker_list_settings', permission = security.MODERATE_MEETING,
+#              title = _(u"Settings"), link = u'speaker_list_settings')
+# def manage_speaker_lists_tabs(context, request, va, **kw):
+#     return generic_tab_any_querystring(context, request, va, **kw)
+# 
+# @view_action('manage_speaker_lists', 'speaker_list_plugin', title = _(u"Speaker list plugin"),
+#              permission = security.MODERATE_MEETING, link = 'speaker_list_plugin')
+# def speaker_list_handlers_menu_item(context, request, va, **kw):
+#     return generic_tab_any_querystring(context, request, va, **kw)

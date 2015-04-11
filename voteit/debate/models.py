@@ -1,25 +1,24 @@
 from random import shuffle
 from datetime import timedelta
 
-from betahaus.pyracont.factories import createSchema
-from zope.interface import implementer
-from zope.component import adapter
-from persistent import Persistent
-from persistent.list import PersistentList
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
-from pyramid.traversal import find_interface
+from persistent import Persistent
+from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.threadlocal import get_current_registry
 from pyramid.threadlocal import get_current_request
+from pyramid.traversal import find_interface
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.irl.models.interfaces import IParticipantNumbers
+from zope.component import adapter
+from zope.interface import implementer
 
-from .interfaces import ISpeakerList
-from .interfaces import ISpeakerLists
-from .interfaces import ISpeakerListPlugin
-from . import DebateTSF as _
+from voteit.debate import _
+from voteit.debate.interfaces import ISpeakerList
+from voteit.debate.interfaces import ISpeakerListPlugin
+from voteit.debate.interfaces import ISpeakerLists
 
 
 @implementer(ISpeakerLists)
@@ -185,9 +184,11 @@ class SpeakerListPlugin(object):
 
     @reify
     def settings(self):
+        #FIXME: This should be refactored...
         meeting = find_interface(self.context, IMeeting)
         assert meeting
-        schema = createSchema('SpeakerListSettingsSchema')
+        from voteit.debate.schemas import SpeakerListSettingsSchema
+        schema = SpeakerListSettingsSchema()
         settings = dict(speaker_list_count = 1,
                         safe_positions = 0)
         settings.update(meeting.get_field_appstruct(schema))

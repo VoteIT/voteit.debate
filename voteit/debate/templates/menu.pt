@@ -1,0 +1,35 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+  <li role="presentation" class="dropdown-header">
+    <span class="glyphicon glyphicon-bullhorn"></span>
+    <span i18n:translate="">Debate</span>
+  </li>
+  <li role="presentation">
+    <a role="menuitem" tabindex="-1"
+      href="${request.resource_url(request.meeting, 'speaker_statistics')}"
+      i18n:translate="">Statistics</a>
+  </li>
+  <tal:moderator condition="request.is_moderator">
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1"
+        href="${request.resource_url(request.meeting, 'fullscreen_speaker_list')}"
+        i18n:translate="">Fullscreen (Projector)</a>
+    </li>
+    <!-- FIXME: Context for speaker lists -->
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1"
+        href="${request.resource_url(context, 'manage_speaker_list')}"
+        i18n:translate="">Manage</a>
+    </li>
+    <li role="presentation">
+      <a role="menuitem" tabindex="-1"
+        href="${request.resource_url(request.meeting, 'speaker_list_settings')}"
+        i18n:translate="">Settings</a>
+    </li>
+  </tal:moderator>
+  <!-- Extension menu? -->
+  <li role="presentation" class="divider"></li>
+</tal:main>
