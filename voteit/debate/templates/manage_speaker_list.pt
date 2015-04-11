@@ -72,10 +72,10 @@
         </form>
         </div>
 
-        <ul id="speaker_active" class="speaker_queue">
+        <ul id="speaker_active" class="speaker_queue list-group">
             <li tal:condition="context_active and active_list.current != None" tal:replace="structure speaker_item(active_list.current)" />
         </ul>
-        <ul id="speaker_queue" class="speaker_queue"></ul>
+        <ul id="speaker_queue" class="speaker_queue list-group"></ul>
       </div>
       <div id="right" class="col-xs-6">
           <div id="slists" tal:content="structure speaker_list_controls"></div>

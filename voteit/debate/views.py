@@ -22,6 +22,10 @@ from voteit.core import security
 from voteit.core.fanstaticlib import voteit_main_css
 from arche.views.base import BaseView
 from arche.utils import get_content_schemas
+from arche.views.base import DefaultEditForm
+from arche.events import SchemaCreatedEvent
+from zope.component.event import objectEventNotify
+from arche.views.base import button_add
 #from voteit.core.fanstaticlib import jquery_deform
 
 #from voteit.core.views.components.tabs_menu import render_tabs_menu
@@ -38,10 +42,7 @@ from voteit.debate.interfaces import ISpeakerLists
 from voteit.debate.models import get_speaker_list_plugins
 from voteit.debate.models import populate_from_proposals
 from voteit.debate import _
-from arche.views.base import DefaultEditForm
-from arche.events import SchemaCreatedEvent
-from zope.component.event import objectEventNotify
-from arche.views.base import button_add
+
 
 
 class BaseActionView(object):
@@ -76,9 +77,6 @@ class BaseActionView(object):
             ai = self.context[self.ai_name]
             if IAgendaItem.providedBy(ai):
                 return ai
-
-    def _api(self):
-        return APIView(self.context, self.request)
 
 
 @view_defaults(context = IMeeting,
@@ -158,9 +156,6 @@ class ListActions(BaseActionView):
                                      mapping = {'count': result})
         self.response['message'] = msg
         self.success()
-        #FIXME: Remove this
-        api = self._api()
-        api.flash_messages.add(msg)
         return self._tmp_redirect_url()
 
 
@@ -176,20 +171,16 @@ class SpeakerActions(BaseActionView):
 
     @view_config(request_param = "action=add")
     def add(self):
-        api = self._api()
-        form = get_add_speaker_form(api, self.list_name)
-        controls = self.request.POST.items()
+        pn = self.request.POST.get('pn', '')
         try:
-            appstruct = form.validate(controls)
-        except deform.ValidationFailure, e:
-            #There's only one field with validation. Change otherwise
-            api = self._api()
-            self.response['message'] = api.translate(e.field['pn'].errormsg)
+            pn = int(pn)
+        except ValueError:
+            self.response['message'] = _('${num} is not a valid number',
+                                         mapping = {'num': pn})
             return self.response
-        pn = appstruct['pn']
         if pn in self.action_list.speakers:
             #Shouldn't happen since js handles this
-            self.response['message'] = _(u"Already in list")
+            self.response['message'] = _("Already in list")
             return self.response
         if pn in self.participant_numbers.number_to_userid:
             self.action_list.add(pn, override = True)
@@ -224,15 +215,6 @@ class SpeakerActions(BaseActionView):
         if self.action_list.speaker_finished(pn, seconds) is not None:
             self.success()
         return self.response
-
-
-# def get_add_speaker_form(view, list_name):
-#     schema = get_content_schemas(view.request.registry)['SpeakerLists']['add_speaker']()
-#     objectEventNotify(SchemaCreatedEvent(schema))
-#     schema = schema.bind(context = view.context, request = view.request, view = view)
-#     action_url = view.request.resource_url(view.request.meeting, 'speaker_action',
-#                                            query = {'action': 'add', 'list_name': list_name})
-#     return deform.Form(schema, action = action_url, buttons = (button_add,), formid = "add_speaker")
 
 
 def speaker_item_moderator(pn, view, slist, userid = None):
@@ -273,9 +255,6 @@ class ManageSpeakerList(BaseView):
     @reify
     def active_list(self):
         return self.slists.get(self.slists.active_list_name)
-
-   # def get_add_form(self):
-   #     return get_add_speaker_form(self, self.slists.active_list_name)
 
     @view_config(name = "manage_speaker_list",
                  permission = security.MODERATE_MEETING,

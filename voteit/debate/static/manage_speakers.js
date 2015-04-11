@@ -34,8 +34,8 @@ function do_request(url, options) {
     });
     request.done(function(data, textStatus, jqXHR) {
         if (typeof(data) === 'object' && 'message' in data) {
-            var msg_cls = data['success'] == true ? 'info' : 'error';
-            arche.create_flash_message(data['message']);
+            var msg_cls = data['success'] == true ? 'info' : 'danger';
+            arche.create_flash_message(data['message'], {type: msg_cls, auto_destruct: true});
         }
     });
     return request;

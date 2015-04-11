@@ -2,27 +2,34 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-<li class="speaker_item">
-    <div class="list-status">
-        <!-- This will cause active speaker, if in list too, to tidsplay an empty circle... -->
-        <span tal:condition="not is_active and not is_locked and pn in slist.speakers">
+<li class="speaker_item list-group-item">
+  <div class="row">
+    <div class="col-xs-2">
+      <!-- This will cause active speaker, if in list too, to display an empty circle... -->
+      <span class="list-status-circle">
+        <span class="pn-num" tal:condition="not is_active and not is_locked and pn in slist.speakers">
             ${slist.get_number_for(pn)}
         </span>
-        <span tal:condition="is_locked" class="is_locked">&nbsp;</span>
-        <span tal:condition="is_active">&nbsp;</span>
+        <span tal:condition="is_locked" class="glyphicon glyphicon-lock"></span>
+        <span tal:condition="is_active" class="glyphicon glyphicon-bullhorn"></span>
+      </span>
     </div>
-    <div class="speaker_name">
-        <span class="delegate_number">${pn}:</span>
-        <span tal:content="structure user_info">Name and userid</span>
-        <div class="time_spoken"></div>
+    <div class="speaker_name col-xs-8">
+      <span class="delegate_number">${pn}:</span>
+      <span tal:content="structure user_info">Name and userid</span>
+      <div class="time_spoken"></div>
     </div>
-    <div class="speaker_controls">
-        <a href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'active'})}"
-           class="promote_start_speaker">&nbsp;</a>
-        <a class="remove_speaker"
-           href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'remove'})}">&nbsp;</a>
+    <div class="speaker_controls col-xs-2">
+      <a href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'active'})}"
+         class="promote_start_speaker">
+        <span class="glyphicon glyphicon-play"></span>
+      </a>
+      <a class="remove_speaker"
+         href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': slist.name, 'pn': pn, 'action': 'remove'})}">
+         <span class="glyphicon glyphicon-remove text-danger"></span>
+      </a>
     </div>
     <input type="hidden" name="speaker_id" value="${pn}" />
-    <div class="clear"><!-- --></div>
+  </div>
 </li>
 </tal:main>
