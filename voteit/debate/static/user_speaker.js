@@ -15,10 +15,11 @@ function load_user_speaker_lists() {
     });
 }
 
-$("#user_speaker_lists .sl_controls a").live("click", user_speaker_action);
+
+//$("#user_speaker_lists .sl_controls a").live("click", user_speaker_action);
 function user_speaker_action(event) {
     event.preventDefault();
-    spinner().appendTo($(event.target));
+    //spinner().appendTo($(event.target));
     if (reload_timer != null) {
         reload_timer = clearInterval(reload_timer);
     }
@@ -30,7 +31,7 @@ function user_speaker_action(event) {
             //Success
         }
         set_reload_timer();
-        $('img.spinner').remove();
+        //$('img.spinner').remove();
     });
 }
 
@@ -44,3 +45,7 @@ function set_reload_timer() {
     }
     reload_timer = setInterval(load_user_speaker_lists, timer_count);    
 }
+
+$(document).ready(function() {
+  $('body').on('click', '[data-sl-user-control]', user_speaker_action);
+})

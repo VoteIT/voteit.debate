@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 def includeme(config):
     config.include('.models')
+    config.include('.portlet')
     config.include('.schemas')
     config.scan()
     config.add_translation_dirs('%s:locale/' % PROJECTNAME)

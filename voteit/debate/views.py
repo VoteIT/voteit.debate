@@ -424,11 +424,13 @@ class UserSpeakerLists(BaseView):
     def participant_numbers(self):
         return self.request.registry.getAdapter(self.request.meeting, IParticipantNumbers)
 
-    @view_config(name = "_user_speaker_lists", context = IAgendaItem, permission = security.VIEW,
-                 renderer = "templates/user_speaker.pt")
+    @view_config(name = "_user_speaker_lists",
+                 context = IAgendaItem,
+                 permission = security.VIEW,
+                 renderer = "voteit.debate:templates/user_speaker.pt")
     def view(self):
         action = self.request.GET.get('action', None)
-        pn = self.participant_numbers.userid_to_number.get(self.api.userid, None)
+        pn = self.participant_numbers.userid_to_number.get(self.request.authenticated_userid, None)
         use_lists = self.request.meeting.get_field_value('speaker_list_count', 1)
         safe_pos = self.request.meeting.get_field_value('safe_positions', 0)
         max_times_in_list = self.request.meeting.get_field_value('max_times_in_list', 0)
@@ -444,23 +446,25 @@ class UserSpeakerLists(BaseView):
             if action == u'remove':
                 if pn in sl.speakers:
                     sl.speakers.remove(pn)
-        self.response['speaker_lists'] = self.slists.get_contextual_lists(self.context)
-        self.response['active_list'] = self.slists.get(self.slists.active_list_name)
-        self.response['pn'] = pn
-        self.response['use_lists'] = use_lists
-        self.response['safe_pos'] = safe_pos
-        self.response['over_limit'] = _over_limit
-        self.response['max_times_in_list'] = max_times_in_list
+        response = {}
+        response['speaker_lists'] = self.slists.get_contextual_lists(self.context)
+        response['active_list'] = self.slists.get(self.slists.active_list_name)
+        response['pn'] = pn
+        response['use_lists'] = use_lists
+        response['safe_pos'] = safe_pos
+        response['over_limit'] = _over_limit
+        response['max_times_in_list'] = max_times_in_list
         if pn != None:
             def _show_add(sl, pn):
                 return pn != None and sl.state == 'open' and pn not in sl.speakers
-            self.response['show_add'] = _show_add
-        return self.response
+            response['show_add'] = _show_add
+        return response
 
     @view_config(name = "speaker_statistics", context = IMeeting, permission = security.VIEW,
                  renderer = "templates/speaker_statistics.pt")
     def speaker_statistics_view(self):
-        self.response['number_to_userid'] = self.participant_numbers.number_to_userid
+        response = {}
+        response['number_to_userid'] = self.participant_numbers.number_to_userid
         results = {}
         maxval = 0
         for sl in self.slists.speaker_lists.values():
@@ -470,7 +474,7 @@ class UserSpeakerLists(BaseView):
                 this_val = sum(current)
                 if this_val > maxval:
                     maxval = this_val
-        self.response['results'] = [(x, results[x]) for x in sorted(results)]
+        response['results'] = [(x, results[x]) for x in sorted(results)]
 
         def _get_percentage(num):
             try:
@@ -478,16 +482,16 @@ class UserSpeakerLists(BaseView):
             except:
                 return u"0%"
 
-        self.response['get_perc'] = _get_percentage
-        return self.response
+        response['get_perc'] = _get_percentage
+        return response
 
     @view_config(name='speaker_statistics.csv', context=IMeeting, permission=security.VIEW)
     def export(self):
         output = StringIO.StringIO()
         writer = csv.writer(output, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
         writer.writerow([self.context.title.encode('utf-8')])
-        writer.writerow([self.api.translate(_(u"Speaker statistics"))])
-        writer.writerow(["#", self.api.translate(_(u"Seconds"))])
+        writer.writerow([self.request.localizer.translate(_(u"Speaker statistics"))])
+        writer.writerow(["#", self.request.localizer.translate(_(u"Seconds"))])
         for sl in self.slists.speaker_lists.values():
             if not len(sl.speaker_log):
                 continue

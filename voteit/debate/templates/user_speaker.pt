@@ -2,52 +2,68 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-<tal:iterate repeat="sl speaker_lists">
-    <div tal:attributes="class active_list == sl and 'active_list speaker_list' or 'speaker_list'">
-        <div class="inner_wrapper">
-            <div class="sl_title">
-                <h4>${sl.title}</h4>
-                <span class="meta">
-                    <span class="state">
-                        <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
-                            ${sl.get_state_title()} - ${len(sl.speakers)} <span i18n:translate="">in queue</span>
-                        </span>
-                    </span>
-                </span>
-            </div>
-            <div class="sl_controls">
-                <tal:not_in_list condition="pn and show_add(sl, pn)|False">
-                    <a tal:condition="not over_limit(sl, pn)"
-                        href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
-                       class="buttonize add" i18n:translate="">Add yourself</a>
-                    <span class="meta" tal:condition="over_limit(sl, pn)"
-                          i18n:translate="over_limit_notice">
-                          You've already spoken
-                          <tal:num i18n:name="count" tal:content="max_times_in_list">2</tal:num> times.
-                    </span>
-                </tal:not_in_list>
-                <tal:in_list condition="pn in sl.speakers">
-                    <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'remove', 'list_name': sl.name})}"
-                       class="buttonize remove" i18n:translate="">Remove yourself</a>
-                </tal:in_list>
-            </div>
-            <div class="sl_stats">
-                <tal:not_in_list condition="pn != None and pn not in sl.speakers and sl.state == 'open'">
-                    <div class="meta" i18n:translate="">
-                        You will enter list att position
-                        <b tal:content="sl.get_position(pn) + 1" i18n:name="num"></b>
-                        if you wish to speak
-                    </div>
-                </tal:not_in_list>
-                <tal:in_list condition="pn in sl.speakers">
-                    <div class="meta" i18n:translate="">
-                        <b tal:content="sl.speakers.index(pn)" i18n:name="num"></b>
-                        speakers before you
-                    </div>
-                </tal:in_list>
-            </div>
-            <div class="clear"><!-- --></div>
-        </div>
+
+<div class="col-sm-6">
+  <div class="list-group">
+    <div class="list-group-item">
+      <h4>
+        <span class="glyphicon glyphicon-bullhorn"></span>
+        <span i18n:translate="">Debate</span>
+      </h4>
     </div>
-</tal:iterate>
+
+    <tal:iterate repeat="sl speaker_lists">
+      <div class="list-group-item">
+        <div class="sl_title">
+          <h4>
+            <span tal:condition="active_list == sl and 'active' or None" class="glyphicon glyphicon-arrow-right"></span>
+            ${sl.title}
+            <small tal:condition="active_list == sl and 'active' or None">Currently active</small>
+          </h4>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <span tal:condition="sl.state == 'open'" class="glyphicon glyphicon-play-circle text-success"></span>
+            <span tal:condition="sl.state == 'closed'" class="glyphicon glyphicon-lock text-danger"></span>
+            ${sl.get_state_title()} - ${len(sl.speakers)} <span i18n:translate="">in queue</span>
+
+            <div class="sl_stats">
+              <tal:not_in_list condition="pn != None and pn not in sl.speakers and sl.state == 'open'">
+                <div class="text-muted" i18n:translate="">
+                  You will enter list att position
+                  <b tal:content="sl.get_position(pn) + 1" i18n:name="num"></b>
+                  if you wish to speak
+                </div>
+              </tal:not_in_list>
+              <tal:in_list condition="pn in sl.speakers">
+                <div class="text-muted" i18n:translate="">
+                  <b tal:content="sl.speakers.index(pn)" i18n:name="num"></b>
+                  speakers before you
+                </div>
+              </tal:in_list>
+            </div>
+          </div>
+          <div class="col-sm-6 sl_controls">
+            <tal:not_in_list condition="pn and show_add(sl, pn)|False">
+              <a tal:condition="not over_limit(sl, pn)"
+                data-sl-user-control
+                href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'add', 'list_name': sl.name})}"
+                class="btn btn-success" i18n:translate="">Add yourself</a>
+              <span class="text-muted" tal:condition="over_limit(sl, pn)"
+                    i18n:translate="over_limit_notice">
+                    You've already spoken
+                    <tal:num i18n:name="count" tal:content="max_times_in_list">2</tal:num> times.
+              </span>
+            </tal:not_in_list>
+            <tal:in_list condition="pn in sl.speakers">
+              <a href="${request.resource_url(context, '_user_speaker_lists', query = {'action': 'remove', 'list_name': sl.name})}"
+                data-sl-user-control
+                class="btn btn-warning" i18n:translate="">Remove yourself</a>
+            </tal:in_list>
+          </div>
+        </div>
+      </div>
+    </tal:iterate>
+  </div>
+</div>
 </tal:main>
