@@ -3,46 +3,48 @@
     xmlns:i18n="http://xml.zope.org/namespaces/i18n"
     i18n:domain="voteit.debate">
     <tal:active_list condition="active_list">
-        <span id="state-area" class="meta">
-            <span class="state">
-                <span tal:attributes="class active_list.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
-                    ${active_list.get_state_title()}
-                </span>
-            </span>
-        </span>
-        <h1 id="agenda_item_title" class="icon">${active_list.title}</h1>
-        <ul id="speaker-list-items">
-            <li class="first" tal:condition="active_speaker">
-                <div class="list-status">
-                    <span>&nbsp;</span>
+        <h1>
+          ${active_list.title}
+          <small class="pull-right">
+            <span class="glyphicon glyphicon-play-circle text-success" tal:condition="active_list.state == 'open'"></span>
+            <span class="glyphicon glyphicon-lock text-danger" tal:condition="active_list.state != 'open'"></span>
+            ${active_list.get_state_title()}
+          </small>
+        </h1>
+        <div id="speaker-list-items" class="list-group">
+          <div class="first list-group-item active" tal:condition="active_speaker">
+            <div class="row">
+              <div class="col-sm-1 col-xs-2">
+                <span class="glyphicon glyphicon-bullhorn"></span>
+              <!-- 
+                <div class="list-status">&nbsp;</div>
+                 -->
+              </div>
+              <div class="col-sm-11 col-xs-10">
+                <img tal:replace="structure active_speaker.get_image_tag(size = 40, request = request)" />
+                <span class="user_fullname">${active_speaker.title}</span>
+                <span class="delegate_number pull-right">${userid_to_number.get(active_speaker.userid, u"")}</span>
+              </div>
+            </div>
+          </div>
+          <tal:iterate repeat="user speaker_profiles">
+              <div class="list-group-item">
+                <div class="row">
+                  <div class="col-sm-1 col-xs-2">
+                    ${get_user_list_number(user.userid)}
+                  </div>
+                  <div class="col-sm-11 col-xs-10">
+                      <img tal:replace="structure user.get_image_tag(size = 40, request = request)" />
+                      <span class="user_fullname">${user.title}</span>
+                      <span class="delegate_number pull-right">${userid_to_number.get(user.userid, u"")}</span>
+                  </div>
                 </div>
-                <div class="user">
-                    <img tal:replace="structure active_speaker.get_image_tag(size = 40, request = request)" />
-                    <span class="user_fullname">${active_speaker.title}</span>
-                    <span class="delegate_number">${userid_to_number.get(active_speaker.userid, u"")}</span>
-                    <div class="clear"><!-- --></div>
-                </div>
-                <div class="clear"><!-- --></div>
-            </li>
-            <tal:iterate repeat="user speaker_profiles">
-                <li>
-                    <div class="list-status">
-                        <span>${get_user_list_number(user.userid)}</span>
-                    </div>
-                    <div class="user">
-                        <img tal:replace="structure user.get_image_tag(size = 40, request = request)" />
-                        <span class="user_fullname">${user.title}</span>
-                        <span class="delegate_number">${userid_to_number.get(user.userid, u"")}</span>
-                        <div class="clear"><!-- --></div>
-                    </div>
-                    <div class="clear"><!-- --></div>
-                </li>
-            </tal:iterate>
-        </ul>
+              </div>
+          </tal:iterate>
+        </div>
     </tal:active_list>
     <tal:not_active condition="not active_list">
-        <h1 i18n:translate="">No list currently active</h1>
+      <h1 i18n:translate="">No list currently active</h1>
     </tal:not_active>
-    <div class="meta" id="status" style="display: none;" i18n:translate="">Error: Connection timeout. Will try again.</div>
-
+    <div class="text-muted" id="status" style="display: none;" i18n:translate="">Error: Connection timeout. Will try again.</div>
 </tal:main>

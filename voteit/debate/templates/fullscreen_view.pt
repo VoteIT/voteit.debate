@@ -1,28 +1,30 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
+      metal:use-macro="view.macro('arche:templates/master.pt')"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-<head>
-    <title i18n:translate="">Speakers</title>
-</head>
-<body>
-<div id="wrapper">
-    <div id="heading-wrapper">
-        <img tal:condition="context.get_field_value('meeting_logo_url')"
-             id="meeting-logo"
-             src="${context.get_field_value('meeting_logo_url')}"
-             alt="Meeting logo" i18n:attributes="alt" />
-        <img id="voteit-logo" src="${request.application_url}/static/images/voteit_logo.png" />
-        <h1>${context.title}</h1>
-        <div class="clear"><!-- --></div>
+<body metal:fill-slot="fullpage">
+  <nav class="navbar navbar-fixed-top navbar-voteit" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand hidden-xs" href="${request.application_url}">
+            <img height="31" width="85" class="voteitlogo"
+                src="${request.static_url('voteit.core:static/images/logo.png')}" />
+        </a>
+        <a tal:condition="request.meeting"
+          class="navbar-brand"
+          href="${request.resource_url(request.meeting)}">
+          <span class="hidden-sm hidden-xs">${request.meeting.title}</span>
+        </a>
+      </div>
+    </div><!-- /.container-->
+    <div class="container" id="messages">
+      <div class="float-below" data-flash-slot="voteit-main"></div>
     </div>
-    <div id="speaker_list">
-    </div>
-</div>
-
-
-
+  </nav>
+  <div class="container-fluid">
+    <div id="speaker_list"></div>
+  </div>
 </body>
 </html>

@@ -365,17 +365,13 @@ class SpeakerListSettingsForm(DefaultEditForm):
         return HTTPFound(location = self.request.resource_url(self.context))
 
 
-class FullscreenSpeakerList(object):
+class FullscreenSpeakerList(BaseView):
 
-    def __init__(self, context, request):
-        self.context = context
-        self.request = request
-
-    @view_config(name = "fullscreen_speaker_list", context = IMeeting, permission = security.MODERATE_MEETING,
-                 renderer = "templates/fullscreen_view.pt")
+    @view_config(name = "fullscreen_speaker_list",
+                 context = IMeeting,
+                 permission = security.MODERATE_MEETING,
+                 renderer = "voteit.debate:templates/fullscreen_view.pt")
     def fullscreen_view(self):
-        voteit_main_css.need()
-        jquery_deform.need()
         voteit_debate_fullscreen_speakers_js.need()
         voteit_debate_fullscreen_speakers_css.need()
         response = dict()
