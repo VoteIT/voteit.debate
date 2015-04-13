@@ -106,4 +106,4 @@ class EditSpeakerLogSchema(colander.Schema):
 
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
-#    config.add_content_schema('SpeakerLists', AddSpeakerSchema, 'add_speaker')
+    config.add_content_schema('SpeakerLists', EditSpeakerLogSchema, 'edit_speaker_log')

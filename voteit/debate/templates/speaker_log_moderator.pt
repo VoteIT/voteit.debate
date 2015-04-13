@@ -3,17 +3,18 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 <tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
-    <li>
-        <div class="namefield">
-            <span>${pn}:</span>
-            <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
+    <div class="list-group-item">
+        <a class="btn btn-default pull-right"
+           href="${request.resource_url(context, 'edit_speaker_log', query = {'speaker_list': active_list.name, 'speaker': pn})}">
+           <span class="glyphicon glyphicon-edit"></span>
+         </a>
+        <div>
+          <span>${pn}:</span>
+          <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
         </div>
-        <div class="log_edit">
-            <a class="editpen"
-               href="${request.resource_url(context, 'edit_speaker_log', query = {'speaker_list': active_list.name, 'speaker': pn})}">&nbsp;</a>
-            <span class="total_time">${format_secs(sum(timelog))}</span>
+        <div>
+          <span class="total_time">${format_secs(sum(timelog))}</span>
         </div>
-        <div class="clear"><!-- --></div>
-    </li>
+    </div>
 </tal:iterate>
 </tal:main>

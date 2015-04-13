@@ -1,47 +1,31 @@
-import csv
-import StringIO
-from decimal import Decimal
 from datetime import timedelta
+from decimal import Decimal
+import StringIO
+import csv
 
-import deform
+from arche.views.base import BaseView
+from arche.views.base import DefaultEditForm
+from betahaus.viewcomponent import view_action
+from pyramid.decorator import reify
+from pyramid.httpexceptions import HTTPForbidden
+from pyramid.httpexceptions import HTTPFound
+from pyramid.renderers import render
+from pyramid.response import Response
+from pyramid.traversal import find_interface
 from pyramid.view import view_config
 from pyramid.view import view_defaults
-from pyramid.response import Response
-from pyramid.renderers import render
-from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPFound
-from pyramid.httpexceptions import HTTPForbidden
-from pyramid.traversal import find_interface
-#from betahaus.pyracont.factories import createSchema
-from betahaus.viewcomponent import view_action
-from voteit.irl.models.interfaces import IParticipantNumbers
-from voteit.core.views.meeting import MeetingView
+from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
-from voteit.core import security
-from voteit.core.fanstaticlib import voteit_main_css
-from arche.views.base import BaseView
-from arche.utils import get_content_schemas
-from arche.views.base import DefaultEditForm
-from arche.events import SchemaCreatedEvent
-from zope.component.event import objectEventNotify
-from arche.views.base import button_add
-#from voteit.core.fanstaticlib import jquery_deform
+from voteit.irl.models.interfaces import IParticipantNumbers
 
-#from voteit.core.views.components.tabs_menu import render_tabs_menu
-#from voteit.core.views.components.tabs_menu import generic_tab_any_querystring
-
+from voteit.debate import _
+from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_css
+from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_js
 from voteit.debate.fanstaticlib import voteit_debate_manage_speakers_js
 from voteit.debate.fanstaticlib import voteit_debate_speaker_view_styles
-from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_js
-from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_css
-from voteit.debate.fanstaticlib import voteit_debate_user_speaker_js
-from voteit.debate.fanstaticlib import voteit_debate_user_speaker_css
-
 from voteit.debate.interfaces import ISpeakerLists
-from voteit.debate.models import get_speaker_list_plugins
 from voteit.debate.models import populate_from_proposals
-from voteit.debate import _
 
 
 
@@ -310,42 +294,50 @@ class ManageSpeakerList(BaseView):
         userid = self.participant_numbers.number_to_userid.get(int(pn))
         return speaker_item_moderator(pn, self, self.active_list, userid = userid)
 
-    @view_config(name = "edit_speaker_log",
-                 permission = security.MODERATE_MEETING,
-                 renderer="voteit.core.views:templates/base_edit.pt")
-    def edit_speaker_log(self):
-        """ Edit log entries for a specific speaker. """
-        speaker_list_name = self.request.GET['speaker_list']
-        speaker_list = self.slists.speaker_lists[speaker_list_name]
-        speaker = int(self.request.GET['speaker'])
-        schema = createSchema("EditSpeakerLogSchema")
-        add_csrf_token(self.context, self.request, schema)
-        schema = schema.bind(context = self.context, request = self.request, api = self.api)
-        form = deform.Form(schema, buttons = (deform.Button("save", _(u"Save")), deform.Button("cancel", _(u"Cancel"))))
-        post = self.request.POST
-        if self.request.method == 'POST':
-            if 'save' in post:
-                controls = post.items()
-                try:
-                    appstruct = form.validate(controls)
-                except deform.ValidationFailure, e:
-                    self.response['form'] = e.render()
-                    return self.response
-                del speaker_list.speaker_log[speaker][:]
-                speaker_list.speaker_log[speaker].extend(appstruct['logs'])
-            ai = find_interface(speaker_list, IAgendaItem)
-            url = self.request.resource_url(ai, 'manage_speaker_list')
-            return HTTPFound(location = url)
-        appstruct = {'logs': speaker_list.speaker_log[speaker]}
-        self.response['form'] = form.render(appstruct = appstruct)
-        return self.response
-
     def format_seconds(self, secs):
         val = str(timedelta(seconds=int(secs)))
         try:
             return ":".join([x for x in val.split(':') if int(x)])
         except ValueError:
             return val
+
+
+@view_config(name = "edit_speaker_log",
+             context = IMeeting,
+             permission = security.MODERATE_MEETING,
+             renderer="arche:templates/form.pt")
+class EditSpeakerLogForm(DefaultEditForm):
+    """ Edit log entries for a specific speaker. """
+    type_name = 'SpeakerLists'
+    schema_name = 'edit_speaker_log'
+
+    @reify
+    def edit_list(self):
+        slists = self.request.registry.getAdapter(self.request.meeting, ISpeakerLists)
+        speaker_list_name = self.request.GET['speaker_list']
+        return slists.speaker_lists[speaker_list_name]
+
+    @reify
+    def users_speaker_log(self):
+        speaker = int(self.request.GET['speaker'])
+        return self.edit_list.speaker_log[speaker]
+
+    def appstruct(self):
+        return {'logs': self.users_speaker_log }
+
+    def save_success(self, appstruct):
+        del self.users_speaker_log[:]
+        self.users_speaker_log.extend(appstruct['logs'])
+        self.flash_messages.add(self.default_success)
+        return self._redirect()
+
+    def _redirect(self):
+        ai = find_interface(self.edit_list, IAgendaItem)
+        url = self.request.resource_url(ai, 'manage_speaker_list')
+        return HTTPFound(location = url)
+
+    def cancel_success(self, *args):
+        return self._redirect()
 
 
 @view_config(context = IMeeting,
@@ -505,30 +497,3 @@ class UserSpeakerLists(BaseView):
 @view_action('meeting', 'debate_menu')
 def debate_menu(context, request, va, **kw):
     return render('voteit.debate:templates/menu.pt', {}, request = request)
-
-# @view_action('agenda_item_top', 'user_speaker_list')
-# def user_speaker_list(context, request, *args, **kw):
-#     api = kw['api']
-#     if not api.meeting.get_field_value('show_controls_for_participants', False):
-#         return u""
-#     if context.get_workflow_state() not in (u'upcoming', u'ongoing'):
-#         return u""
-#     response = dict()
-#     response.update(kw)
-#     voteit_debate_user_speaker_js.need()
-#     voteit_debate_user_speaker_css.need()
-#     return render("templates/user_speaker_area.pt", response, request = request)
-
-# @view_action('tabs', 'manage_speaker_lists', permission = security.MODERATE_MEETING)
-# def render_tabs_menu_sl(context, request, va, **kw):
-#     return render_tabs_menu(context, request, va, **kw)
-# 
-# @view_action('manage_speaker_lists', 'speaker_list_settings', permission = security.MODERATE_MEETING,
-#              title = _(u"Settings"), link = u'speaker_list_settings')
-# def manage_speaker_lists_tabs(context, request, va, **kw):
-#     return generic_tab_any_querystring(context, request, va, **kw)
-# 
-# @view_action('manage_speaker_lists', 'speaker_list_plugin', title = _(u"Speaker list plugin"),
-#              permission = security.MODERATE_MEETING, link = 'speaker_list_plugin')
-# def speaker_list_handlers_menu_item(context, request, va, **kw):
-#     return generic_tab_any_querystring(context, request, va, **kw)
