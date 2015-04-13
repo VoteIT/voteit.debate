@@ -458,7 +458,7 @@ class UserSpeakerLists(BaseView):
         return response
 
     @view_config(name = "speaker_statistics", context = IMeeting, permission = security.VIEW,
-                 renderer = "templates/speaker_statistics.pt")
+                 renderer = "voteit.debate:templates/speaker_statistics.pt")
     def speaker_statistics_view(self):
         response = {}
         response['number_to_userid'] = self.participant_numbers.number_to_userid
