@@ -28,7 +28,6 @@ from voteit.debate.interfaces import ISpeakerLists
 from voteit.debate.models import populate_from_proposals
 
 
-
 class BaseActionView(object):
     
     def __init__(self, context, request):
@@ -358,20 +357,20 @@ class SpeakerListSettingsForm(DefaultEditForm):
         return HTTPFound(location = self.request.resource_url(self.context))
 
 
+@view_defaults(context = IMeeting)
 class FullscreenSpeakerList(BaseView):
 
     @view_config(name = "fullscreen_speaker_list",
-                 context = IMeeting,
-                 permission = security.MODERATE_MEETING,
+                 permission = security.VIEW,
                  renderer = "voteit.debate:templates/fullscreen_view.pt")
     def fullscreen_view(self):
         voteit_debate_fullscreen_speakers_js.need()
         voteit_debate_fullscreen_speakers_css.need()
-        response = dict()
-        return response
+        return {}
 
-    @view_config(name = "_fullscreen_list", context = IMeeting, permission = security.MODERATE_MEETING,
-                 renderer = "templates/fullscreen_list.pt")
+    @view_config(name = "_fullscreen_list",
+                 permission = security.MODERATE_MEETING,
+                 renderer = "voteit.debate:templates/fullscreen_list.pt")
     def fullscreen_list(self):
         slists = self.request.registry.getAdapter(self.context, ISpeakerLists)
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
