@@ -152,7 +152,8 @@ class ListActions(BaseActionView):
     @view_config(request_param = "action=populate_from_proposals")
     def populate_from_proposals(self):
         result = populate_from_proposals(self.action_list)
-        msg = _(u"Added ${count} speakers from published proposals in this context.",
+        msg = _("speakers_from_published_props",
+                default = u"Added ${count} speakers from published proposals.",
                                      mapping = {'count': result})
         self.response['message'] = msg
         self.success()
