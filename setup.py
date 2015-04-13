@@ -12,9 +12,7 @@ requires = ('voteit.core',
             'pyramid',
             'colander',
             'deform',
-            'fanstatic',
-            'Babel',
-            'lingua',)
+            'fanstatic',)
 
 setup(name='voteit.debate',
       version='0.1dev',
@@ -40,10 +38,5 @@ setup(name='voteit.debate',
       [fanstatic.libraries]
       voteit_debate_lib = voteit.debate.fanstaticlib:voteit_debate_lib
       """,
-      paster_plugins=['pyramid'],
-      message_extractors = { '.': [
-              ('**.py',   'lingua_python', None ),
-              ('**.pt',   'lingua_xml', None ),
-              ]},
       )
 
