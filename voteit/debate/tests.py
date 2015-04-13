@@ -148,6 +148,7 @@ class SpeakerListsTests(unittest.TestCase):
         self.assertEqual("%s/11" % ai.uid, result[10])
 
     def test_integration(self):
+        self.config.include('arche.portlets')
         self.config.include('voteit.debate')
         meeting = Meeting()
         self.failUnless(self.config.registry.queryAdapter(meeting, ISpeakerLists))
@@ -158,6 +159,7 @@ class SpeakerListPluginTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(request = testing.DummyRequest())
         self.config.include('arche.testing')
+        self.config.include('arche.portlets')
 
     def tearDown(self):
         testing.tearDown()
@@ -378,6 +380,7 @@ class PopulateFromProposalsTests(unittest.TestCase):
     def setUp(self):
         self.config = testing.setUp(request = testing.DummyRequest())
         self.config.include('arche.testing')
+        self.config.include('arche.portlets')
 
     def tearDown(self):
         testing.tearDown()
