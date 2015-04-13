@@ -9,7 +9,7 @@ function load_fullscreen_speaker_list() {
         timer = clearInterval(timer);
     }
     $('#speaker_list').load('_fullscreen_list', function(response, status, xhr) {
-        timer = setInterval(load_fullscreen_speaker_list, 1000000);
+        timer = setInterval(load_fullscreen_speaker_list, 1000);
         if (status == "error") {
             $('#status').show();
         } else {
