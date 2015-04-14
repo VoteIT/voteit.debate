@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-04-13 13:36+0200\n"
-"PO-Revision-Date: 2015-04-13 13:38+0100\n"
+"POT-Creation-Date: 2015-04-14 10:51+0200\n"
+"PO-Revision-Date: 2015-04-14 10:51+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -40,8 +40,7 @@ msgstr "Stängd"
 msgid "Default list handler"
 msgstr "Normal listhanterare"
 
-#: voteit/debate/portlet.py:14 voteit/debate/templates/menu.pt:8
-#: voteit/debate/templates/user_speaker.pt:11
+#: voteit/debate/portlet.py:14
 msgid "Debate"
 msgstr "Debatt"
 
@@ -130,51 +129,43 @@ msgid "speaker_list_functionality_description"
 msgstr ""
 "Om du har registrerat någonting som kan justera betéendet hos talarlistorna."
 
-#: voteit/debate/views.py:358
+#: voteit/debate/views.py:349
 msgid "Speaker list settings"
 msgstr "Talarlistinställningar"
 
-#. Default: Added ${count} speakers from published proposals in this context.
-#: voteit/debate/views.py:155
+#. Default: Added ${count} speakers from published proposals.
+#: voteit/debate/views.py:138
 msgid "speakers_from_published_props"
 msgstr "La till ${count} talare från publicerade förslag"
 
-#: voteit/debate/views.py:228
+#: voteit/debate/views.py:211
 msgid "(No user associated)"
 msgstr "(Ingen användare associerad)"
 
-#: voteit/debate/views.py:184
+#: voteit/debate/views.py:167
 msgid "Already in list"
 msgstr "Talaren redan i listan"
 
-#: voteit/debate/views.py:190
+#: voteit/debate/views.py:173
 msgid "No user with that number"
 msgstr "Ingen användare med det numret"
 
-#: voteit/debate/views.py:179
+#: voteit/debate/views.py:162
 #, python-format
 msgid "${num} is not a valid number"
 msgstr "${num} är inte ett giltigt nummer"
 
-#: voteit/debate/views.py:439
+#: voteit/debate/views.py:430
 msgid "Speaker list doesn't exist"
 msgstr "Talarlistan existerar inte"
 
-#: voteit/debate/views.py:490 voteit/debate/templates/speaker_statistics.pt:14
+#: voteit/debate/views.py:481 voteit/debate/templates/speaker_statistics.pt:10
 msgid "Speaker statistics"
 msgstr "Talarstatistik"
 
-#: voteit/debate/views.py:491
+#: voteit/debate/views.py:482
 msgid "Seconds"
 msgstr "Sekunder"
-
-#: voteit/debate/views.py:324
-msgid "Save"
-msgstr "Spara"
-
-#: voteit/debate/views.py:324
-msgid "Cancel"
-msgstr "Avbryt"
 
 #: voteit/debate/templates/fullscreen_list.pt:47
 msgid "No list currently active"
@@ -233,6 +224,11 @@ msgstr "Talarlogg"
 msgid "Clear"
 msgstr "Rensa"
 
+#: voteit/debate/templates/menu.pt:8
+#: voteit/debate/templates/user_speaker.pt:11
+msgid "Speaker list"
+msgstr "Talarlista"
+
 #: voteit/debate/templates/menu.pt:13
 msgid "Statistics"
 msgstr "Statistik"
@@ -273,25 +269,29 @@ msgstr "Hämta från förslag"
 msgid "Delete"
 msgstr "Radera"
 
-#: voteit/debate/templates/speaker_statistics.pt:16
+#: voteit/debate/templates/speaker_statistics.pt:12
 msgid "Back"
 msgstr "Tillbaka"
 
-#: voteit/debate/templates/speaker_statistics.pt:20
+#: voteit/debate/templates/speaker_statistics.pt:15
 msgid "Export CSV, one entry per row"
 msgstr "Exportera till CSV, en taltid per rad"
 
-#: voteit/debate/templates/speaker_statistics.pt:26
+#: voteit/debate/templates/speaker_statistics.pt:21
 msgid "Name"
 msgstr "Namn"
 
-#: voteit/debate/templates/speaker_statistics.pt:27
+#: voteit/debate/templates/speaker_statistics.pt:22
 msgid "Times spoken"
 msgstr "Antal talat"
 
-#: voteit/debate/templates/speaker_statistics.pt:28
+#: voteit/debate/templates/speaker_statistics.pt:23
 msgid "Total s"
 msgstr "Totala s"
+
+#: voteit/debate/templates/user_speaker.pt:21
+msgid "Currently active"
+msgstr "Aktiv nu"
 
 #: voteit/debate/templates/user_speaker.pt:28
 msgid "in queue"
@@ -305,18 +305,29 @@ msgstr "Om du begär ordet hamnar du på position ${num}"
 msgid "${num} speakers before you"
 msgstr "${num} talare före dig"
 
-#: voteit/debate/templates/user_speaker.pt:51
+#. Default: You need a participant number to use this.
+#: voteit/debate/templates/user_speaker.pt:48
+msgid "need_pn_to_enter_list"
+msgstr "Du behöver ett deltagarnummer för att använda detta."
+
+#: voteit/debate/templates/user_speaker.pt:54
 msgid "Add yourself"
 msgstr "Sätt upp dig"
 
 #. Default: You've already spoken ${count} times.
-#: voteit/debate/templates/user_speaker.pt:53
+#: voteit/debate/templates/user_speaker.pt:56
 msgid "over_limit_notice"
 msgstr "Duhar redan pratat ${count} gånger."
 
-#: voteit/debate/templates/user_speaker.pt:61
+#: voteit/debate/templates/user_speaker.pt:64
 msgid "Remove yourself"
 msgstr "Stryk dig"
+
+#~ msgid "Save"
+#~ msgstr "Spara"
+
+#~ msgid "Cancel"
+#~ msgstr "Avbryt"
 
 #~ msgid "Add speaker"
 #~ msgstr "Lägg till talare"
@@ -333,9 +344,6 @@ msgstr "Stryk dig"
 
 #~ msgid "Females get to pass men every 2nd time"
 #~ msgstr "Kvinnor får gå förbi män var annan gång"
-
-#~ msgid "Speakers"
-#~ msgstr "Talare"
 
 #~ msgid "Meeting logo"
 #~ msgstr "Möteslogo"

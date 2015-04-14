@@ -5,7 +5,7 @@
       i18n:domain="voteit.debate">
   <li role="presentation" class="dropdown-header">
     <span class="glyphicon glyphicon-bullhorn"></span>
-    <span i18n:translate="">Debate</span>
+    <span i18n:translate="">Speaker list</span>
   </li>
   <li role="presentation">
     <a role="menuitem" tabindex="-1"
