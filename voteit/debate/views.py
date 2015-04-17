@@ -369,7 +369,7 @@ class FullscreenSpeakerList(BaseView):
         return {}
 
     @view_config(name = "_fullscreen_list",
-                 permission = security.MODERATE_MEETING,
+                 permission = security.VIEW,
                  renderer = "voteit.debate:templates/fullscreen_list.pt")
     def fullscreen_list(self):
         slists = self.request.registry.getAdapter(self.context, ISpeakerLists)
