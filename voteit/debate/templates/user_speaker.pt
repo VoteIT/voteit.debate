@@ -3,7 +3,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 
-<div class="col-sm-6">
+<div class="col-sm-12">
   <div class="list-group">
     <div class="list-group-item">
       <h4>
