@@ -15,10 +15,9 @@
           <div class="first list-group-item active" tal:condition="active_speaker">
             <div class="row">
               <div class="col-sm-1 col-xs-2">
-                <span class="glyphicon glyphicon-bullhorn"></span>
-              <!-- 
-                <div class="list-status">&nbsp;</div>
-                 -->
+                <span class="list-status-circle">
+                  <span class="glyphicon glyphicon-play"></span>
+                </span>
               </div>
               <div class="col-sm-11 col-xs-10">
                 <img tal:replace="structure active_speaker.get_image_tag(size = 40, request = request)" />
@@ -31,7 +30,11 @@
               <div class="list-group-item">
                 <div class="row">
                   <div class="col-sm-1 col-xs-2">
-                    ${get_user_list_number(user.userid)}
+                    <span class="list-status-circle">
+                      <span class="pn-num">
+                        ${get_user_list_number(user.userid)}
+                      </span>
+                    </span>
                   </div>
                   <div class="col-sm-11 col-xs-10">
                       <img tal:replace="structure user.get_image_tag(size = 40, request = request)" />
