@@ -13,6 +13,11 @@
           class="btn btn-default btn-sm"
           href="${request.resource_url(context, 'manage_speaker_list')}"
           i18n:translate="">Manage</a>
+        <a tal:condition="request.is_moderator"
+          href="${request.resource_url(request.meeting, 'speaker_list_action',
+                  query = {'action': 'add', 'ai_name': context.__name__})}"
+          class="btn btn-default btn-sm"
+          i18n:translate="">New</a>
       </h4>
     </div>
 

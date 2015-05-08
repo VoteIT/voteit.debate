@@ -79,6 +79,8 @@ class ListActions(BaseActionView):
         if ai:
             self.slists.add_contextual_list(ai)
             self.success()
+        if not self.request.is_xhr:
+            return HTTPFound(location = self.request.resource_url(ai))
         return self.response
 
     @view_config(request_param = "action=set_state")
