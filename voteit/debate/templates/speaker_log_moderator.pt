@@ -9,7 +9,7 @@
            <span class="glyphicon glyphicon-edit"></span>
          </a>
         <div>
-          <span>${pn}:</span>
+          <b>${pn}:</b>
           <span tal:replace="structure number_to_profile_tag[pn]">Profile link</span>
         </div>
         <div>

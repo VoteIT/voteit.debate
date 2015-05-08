@@ -186,7 +186,9 @@ class SpeakerListPlugin(object):
     def settings(self):
         #FIXME: This should be refactored...
         meeting = find_interface(self.context, IMeeting)
-        assert meeting
+        if meeting is None:
+            request = get_current_request()
+            meeting = request.meeting
         from voteit.debate.schemas import SpeakerListSettingsSchema
         schema = SpeakerListSettingsSchema()
         settings = dict(speaker_list_count = 1,
@@ -306,7 +308,6 @@ def populate_from_proposals(sl, request = None):
     meeting = find_interface(sl, IMeeting)
     assert meeting
     participant_numbers = request.registry.getAdapter(meeting, IParticipantNumbers)
-    #participant_numbers.userid_to_number
     handled_userids = set()
     found = 0
     for prop in ai.get_content(content_type = 'Proposal', states = ['published'], sort_on = 'created'):

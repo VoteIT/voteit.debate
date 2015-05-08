@@ -166,11 +166,8 @@ class SpeakerActions(BaseActionView):
             #Shouldn't happen since js handles this
             self.response['message'] = _("Already in list")
             return self.response
-        if pn in self.participant_numbers.number_to_userid:
-            self.action_list.add(pn, override = True)
-            self.success()
-        else:
-            self.response['message'] = _("No user with that number")
+        self.action_list.add(pn, override = True)
+        self.success()
         return self.response
 
     @view_config(request_param = "action=active")
@@ -277,7 +274,7 @@ class ManageSpeakerList(BaseView):
                 userid = self.participant_numbers.number_to_userid[pn]
                 number_to_profile_tag[pn] = self.request.creators_info([userid], portrait = False)
             else:
-                number_to_profile_tag[pn] = pn
+                number_to_profile_tag[pn] = '-'
         response['number_to_profile_tag'] = number_to_profile_tag
         response['format_secs'] = self.format_seconds
         return response
@@ -373,33 +370,21 @@ class FullscreenSpeakerList(BaseView):
                  renderer = "voteit.debate:templates/fullscreen_list.pt")
     def fullscreen_list(self):
         slists = self.request.registry.getAdapter(self.context, ISpeakerLists)
+        active_list = slists.get(slists.active_list_name)
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
         root = self.context.__parent__
-        active_list = slists.get(slists.active_list_name)
-        active_speaker = None
-        speaker_profiles = []
+        speaker_profiles = {}
         num_lists = self.context.get_field_value('speaker_list_count', 1)
         if active_list:
             if active_list.current != None: #Note could be int 0!
-                userid = participant_numbers.number_to_userid[active_list.current]
-                active_speaker = root.users[userid]
+                userid = participant_numbers.number_to_userid.get(active_list.current, None)
+                if userid:
+                    speaker_profiles[active_list.current] = root.users[userid]
             for num in active_list.speakers:
                 userid = participant_numbers.number_to_userid.get(num)
                 if userid:
-                    speaker_profiles.append(root.users[userid])
-
-        def _get_user_list_number(userid):
-            pn = participant_numbers.userid_to_number[userid]
-            return active_list.get_number_for(pn)
-
-        response = dict(
-            active_list = active_list,
-            active_speaker = active_speaker,
-            speaker_profiles = speaker_profiles,
-            get_user_list_number = _get_user_list_number,
-            userid_to_number = participant_numbers.userid_to_number, #FIXME: This shouldn't be needed, refactor later
-        )
-        return response
+                    speaker_profiles[num] = root.users[userid]
+        return dict(active_list = active_list, speaker_profiles = speaker_profiles)
 
 
 class UserSpeakerLists(BaseView):

@@ -1,18 +1,10 @@
 import colander
 import deform
 from betahaus.pyracont.decorators import schema_factory
-#from voteit.irl.schemas import deferred_autocompleting_participant_number_widget
-#from voteit.irl.schemas import deferred_existing_participant_number_validator
 
 from voteit.debate import _
 from voteit.debate.models import get_speaker_list_plugins
 
-
-# class AddSpeakerSchema(colander.Schema):
-#     pn = colander.SchemaNode(colander.Int(),
-#                              title = _(u"Add speaker"),
-#                              widget = deferred_autocompleting_participant_number_widget,
-#                              validator = deferred_existing_participant_number_validator,)
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
@@ -39,13 +31,14 @@ class SpeakerListSettingsSchema(colander.Schema):
                                                              u"2 times and 4 will be treated equally."),
                                              widget = deform.widget.SelectWidget(values = _list_alts),
                                              default = 3)
-    show_controls_for_participants = colander.SchemaNode(
-        colander.Bool(),
-        title = _(u"Show user controls for speaker list statuses"),
-        description = _(u"show_controls_participants_description",
-                        default = u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
-        default = False,
-    )
+#FIXME: This doesn't have any effect right now
+#    show_controls_for_participants = colander.SchemaNode(
+#        colander.Bool(),
+#        title = _(u"Show user controls for speaker list statuses"),
+#        description = _(u"show_controls_participants_description",
+#                        default = u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
+#        default = False,
+#    )
     safe_positions = colander.SchemaNode(
         colander.Int(),
         widget = deform.widget.SelectWidget(values = _safe_pos_list_alts),
