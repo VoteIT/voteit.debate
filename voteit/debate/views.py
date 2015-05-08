@@ -17,6 +17,7 @@ from pyramid.view import view_defaults
 from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
+from voteit.core.views.agenda_item import AgendaItemView
 from voteit.irl.models.interfaces import IParticipantNumbers
 
 from voteit.debate import _
@@ -139,7 +140,7 @@ class ListActions(BaseActionView):
         result = populate_from_proposals(self.action_list)
         msg = _("speakers_from_published_props",
                 default = u"Added ${count} speakers from published proposals.",
-                                     mapping = {'count': result})
+                mapping = {'count': result})
         self.response['message'] = msg
         self.success()
         return self._tmp_redirect_url()
@@ -225,7 +226,7 @@ def speaker_list_controls_moderator(view, slists, ai):
 
 @view_defaults(context = IMeeting,
                permission = security.MODERATE_MEETING)
-class ManageSpeakerList(BaseView):
+class ManageSpeakerList(AgendaItemView):
 
     @reify
     def slists(self):
