@@ -152,9 +152,7 @@ class SpeakerActions(BaseActionView):
     def _get_pn(self):
         pn = self.request.params.get('pn', None)
         if pn:
-            pn = int(pn)
-            if pn in self.participant_numbers.number_to_userid:
-                return pn
+            return int(pn)
 
     @view_config(request_param = "action=add")
     def add(self):
