@@ -482,3 +482,7 @@ class UserSpeakerLists(BaseView):
 @view_action('meeting', 'debate_menu')
 def debate_menu(context, request, va, **kw):
     return render('voteit.debate:templates/menu.pt', {}, request = request)
+
+
+def includeme(config):
+    config.scan()
