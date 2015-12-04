@@ -18,17 +18,6 @@
         href="${request.resource_url(request.meeting, 'fullscreen_speaker_list')}"
         i18n:translate="">Fullscreen (Projector)</a>
     </li>
-    <!-- FIXME: Context for speaker lists -->
-    <li role="presentation">
-      <a role="menuitem" tabindex="-1"
-        href="${request.resource_url(context, 'manage_speaker_list')}"
-        i18n:translate="">Manage</a>
-    </li>
-    <li role="presentation">
-      <a role="menuitem" tabindex="-1"
-        href="${request.resource_url(request.meeting, 'speaker_list_settings')}"
-        i18n:translate="">Settings</a>
-    </li>
   </tal:moderator>
   <!-- Extension menu? -->
   <li role="presentation" class="divider"></li>

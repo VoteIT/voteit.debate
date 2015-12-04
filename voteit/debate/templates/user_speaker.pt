@@ -6,19 +6,37 @@
 <div class="col-sm-12">
   <div class="list-group">
     <div class="list-group-item">
-      <h4>
-        <span class="glyphicon glyphicon-bullhorn"></span>
-        <span i18n:translate="">Speaker list</span>
-        <a tal:condition="request.is_moderator"
-          class="btn btn-default btn-sm"
-          href="${request.resource_url(context, 'manage_speaker_list')}"
-          i18n:translate="">Manage</a>
-        <a tal:condition="request.is_moderator"
-          href="${request.resource_url(request.meeting, 'speaker_list_action',
-                  query = {'action': 'add', 'ai_name': context.__name__})}"
-          class="btn btn-default btn-sm"
-          i18n:translate="">New</a>
-      </h4>
+      <div class="row">
+        <div class="col-sm-6">
+          <h4>
+            <span class="glyphicon glyphicon-bullhorn"></span>
+            <span i18n:translate="">Speaker list</span>
+          </h4>
+        </div>
+        <div class="col-sm-6">
+          <a tal:condition="request.is_moderator"
+            href="${request.resource_url(request.meeting, 'speaker_list_action',
+                    query = {'action': 'add', 'ai_name': context.__name__})}"
+            class="btn btn-default btn-sm"
+            i18n:translate="">New</a>
+          <a tal:condition="request.is_moderator"
+            class="btn btn-default btn-sm"
+            href="${request.resource_url(context, 'manage_speaker_list')}"
+            i18n:translate="">Manage</a>
+          <a tal:condition="request.is_moderator"
+            href="${request.resource_url(request.meeting, 'speaker_list_settings')}"
+            class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-cog"></span>
+            <span i18n:translate="">Settings</span>
+          </a>
+          <a href="${request.resource_url(request.meeting, 'speaker_statistics')}"
+            class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-stats"></span>
+            <span i18n:translate="">Statistics</span>
+          </a>
+        
+        </div>
+      </div>
     </div>
 
     <tal:iterate repeat="sl speaker_lists">

@@ -21,24 +21,17 @@ def deferred_speaker_list_plugin_widget(node, kw):
 
 
 class SpeakerListSettingsSchema(colander.Schema):
-    speaker_list_count = colander.SchemaNode(colander.Int(),
-                                             title = _(u"Number of speaker lists to use"),
-                                             description = _(u"speaker_lists_to_use_description",
-                                                             default = u"Using more than one speaker list will prioritise anyone who has spoken less than someone else, "
-                                                             u"but only up to number of lists. <br/><br/>"
-                                                             u"Example: When using 2 speaker lists, someone who hasn't spoken will get to speak before "
-                                                             u"everyone who's spoken 1 or more times. However, when entering the queue someone who's spoken "
-                                                             u"2 times and 4 will be treated equally."),
-                                             widget = deform.widget.SelectWidget(values = _list_alts),
-                                             default = 3)
-#FIXME: This doesn't have any effect right now
-#    show_controls_for_participants = colander.SchemaNode(
-#        colander.Bool(),
-#        title = _(u"Show user controls for speaker list statuses"),
-#        description = _(u"show_controls_participants_description",
-#                        default = u"Users will need participant numbers to add themselves to the speakers list. This includes administrators too!"),
-#        default = False,
-#    )
+    speaker_list_count = colander.SchemaNode(
+        colander.Int(),
+        title = _(u"Number of speaker lists to use"),
+        description = _(u"speaker_lists_to_use_description",
+                        default = u"Using more than one speaker list will prioritise anyone who has spoken less than someone else, "
+                        u"but only up to number of lists. <br/><br/>"
+                        u"Example: When using 2 speaker lists, someone who hasn't spoken will get to speak before "
+                        u"everyone who's spoken 1 or more times. However, when entering the queue someone who's spoken "
+                        u"2 times and 4 will be treated equally."),
+        widget = deform.widget.SelectWidget(values = _list_alts),
+        default = 9)
     safe_positions = colander.SchemaNode(
         colander.Int(),
         widget = deform.widget.SelectWidget(values = _safe_pos_list_alts),

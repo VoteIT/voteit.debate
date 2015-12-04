@@ -307,6 +307,7 @@ class EditSpeakerLogForm(DefaultEditForm):
     """ Edit log entries for a specific speaker. """
     type_name = 'SpeakerLists'
     schema_name = 'edit_speaker_log'
+    title = _("Edit speaker log")
 
     @reify
     def edit_list(self):

@@ -14,7 +14,6 @@ class DebatePortlet(PortletType):
     title = _("Debate")
 
     def render(self, context, request, view, **kwargs):
-        
         if IAgendaItem.providedBy(context):
             voteit_debate_user_speaker_js.need()
             voteit_debate_user_speaker_css.need()
