@@ -486,4 +486,4 @@ def debate_menu(context, request, va, **kw):
 
 
 def includeme(config):
-    config.scan()
+    config.scan(__name__)
