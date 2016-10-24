@@ -376,7 +376,6 @@ class FullscreenSpeakerList(BaseView):
         participant_numbers = self.request.registry.getAdapter(self.context, IParticipantNumbers)
         root = self.context.__parent__
         speaker_profiles = {}
-        num_lists = self.context.get_field_value('speaker_list_count', 1)
         if active_list:
             if active_list.current != None: #Note could be int 0!
                 userid = participant_numbers.number_to_userid.get(active_list.current, None)
