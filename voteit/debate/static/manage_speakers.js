@@ -10,17 +10,21 @@ $(window).on('beforeunload', function() {
 });
 
 $(document).ready(function () {
-    $("#reload_slists_js").on("click", load_speaker_lists);
-    $("#new_speaker_list").on("click", generic_speaker_list_get_actions);
-    //Bind events to controls
-    $("#start_speaker").on("click", start_speaker);
-    $("#pause_speaker").on("click", pause_speaker);
-    $("#finished_speaker").on("click", finished_speaker);
-    $("#quickstart_next_speaker").on("click", quickstart_next_speaker);
-    $("#speaker_undo").on("click", speaker_undo);
-    $("#shuffle_speakers").on("click", shuffle_speakers);
-    $("form#add_speaker").on("submit", add_speaker);
-    $("#clear_speaker_log").on("click", clear_speaker_log);
+    $('body').on('click', '[data-load-agenda-item]', voteit.load_agenda_item);
+
+    $('body').on("click", "#reload_slists_js", load_speaker_lists);
+    $('body').on("click", "#new_speaker_list", generic_speaker_list_get_actions);
+    $('body').on("click", "#start_speaker", start_speaker);
+    $('body').on("click", "#pause_speaker", pause_speaker);
+    $('body').on("click", "#finished_speaker", finished_speaker);
+    $('body').on("click", "#speaker_undo", speaker_undo);
+
+
+    $('body').on("click", "#shuffle_speakers", shuffle_speakers);
+    $('body').on("click", "form#add_speaker", add_speaker);
+    $('body').on("click", "#clear_speaker_log", clear_speaker_log);
+
+    //When loaded... FIXME
     //Focus
     $('[name="pn"]').focus();
 });
@@ -76,7 +80,7 @@ function load_speaker_log() {
 
 function load_speaker_lists(event) {
     event.preventDefault();
-    var url = $(event.delegateTarget).attr('href');
+    var url = $(event.currentTarget).attr('href');
     //spinner().appendTo('#reload_slists_js');
     var request = load_request(url, '#slists');
     request.done(function() {
@@ -139,7 +143,7 @@ function add_speaker(event) {
 function remove_speaker(event) {
     event.preventDefault();
     var speaker_to_be_removed = $(this).parents('li');
-    var url = $(event.delegateTarget).attr('href');
+    var url = $(event.currentTarget).attr('href');
     var request = do_request(url);
     request.done(function(){
         speaker_to_be_removed.remove();
@@ -175,7 +179,7 @@ function start_speaker(event) {
     event.preventDefault();
     if ($('#speaker_active li').length == 0) {
         if ($('#speaker_queue li').length != 0) {
-            var url = $(event.delegateTarget).attr('href');
+            var url = $(event.currentTarget).attr('href');
             var request = do_request(url);
             request.done(function(data) {
                 $('#speaker_active').html(data['active_speaker']);
@@ -239,7 +243,7 @@ function quickstart_next_speaker(event) {
 
 function shuffle_speakers(event) {
     event.preventDefault();
-    var url = $(event.delegateTarget).attr('href');
+    var url = $(event.currentTarget).attr('href');
     var request = do_request(url);
     request.done(load_speaker_queue);
 }
@@ -249,7 +253,7 @@ function speaker_undo(event) {
     if (timer != null) {
         pause_speaker(event);
     }
-    var url = $(event.delegateTarget).attr('href');
+    var url = $(event.currentTarget).attr('href');
     var request = do_request(url);
     request.done(function() {
         spoken_time = 0;
@@ -260,14 +264,12 @@ function speaker_undo(event) {
 
 function generic_speaker_list_get_actions(event) {
     event.preventDefault();
-    var url = $(event.delegateTarget).attr('href');
+    var url = $(event.currentTarget).attr('href');
     if (typeof(url) === 'undefined') return;
-    //spinner().appendTo(event.target);
     var request = do_request(url);
     request.done(function(data) {
         if (data['success'] == true) {
             $('#reload_slists_js').click();
-            //Spinner cleared by this action
         }
     });
 }

@@ -1,4 +1,6 @@
 """ Fanstatic lib"""
+from arche.interfaces import IBaseView
+from arche.interfaces import IViewInitializedEvent
 from fanstatic import Library
 from fanstatic import Resource
 
@@ -15,3 +17,13 @@ voteit_debate_fullscreen_speakers_css = Resource(voteit_debate_lib, 'fullscreen_
                                                  depends = (voteit_main_css, voteit_debate_speaker_view_styles))
 voteit_debate_user_speaker_js = Resource(voteit_debate_lib, 'user_speaker.js', depends = (base_js,))
 voteit_debate_user_speaker_css = Resource(voteit_debate_lib, 'user_speaker.css')
+
+
+def include_user_resources(view, event):
+    if view.request.meeting:
+        voteit_debate_user_speaker_js.need()
+        voteit_debate_user_speaker_css.need()
+
+
+def includeme(config):
+    config.add_subscriber(include_user_resources, [IBaseView, IViewInitializedEvent])

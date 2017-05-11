@@ -9,6 +9,7 @@ _ = TranslationStringFactory(PROJECTNAME)
 logger = logging.getLogger(__name__)
 
 def includeme(config):
+    config.include('.fanstaticlib')
     config.include('.models')
     config.include('.portlet')
     config.include('.schemas')

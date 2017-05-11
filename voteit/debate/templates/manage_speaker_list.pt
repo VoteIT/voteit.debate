@@ -7,18 +7,18 @@
       i18n:domain="voteit.debate">
 <body>
 <metal:actionbar fill-slot="actionbar"></metal:actionbar>
-<div metal:fill-slot="main-content" class="row">
+<div metal:fill-slot="main-content">
   <script type="text/javascript">
   //FIXME: Refactor
   voteit.cfg = {};
   voteit.cfg['meeting_url'] = '${request.resource_url(request.meeting)}';
   </script>
-
-  <div class="col-xs-12">
+  <h4 class="text-center">${context.title}</h4>
     ${structure: view.render_template('voteit.core:templates/snippets/ai_previous_next.pt', view_name = 'manage_speaker_list')}
-  </div>
+
   <br/><br/>
   <!-- FIXME: Limit to context_active might not be what we want. Editing other inactive lists is a good idea -->
+  <div class="row">
   <div class="col-xs-6" id="left">
     <tal:not_active condition="not context_active">
         <h3 i18n:translate="">(Activate list to show controls)</h3>
@@ -93,6 +93,7 @@
       <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'action': 'clear', 'list_name': active_list.name})}"
          tal:condition="context_active" class="btn btn-danger" id="clear_speaker_log" i18n:translate="">Clear</a>
   </div>
+  </div>
 
 <script language="javascript" type="text/javascript" tal:condition="context_active">
     $(document).ready(function () {
@@ -102,9 +103,6 @@
         load_speaker_log();
     });
 </script>
-
-
-
 </div>
 </body>
 </html>
