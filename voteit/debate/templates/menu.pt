@@ -3,22 +3,31 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-  <li role="presentation" class="dropdown-header">
-    <span class="glyphicon glyphicon-bullhorn"></span>
-    <span i18n:translate="">Speaker list</span>
-  </li>
-  <li role="presentation">
-    <a role="menuitem" tabindex="-1"
-      href="${request.resource_url(request.meeting, 'speaker_statistics')}"
-      i18n:translate="">Statistics</a>
-  </li>
-  <tal:moderator condition="request.is_moderator">
-    <li role="presentation">
-      <a role="menuitem" tabindex="-1"
-        href="${request.resource_url(request.meeting, 'fullscreen_speaker_list')}"
-        i18n:translate="">Fullscreen (Projector)</a>
-    </li>
-  </tal:moderator>
-  <!-- Extension menu? -->
-  <li role="presentation" class="divider"></li>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h4 class="panel-title">
+      <span class="glyphicon glyphicon-bullhorn"></span>
+      <span i18n:translate="">Speaker list</span>
+    </h4>
+  </div>
+  <div class="panel-body">
+    <ul class="nav nav-pills nav-stacked">
+
+      <li role="presentation">
+        <a role="menuitem" tabindex="-1"
+          href="${request.resource_url(request.meeting, 'speaker_statistics')}"
+          i18n:translate="">Statistics</a>
+      </li>
+
+      <tal:moderator condition="request.is_moderator">
+        <li role="presentation">
+          <a role="menuitem" tabindex="-1"
+            href="${request.resource_url(request.meeting, 'fullscreen_speaker_list')}"
+            i18n:translate="">Fullscreen (Projector)</a>
+        </li>
+      </tal:moderator>
+    </ul>
+
+  </div>
+</div>
 </tal:main>
