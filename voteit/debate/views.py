@@ -11,6 +11,7 @@ from pyramid.httpexceptions import HTTPForbidden
 from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render
 from pyramid.response import Response
+from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.traversal import find_interface
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -360,7 +361,7 @@ class SpeakerListSettingsForm(DefaultEditForm):
 class FullscreenSpeakerList(BaseView):
 
     @view_config(name = "fullscreen_speaker_list",
-                 permission = security.VIEW,
+                 permission = NO_PERMISSION_REQUIRED,
                  renderer = "voteit.debate:templates/fullscreen_view.pt")
     def fullscreen_view(self):
         voteit_debate_fullscreen_speakers_js.need()
@@ -368,7 +369,7 @@ class FullscreenSpeakerList(BaseView):
         return {}
 
     @view_config(name = "_fullscreen_list",
-                 permission = security.VIEW,
+                 permission = NO_PERMISSION_REQUIRED,
                  renderer = "voteit.debate:templates/fullscreen_list.pt")
     def fullscreen_list(self):
         slists = self.request.registry.getAdapter(self.context, ISpeakerLists)
