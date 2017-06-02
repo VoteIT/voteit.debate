@@ -39,9 +39,6 @@
          href="${request.resource_url(request.meeting, 'speaker_action', query = {'list_name': active_list.name, 'action': 'finished'})}">
         <span class="glyphicon glyphicon-stop"></span>
       </a>
-      <a id="quickstart_next_speaker" class="btn btn-default" title="Quickstart next" i18n:attributes="title">
-        <span class="glyphicon glyphicon-step-forward"></span>
-      </a>
       <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'list_name': active_list.name, 'action': 'undo'})}"
         id="speaker_undo"
         class="btn btn-default"

@@ -234,12 +234,13 @@ function finished_speaker(event, reload_queue) {
         }
     });
 }
-
+/*
 function quickstart_next_speaker(event) {
     event.preventDefault();
     finished_speaker(event, false);
     $('#start_speaker').click();
 }
+*/
 
 function shuffle_speakers(event) {
     event.preventDefault();
