@@ -158,11 +158,14 @@ class SpeakerActions(BaseActionView):
     @view_config(request_param = "action=add")
     def add(self):
         pn = self.request.POST.get('pn', '')
+        if not pn:
+            return self.response
         try:
             pn = int(pn)
         except ValueError:
-            self.response['message'] = _('${num} is not a valid number',
-                                         mapping = {'num': pn})
+            self.response['message'] = self.request.localizer.translate(
+                _('${num} is not a valid number', mapping = {'num': pn})
+            )
             return self.response
         if pn in self.action_list.speakers:
             #Shouldn't happen since js handles this

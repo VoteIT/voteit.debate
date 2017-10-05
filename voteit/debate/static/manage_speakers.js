@@ -2,7 +2,6 @@ var spoken_time = 0;
 var timer = null;
 var reload_timer = null;
 //reload_interval var is part of init
-
 //Init js code in template!
 
 $(window).on('beforeunload', function() {
@@ -19,12 +18,10 @@ $(document).ready(function () {
     $('body').on("click", "#finished_speaker", finished_speaker);
     $('body').on("click", "#speaker_undo", speaker_undo);
 
-
     $('body').on("click", "#shuffle_speakers", shuffle_speakers);
-    $('body').on("click", "form#add_speaker", add_speaker);
+    $('body').on("submit", "form#add_speaker", add_speaker);
     $('body').on("click", "#clear_speaker_log", clear_speaker_log);
 
-    //When loaded... FIXME
     //Focus
     $('[name="pn"]').focus();
 });
@@ -61,7 +58,6 @@ function load_speaker_queue() {
     request.done(function() {
         $(".promote_start_speaker").on("click", promote_start_speaker);
         $(".remove_speaker").on("click", remove_speaker);
-        //$('img.spinner').remove();
     });
     request.always(function() {
         reload_timer = setInterval(load_speaker_queue, reload_interval);
@@ -70,21 +66,15 @@ function load_speaker_queue() {
 
 function load_speaker_log() {
     if ($('#speaker_log').length > 0) {
-        //spinner().appendTo('#speaker_log');
         var request = load_request(voteit.cfg['meeting_url'] + '_speaker_log_moderator', '#speaker_log', {async: true});
-        request.always(function() {
-            //$('img.spinner').remove();
-        });
     }
 }
 
 function load_speaker_lists(event) {
     event.preventDefault();
     var url = $(event.currentTarget).attr('href');
-    //spinner().appendTo('#reload_slists_js');
     var request = load_request(url, '#slists');
     request.done(function() {
-        //$('img.spinner').remove();
         $("#reload_slists_js").on("click", load_speaker_lists);
     });
 }
@@ -109,18 +99,15 @@ function rename_speaker_submit(event) {
 
 function clear_speaker_log(event) {
     event.preventDefault();
-    //spinner().appendTo($(event.target));
     var url = $(event.target).attr('href');
     var request = do_request(url);
     request.done(function() {
         $("#speaker_log").empty();
-        //$('img.spinner').remove();
     });
 }
 
 function add_speaker(event) {
     event.preventDefault();
-    //spinner().appendTo("input");
     var form = $(this);
     var speaker_id = $("[name='pn']").attr('value');
     // Does this speaker exist already?
@@ -134,9 +121,6 @@ function add_speaker(event) {
     request.done(function(data) {
         $("[name='pn']").val("");
         load_speaker_queue();
-    });
-    request.always(function() {
-        //$('img.spinner').remove();
     });
 }
 
@@ -220,11 +204,9 @@ function finished_speaker(event, reload_queue) {
     spoken_time = parse_spoken_time($('#speaker_active li .time_spoken').html());
     var url = $("#finished_speaker").attr('href');
     url += '&seconds=' + Math.round(spoken_time / 10);
-    //var request = $.ajax({url: url, async: false});
     var request = do_request(url);
     request.done(function() {
         //Success
-        //$('img.spinner').remove();
         spoken_time = 0;
         $('#speaker_active li').remove();
         load_speaker_log();
@@ -234,13 +216,6 @@ function finished_speaker(event, reload_queue) {
         }
     });
 }
-/*
-function quickstart_next_speaker(event) {
-    event.preventDefault();
-    finished_speaker(event, false);
-    $('#start_speaker').click();
-}
-*/
 
 function shuffle_speakers(event) {
     event.preventDefault();
