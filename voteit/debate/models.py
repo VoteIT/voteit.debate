@@ -191,8 +191,9 @@ class SpeakerListPlugin(object):
             meeting = request.meeting
         from voteit.debate.schemas import SpeakerListSettingsSchema
         schema = SpeakerListSettingsSchema()
-        settings = dict(speaker_list_count = 1,
-                        safe_positions = 0)
+        #Should map default values from schema
+        settings = dict(speaker_list_count = 9,
+                        safe_positions = 1)
         settings.update(meeting.get_field_appstruct(schema))
         return settings
 
@@ -206,7 +207,6 @@ class SpeakerListPlugin(object):
         self.speakers.insert(pos, pn)
 
     def get_position(self, pn):
-        use_lists = self.settings.get('speaker_list_count')
         safe_pos = self.settings.get('safe_positions')
         compare_val = self.get_number_for(pn)
         pos = len(self.speakers)
