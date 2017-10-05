@@ -181,6 +181,7 @@ class SpeakerListPluginTests(unittest.TestCase):
         meeting['ai'] = ai = AgendaItem()
         ai.uid = 'uid'
         request = testing.DummyRequest()
+        request.meeting = meeting
         lists = request.registry.getAdapter(meeting, ISpeakerLists)
         lists.add_contextual_list(ai)
         return lists
@@ -217,7 +218,7 @@ class SpeakerListPluginTests(unittest.TestCase):
         self.assertIn(1, obj.speakers)
 
     def test_add_with_secondary_speaker_list(self):
-        lists = self._fixture(speaker_list_count = 2)
+        lists = self._fixture(speaker_list_count = 2, safe_positions=0)
         obj = lists['uid/1']
         obj.add(1)
         obj.speaker_active(1)
@@ -227,7 +228,7 @@ class SpeakerListPluginTests(unittest.TestCase):
         self.assertEqual([2, 1], obj.speakers)
 
     def test_add_with_lots_of_speakers(self):
-        lists = self._fixture(speaker_list_count = 3)
+        lists = self._fixture(speaker_list_count = 3, safe_positions=0)
         obj = lists['uid/1']
         obj.speaker_log[1] = [1, 1, 1]
         obj.speaker_log[2] = [1]
