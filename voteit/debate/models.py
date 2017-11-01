@@ -1,9 +1,11 @@
-from random import shuffle
 from datetime import timedelta
+from persistent import Persistent
+from random import shuffle
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
-from persistent import Persistent
+from arche.interfaces import IObjectUpdatedEvent
+from arche.portlets import get_portlet_manager
 from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.threadlocal import get_current_registry
@@ -322,9 +324,42 @@ def populate_from_proposals(sl, request = None):
         found += 1
     return found
 
+
 def get_speaker_list_plugins(request):
     return [(x.name, x.factory.plugin_title) for x in request.registry.registeredAdapters() if x.provided == ISpeakerListPlugin]
+
+
+def insert_portlet_when_enabled(context, event):
+    if 'enable_voteit_debate' in event.changed:
+        manager = get_portlet_manager(context)
+        current = manager.get_portlets('agenda_item', 'voteit_debate')
+        if not context.get_field_value('enable_voteit_debate', None):
+            for portlet in current:
+                manager.remove('agenda_item', portlet.uid)
+        else:
+            if not current:
+                new_portlet = manager.add('agenda_item', 'voteit_debate')
+                ai_slot = manager['agenda_item']
+                current_order = list(ai_slot.keys())
+                pos = current_order.index(new_portlet.uid)
+                #Find a good position to insert it - above discussions or proposals
+                types = ('ai_proposals', 'ai_discussions')
+                for portlet in ai_slot.values():
+                    if portlet.portlet_type in types:
+                        pos = current_order.index(portlet.uid)
+                        break
+                current_order.remove(new_portlet.uid)
+                current_order.insert(pos, new_portlet.uid)
+                ai_slot.order = current_order
+
 
 def includeme(config):
     config.registry.registerAdapter(SpeakerLists)
     config.registry.registerAdapter(SpeakerListPlugin)
+    config.add_subscriber(insert_portlet_when_enabled, [IMeeting, IObjectUpdatedEvent])
+    from voteit.core.models.meeting import Meeting
+    def get_enable_voteit_debate(self):
+        return self.get_field_value('enable_voteit_debate', None)
+    def set_enable_voteit_debate(self, value):
+        return self.set_field_value('enable_voteit_debate', bool(value))
+    Meeting.enable_voteit_debate = property(get_enable_voteit_debate, set_enable_voteit_debate)

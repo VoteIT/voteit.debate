@@ -5,17 +5,17 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 <body metal:fill-slot="fullpage">
-  <nav class="navbar navbar-fixed-top navbar-voteit" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand hidden-xs" href="${request.application_url}">
+  <nav class="navbar navbar-fixed-top navbar-voteit">
+    <div class="container-fluid">
+      <div class="navbar-header" data-check-greedy style="display: inline-block; width: 100%;">
+        <a class="navbar-brand" href="${request.application_url}">
             <img height="31" width="85" class="voteitlogo"
                 src="${request.static_url('voteit.core:static/images/logo.png')}" />
         </a>
         <a tal:condition="request.meeting"
-          class="navbar-brand"
+          class="navbar-brand text-overflow greedy"
           href="${request.resource_url(request.meeting)}">
-          <span class="hidden-sm hidden-xs">${request.meeting.title}</span>
+          ${request.meeting.title}
         </a>
       </div>
     </div><!-- /.container-->
