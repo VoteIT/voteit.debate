@@ -13,10 +13,7 @@
   voteit.cfg = {};
   voteit.cfg['meeting_url'] = '${request.resource_url(request.meeting)}';
   </script>
-  <h4 class="text-center">${context.title}</h4>
-    ${structure: view.render_template('voteit.core:templates/snippets/ai_previous_next.pt', view_name = 'manage_speaker_list')}
 
-  <br/><br/>
   <!-- FIXME: Limit to context_active might not be what we want. Editing other inactive lists is a good idea -->
   <div class="row">
   <div class="col-xs-6" id="left">
