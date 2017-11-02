@@ -330,7 +330,7 @@ def get_speaker_list_plugins(request):
 
 
 def insert_portlet_when_enabled(context, event):
-    if 'enable_voteit_debate' in event.changed:
+    if event.changed and 'enable_voteit_debate' in event.changed:
         manager = get_portlet_manager(context)
         current = manager.get_portlets('agenda_item', 'voteit_debate')
         if not context.get_field_value('enable_voteit_debate', None):

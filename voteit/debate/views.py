@@ -490,7 +490,7 @@ class UserSpeakerLists(BaseView):
 
 
 def _debate_is_active(context, request, va):
-    return context.enable_voteit_debate
+    return bool(context.enable_voteit_debate)
 
 
 @view_action('agenda_actions', 'manage_speaker_lists',
