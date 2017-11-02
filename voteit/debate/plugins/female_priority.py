@@ -48,7 +48,7 @@ class FemalePrioritySL(SpeakerListPlugin):
     plugin_title = _("female_prio_plugin_title",
                      default = u"Females get to be moved up")
     plugin_description = _(u"female_prio_plugin_desc",
-                           u"If there are 2 speakers before who aren't females and all "
+                           default=u"If there are 2 speakers before who aren't females and all "
                            u"speakers have spoken the same amount of times, "
                            u"the female speaker will be moved up to second position. "
                            u"If their are other female speakers in the list, "
