@@ -7,6 +7,10 @@
       i18n:domain="voteit.debate">
 <body>
 <metal:actionbar fill-slot="actionbar"></metal:actionbar>
+
+<tal:agenda_actionbar metal:fill-slot="agenda_actionbar"
+    tal:replace="structure view.render_template('voteit.core:templates/menus/context_actions.pt')" />
+
 <div metal:fill-slot="main-content">
   <script type="text/javascript">
   //FIXME: Refactor
