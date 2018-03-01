@@ -1,0 +1,24 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+<div class="list-group-item speaker-log-item">
+
+      <a class="pull-right"
+         data-speaker-log="edit"
+         href="${edit_url}">
+       <span class="glyphicon glyphicon-edit"></span>
+     </a>
+      <b data-speaker-log="pn"></b>
+      <span data-speaker-log="fullname">(Name and userid)</span>
+
+      <div class="text-right">
+        Times spoken:
+        <span data-speaker-log="times"></span>
+
+        Total seconds:
+        <span data-speaker-log="total"></span>
+
+      </div>
+</div>
+</tal:main>

@@ -5,7 +5,7 @@
 <tal:iterate repeat="(pn, timelog) active_list.speaker_log.items()">
     <div class="list-group-item">
         <a class="btn btn-default pull-right"
-           href="${request.resource_url(context, 'edit_speaker_log', query = {'speaker_list': active_list.name, 'speaker': pn})}">
+           href="${edit_url}">
            <span class="glyphicon glyphicon-edit"></span>
          </a>
         <div>

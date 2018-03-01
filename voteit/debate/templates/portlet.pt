@@ -3,7 +3,8 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 <div id="user_speaker_lists"><!-- Don't put anything here! --></div>
-<script language="javascript" type="text/javascript">
+Hello world
+<script tal:condition="None" language="javascript" type="text/javascript">
   var user_speaker_list_url = "${request.resource_url(context, '_user_speaker_lists')}";
   $(document).ready(function () {
     reload_speaker_in_queue = ${request.meeting.get_field_value('reload_speaker_in_queue', 5) * 1000};

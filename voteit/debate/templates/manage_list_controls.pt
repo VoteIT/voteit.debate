@@ -11,7 +11,8 @@
 
 <div class="list-group">
   <tal:iter repeat="sl context_lists">
-  <div class="list-group-item ${(active_list and sl.name == active_list.name) and 'active' or None}">
+
+  <div class="list-group-item ${(view.active_name and sl.name == view.active_name) and 'active' or None}">
     <div class="btn-group pull-right">
       <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
         <span class="glyphicon glyphicon-cog"></span>
@@ -54,7 +55,7 @@
       </ul>
     </div><!-- btn-group -->
 
-    <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'action': 'active', 'list_name': sl.name, 'ai_name': context.__name__})}"
+    <a href="${request.resource_url(context, '_activate_slist', sl.name)}"
        class="sl_title">
        <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
        </span>
@@ -72,7 +73,9 @@
 
 <script language="javascript" type="text/javascript">
     //$("#speaker_list_controls a").on("click", generic_speaker_list_get_actions);
+    /*
     $(".rename_sl").on("click", rename_speaker_show);
     $(".rename_form").on("submit", rename_speaker_submit);
+    */
 </script>
 </tal:main>

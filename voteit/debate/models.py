@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from UserDict import IterableUserDict
+from UserList import UserList
+from calendar import timegm
 from datetime import timedelta
 from random import shuffle
 
@@ -9,16 +11,20 @@ from persistent import Persistent
 
 from arche.interfaces import IObjectUpdatedEvent
 from arche.portlets import get_portlet_manager
+from arche.utils import AttributeAnnotations
+from arche.utils import utcnow
 from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.interfaces import IRequest
+from pyramid.renderers import render
 from six import string_types
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
+from voteit.irl.models.interfaces import IParticipantNumbers
 from zope.component import adapter
 from zope.interface import implementer
 
-from voteit.debate.interfaces import ISpeakerList
+from voteit.debate.interfaces import ISpeakerList, ISpeakerListSettings
 from voteit.debate.interfaces import ISpeakerLists
 from voteit.debate import _
 
@@ -30,6 +36,11 @@ class SpeakerLists(IterableUserDict):
     name = ""
     title = _("Default list handler")
     description = ""
+    _state_titles = {"open": _("Open"), "closed": _("Closed")}
+    templates = {
+        'speaker': 'voteit.debate:templates/speaker_item.pt',
+        'log': 'voteit.debate:templates/speaker_log_item.pt',
+    }
 
     def __init__(self, context, request):
         self.context = context
@@ -38,22 +49,38 @@ class SpeakerLists(IterableUserDict):
     @property
     def data(self):
         try:
-            return self.context.__speaker_lists__
+            return self.context._speaker_lists
         except AttributeError:
-            self.context.__speaker_lists__ = OOBTree()
-            return self.context.__speaker_lists__
+            self.context._speaker_lists = OOBTree()
+            return self.context._speaker_lists
 
     @reify
     def settings(self):
 #        schema = self.request.get_schema(context, context.type_name, 'edit', bind=None, event=True)
-        from voteit.debate.schemas import SpeakerListSettingsSchema
-        schema = SpeakerListSettingsSchema()
+        #from voteit.debate.schemas import SpeakerListSettingsSchema
+        #schema = SpeakerListSettingsSchema()
         #FIXME: use get_schema on request instead
         #Should map default values from schema
-        settings = dict(speaker_list_count = 9,
-                        safe_positions = 1)
-        settings.update(self.context.get_field_appstruct(schema))
+
+        #Fallback to default class
+        settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
+        settings.setdefault('speaker_list_count', 9)
+        settings.setdefault('safe_positions',1)
         return settings
+
+    def set_active_list(self, list_name, category='default'):
+        try:
+            assert list_name in self
+        except AssertionError:
+            raise KeyError("No list named %r" % list_name)
+        try:
+            active = self.context._v_active_lists
+        except AttributeError:
+            active = self.context._v_active_lists = OOBTree()
+        active[category] = list_name
+
+    def get_active_list(self, category='default'):
+        return getattr(self.context, '_v_active_lists', {}).get(category, '')
 
     # @property
     # def active_list_name(self, default = None):
@@ -116,6 +143,9 @@ class SpeakerLists(IterableUserDict):
         #Make sure the adapter registers as true even if it's empty
         return True
 
+    def get_state_title(self, sl):
+        return self._state_titles.get(sl.state, '')
+
     def add_to_list(self, pn, sl, override = False):
         assert isinstance(pn, int)
         if not override and sl.state == "closed":
@@ -123,7 +153,8 @@ class SpeakerLists(IterableUserDict):
         if pn in sl:
             return
         pos = self.get_position(pn, sl)
-        sl.speakers.insert(pos, pn)
+        sl.insert(pos, pn)
+        return pos
 
     def shuffle(self, sl):
         use_lists = self.settings.get('speaker_list_count')
@@ -134,11 +165,11 @@ class SpeakerLists(IterableUserDict):
                 cmp_val = use_lists
             cur = lists.setdefault(cmp_val, [])
             cur.append(speaker)
-        del sl.speakers[:]
+        del sl[:]
         for i in range(1, use_lists + 1):
             if i in lists:
                 shuffle(lists[i])
-                sl.speakers.extend(lists[i])
+                sl.extend(lists[i])
 
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
@@ -160,60 +191,101 @@ class SpeakerLists(IterableUserDict):
         cmp_val = len(sl.speaker_log.get(pn, ())) + 1
         return cmp_val <= use_lists and cmp_val or use_lists
 
+    def render_tpl(self, name, **kw):
+        return render(self.templates[name], kw, request=self.request)
+
+    # def render_speaker_item(self, pn, sl, controls=True):
+    #     safe_positions = self.settings['safe_positions']
+    #     userid = self._pn_to_userid.get(pn, None)
+    #     response = dict(
+    #         sl=sl,
+    #         pn=pn,
+    #         userid=userid,
+    #         is_active=pn == sl.current,
+    #         is_locked=pn in sl and sl.index(pn) < safe_positions,
+    #         controls=controls and self.request.is_moderator,
+    #     )
+    #     return render(self.speaker_tpl, response, request=self.request)
+
+    @reify
+    def _pn_to_userid(self):
+        return IParticipantNumbers(self.context).number_to_userid
+
+
+@implementer(ISpeakerListSettings)
+@adapter(IMeeting)
+class SpeakerListSettings(AttributeAnnotations):
+    attr_name = '_voteit_debate_settings'
+
 
 @implementer(ISpeakerList)
-class SpeakerList(Persistent):
+class SpeakerList(PersistentList):
     name = ""
-    current = None
     title = ""
     state = ""
     __parent__ = None
 
     def __init__(self, name, title = "", state = "open"):
+        super(SpeakerList, self).__init__()
         self.name = name
-        self.speakers = PersistentList()
         self.speaker_log = IOBTree()
-        self.current = None
         self.title = title
         self.state = state
+
+    @property
+    def current(self):
+        return getattr(self, '_v_current', None)
+    @current.setter
+    def current(self, value):
+        self._v_current = value
+
+    @property
+    def current_secs(self):
+        try:
+            if self._v_start_ts is not None:
+                ts = utcnow() - self._v_start_ts
+                return ts.seconds
+        except AttributeError:
+            pass
+
+    @property
+    def start_ts_epoch(self):
+        start_ts = getattr(self, '_v_start_ts', None)
+        if start_ts:
+            return timegm(start_ts.timetuple())
 
     def start(self, pn):
         assert isinstance(pn, int)
         if pn in self:
             self.current = pn
-            self.speakers.remove(pn)
+            self.remove(pn)
+            self._v_start_ts = utcnow()
             return pn
 
-    def finish(self, pn, seconds):
+    def finish(self, pn):
         if self.current != pn:
             return
         assert isinstance(pn, int)
-        assert isinstance(seconds, int)
         if self.current not in self.speaker_log:
             self.speaker_log[self.current] = PersistentList()
-        self.speaker_log[self.current].append(seconds)
+        # While this is a volatile attr, current is also volatile.
+        # So if it doesn't exist, neither will current!
+        self.speaker_log[self.current].append(self.current_secs)
+        self._v_start_ts = None
         self.current = None
         return pn
 
     def undo(self):
         if self.current == None:
             return
-        self.speakers.insert(0, self.current)
+        self.insert(0, self.current)
         pn = self.current
         self.current = None
+        self._v_start_ts = None
         return pn
 
     def __repr__(self): # pragma : no cover
-        return "<%s> '%s' with %s speakers" % (self.__class__.__name__, self.name, len(self.speakers))
-
-    def __contains__(self, item):
-        return item in self.speakers
-
-    def __iter__(self):
-        return iter(self.speakers)
-
-    def __len__(self):
-        return len(self.speakers)
+        return "<%s> '%s' with %s speakers" % (self.__class__.__name__, self.name, len(self))
 
 
 def speaker_lists(request, meeting=None):
@@ -223,8 +295,9 @@ def speaker_lists(request, meeting=None):
     """
     if not meeting:
         meeting = request.meeting
+    name = ISpeakerListSettings(meeting, {}).get('speaker_list_plugin', '')
     return request.registry.getMultiAdapter([meeting, request], ISpeakerLists,
-                                            name=meeting.speaker_list_plugin)
+                                            name=name)
 
 
 # def populate_from_proposals(sl, request = None):
@@ -250,48 +323,10 @@ def speaker_lists(request, meeting=None):
 #     return found
 
 
-def insert_portlet_when_enabled(context, event):
-    if event.changed and 'enable_voteit_debate' in event.changed:
-        manager = get_portlet_manager(context)
-        current = manager.get_portlets('agenda_item', 'voteit_debate')
-        if not context.get_field_value('enable_voteit_debate', None):
-            for portlet in current:
-                manager.remove('agenda_item', portlet.uid)
-        else:
-            if not current:
-                new_portlet = manager.add('agenda_item', 'voteit_debate')
-                ai_slot = manager['agenda_item']
-                current_order = list(ai_slot.keys())
-                pos = current_order.index(new_portlet.uid)
-                #Find a good position to insert it - above discussions or proposals
-                types = ('ai_proposals', 'ai_discussions')
-                for portlet in ai_slot.values():
-                    if portlet.portlet_type in types:
-                        pos = current_order.index(portlet.uid)
-                        break
-                current_order.remove(new_portlet.uid)
-                current_order.insert(pos, new_portlet.uid)
-                ai_slot.order = current_order
-
-
 def includeme(config):
     config.add_request_method(speaker_lists, reify=True)
     # The default one won't have a name
     config.registry.registerAdapter(SpeakerLists, name=SpeakerLists.name)
-    config.add_subscriber(insert_portlet_when_enabled, [IMeeting, IObjectUpdatedEvent])
+    config.registry.registerAdapter(SpeakerListSettings)
 
-    from voteit.core.models.meeting import Meeting
-    #Bool property for enabled plugin
-    def get_enable_voteit_debate(self):
-        return self.get_field_value('enable_voteit_debate', None)
-    def set_enable_voteit_debate(self, value):
-        return self.set_field_value('enable_voteit_debate', bool(value))
-    Meeting.enable_voteit_debate = property(get_enable_voteit_debate, set_enable_voteit_debate)
-
-    #Property for adapter type
-    def get_speaker_list_plugin(self):
-        return self.get_field_value('speaker_list_plugin', '')
-    def set_speaker_list_plugin(self, value):
-        assert isinstance(value, string_types)
-        self.set_field_value('speaker_list_plugin', value)
-    Meeting.speaker_list_plugin = property(get_speaker_list_plugin, set_speaker_list_plugin)
+ #   config.add_subscriber(insert_portlet_when_enabled, [IMeeting, IObjectUpdatedEvent])

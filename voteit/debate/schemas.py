@@ -1,9 +1,11 @@
+from __future__ import unicode_literals
+
 import colander
 import deform
 from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
-from voteit.debate.models import get_speaker_list_plugins
+from voteit.debate.interfaces import ISpeakerLists
 
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
@@ -12,12 +14,13 @@ _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 
 @colander.deferred
 def deferred_speaker_list_plugin_widget(node, kw):
-    """ Return a radio choice widget or a hidden widget if it's the default one. """
+    """ Return a radio choice widget."""
     request = kw['request']
-    values = get_speaker_list_plugins(request)
-    if len(values) > 1:
-        return deform.widget.RadioChoiceWidget(values = values)
-    return deform.widget.HiddenWidget()
+    values = []
+    for x in request.registry.registeredAdapters():
+        if x.provided == ISpeakerLists:
+            values.append((x.name, x.factory.title))
+    return deform.widget.RadioChoiceWidget(values = values)
 
 
 class SpeakerListSettingsSchema(colander.Schema):
@@ -57,6 +60,15 @@ class SpeakerListSettingsSchema(colander.Schema):
                         default = u"If anything else than '0', "
                                   u"users aren't able to add themselves to the list when they've "
                         u"spoken more times that this number."))
+    speaker_list_plugin = colander.SchemaNode(
+        colander.String(),
+        default = "",
+        title = _("Plugin to handle speaker lists"),
+        description = _("speaker_list_functionality_description",
+                        default = "If you've registered anything esle as a "
+                                  "plugin capable of adjusting speaker list behaviour. "),
+        widget = deferred_speaker_list_plugin_widget,
+        missing = "")
     reload_manager_interface = colander.SchemaNode(
         colander.Int(),
         default = 4,
@@ -78,16 +90,6 @@ class SpeakerListSettingsSchema(colander.Schema):
         description = _(u"In seconds. After this timeout the list will be updated."),
         tab = 'advanced',
     )
-    speaker_list_plugin = colander.SchemaNode(
-        colander.String(),
-        default = u"",
-        title = _(u"Plugin to handle speaker lists"),
-        description = _(u"speaker_list_functionality_description",
-                        default = u"If you've registered anything esle as a "
-                                  u"plugin capable of adjusting speaker list behaviour. "),
-        widget = deferred_speaker_list_plugin_widget,
-        missing = u"",
-        tab = 'advanced')
 
 
 class LogEntries(colander.SequenceSchema):
