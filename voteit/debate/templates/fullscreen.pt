@@ -19,12 +19,36 @@
         </a>
       </div>
     </div><!-- /.container-->
-    <div class="container" id="messages">
-      <div class="float-below" data-flash-slot="voteit-main"></div>
-    </div>
   </nav>
   <div class="container-fluid">
-    <div id="speaker_list"></div>
+
+    <h1 class="text-center">
+      <span data-list="title"></span>
+      <small class="pull-right">
+        <span data-list-state="open"
+              class="glyphicon glyphicon-play-circle text-success"></span>
+        <span data-list-state="closed"
+              class="glyphicon glyphicon-lock text-danger"></span>
+        <span data-list="state_title"></span>
+      </small>
+    </h1>
+
+    <div id="speakers-fullscreen" class="list-group" data-speaker-list>
+    </div>
+
   </div>
+  <div class="hidden" data-speaker-template
+       tal:content="structure request.speaker_lists.render_tpl('fullscreen')">
+    The speaker template goes here, it will be populated by json
+    The base template lives at templates/speaker_item.pt
+  </div>
+
+  <script>
+  $(document).ready(function () {
+    speaker_list.load_url = "${request.resource_url(request.meeting, 'speaker_queue_current.json')}";
+  });
+  </script>
+
+
 </body>
 </html>

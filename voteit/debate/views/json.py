@@ -14,14 +14,30 @@ from voteit.debate import _
 class JSONView(BaseSLView):
 
     @view_config(name='speaker_queue.json')
-    def queue_view(self):
+    def queue_view(self, sl_name=None, image=False):
         #Inject category here
-        sl_name = self.request.GET.get('sl', self.request.speaker_lists.get_active_list())
+        if sl_name is None:
+            sl_name = self.request.GET.get('sl', self.request.speaker_lists.get_active_list())
         try:
             sl = self.request.speaker_lists[sl_name]
         except KeyError:
             raise HTTPBadRequest('No such list')
-        return self.get_queue_response(sl)
+        return self.get_queue_response(sl, image=image)
+
+    @view_config(name='speaker_queue_current.json')
+    def queue_current_view(self):
+        """ Defaults to current list, and won't accept other options.
+            Always returns a translated string appropriate for no active list.
+        """
+        sl_name = self.request.speaker_lists.get_active_list()
+        if sl_name:
+            return self.queue_view(sl_name, image=True)
+        return dict(
+            name="",
+            title=self.request.localizer.translate(
+                _("No active list")
+            ),
+        )
 
     @view_config(name='speaker_log.json', permission=MODERATE_MEETING)
     def log_view(self):
@@ -46,6 +62,7 @@ class JSONView(BaseSLView):
                 fullname=fullname,
                 total=sum(entries),
                 times=len(entries),
+
             ))
         return log_entries
 

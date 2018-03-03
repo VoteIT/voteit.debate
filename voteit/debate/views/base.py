@@ -1,7 +1,6 @@
 from arche.views.base import BaseView
 from pyramid.decorator import reify
-from pyramid.renderers import render
-from voteit.debate.interfaces import ISpeakerLists, ISpeakerListSettings
+from voteit.debate.interfaces import ISpeakerListSettings
 from voteit.irl.models.interfaces import IParticipantNumbers
 
 from voteit.debate import _
@@ -34,7 +33,7 @@ class BaseSLView(BaseView):
     def no_user_txt(self):
         return self.request.localizer.translate(_("(No user registered)"))
 
-    def get_queue_response(self, sl):
+    def get_queue_response(self, sl, image=False):
         list_users = []
         n2u = self.participant_numbers.number_to_userid
         user_pns = list(sl)
@@ -46,10 +45,18 @@ class BaseSLView(BaseView):
             except (ValueError, TypeError):
                 continue
             userid = n2u.get(pn, '')
+            img_url = ''
             if userid:
-                fullname = self.request.creators_info(
-                    [userid], no_tag=True, no_userid=True, portrait=False
-                ).strip()
+                user = self.request.root['users'].get(userid, None)
+                if user:
+                    fullname = user.title
+                    if image:
+                        plugin = user.get_image_plugin(self.request)
+                        if plugin:
+                            try:
+                                img_url = plugin.url(60, self.request)
+                            except:
+                                pass
             else:
                 fullname = self.no_user_txt
             list_users.append(dict(
@@ -58,6 +65,7 @@ class BaseSLView(BaseView):
                 fullname=fullname,
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
+                img_url=img_url,
             ))
         return dict(
             name=sl.name,
@@ -66,4 +74,6 @@ class BaseSLView(BaseView):
             queue=list(sl),
             list_users=list_users,
             start_ts_epoch=sl.start_ts_epoch,
+            state=sl.state,
+            state_title=self.request.localizer.translate(self.request.speaker_lists.get_state_title(sl))
         )

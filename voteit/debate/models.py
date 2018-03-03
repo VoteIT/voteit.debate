@@ -40,6 +40,7 @@ class SpeakerLists(IterableUserDict):
     templates = {
         'speaker': 'voteit.debate:templates/speaker_item.pt',
         'log': 'voteit.debate:templates/speaker_log_item.pt',
+        'fullscreen': 'voteit.debate:templates/speaker_item_fullscreen.pt',
     }
 
     def __init__(self, context, request):

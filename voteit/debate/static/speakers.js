@@ -26,16 +26,12 @@ class SpeakerList {
         this.moderator_directive = {};
         this.update_timer = null;
         this.timer_callbacks = [];
+        this.update_callbacks = [];
     }
 
     refresh() {
-        var request = this.load();
-        request.done(this.handle_response.bind(this));
-    }
-
-    load() {
         var request = arche.do_request(this.load_url);
-        request.done(this.handle_response.bind(this))
+        request.done(this.handle_response.bind(this));
         return request;
     }
 
@@ -44,7 +40,10 @@ class SpeakerList {
         this.queue = response['queue'];
         this.current = response['current'];
         this.title = response['title'];
+        this.state = response['state'];
+        this.state_title = response['state_title'];
         this.list_users = response['list_users'];
+        this.img_url = response['img_url'];
         if (this.start_ts_epoch != response['start_ts_epoch']) {
             this.start_ts_epoch = response['start_ts_epoch'];
             this.toggle_update_timer();
@@ -74,10 +73,17 @@ class SpeakerList {
         this.timer_callbacks.push(callback);
     }
 
+    add_update_callback(callback) {
+        this.update_callbacks.push(callback);
+    }
+
     update_queue() {
         var target = $('[data-speaker-list]');
         target.html($('[data-speaker-template]').html());
         target.render( this.list_users, this.directive );
+        for (var i = 0, len = this.update_callbacks.length; i < len; i++) {
+            this.update_callbacks[i](this);
+        }
     }
 
     elapsed_time() {
@@ -88,11 +94,7 @@ class SpeakerList {
             return;
         }
     }
-
-
 }
-
-
 
 
 var speaker_list = new SpeakerList();

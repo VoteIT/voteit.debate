@@ -3,12 +3,6 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
 
-<a href="${request.resource_url(context, '_speaker_lists_moderator')}"
-  class="btn btn-default btn-sm" id="reload_slists_js">
-  <span class="glyphicon glyphicon-refresh"></span>
-  <span i18n:translate="">Reload</span>
-</a>
-
 <div class="list-group">
   <tal:iter repeat="sl context_lists">
 

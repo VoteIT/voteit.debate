@@ -105,7 +105,7 @@ $(document).ready(function () {
 </script>
 
   <div class="hidden" data-speaker-template
-       tal:content="structure request.speaker_lists.render_tpl('speaker')">
+       tal:content="structure request.speaker_lists.render_tpl('speaker', controls=True)">
     The speaker template goes here, it will be populated by json
     The base template lives at templates/speaker_item.pt
   </div>
