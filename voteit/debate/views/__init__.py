@@ -8,6 +8,7 @@ def includeme(config):
     config.include('.log')
     config.include('.manage')
     config.include('.settings')
+    config.include('.statistics')
 
 
 #FIXME
