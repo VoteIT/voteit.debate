@@ -176,6 +176,7 @@ class UserSpeakerLists {
         var action = target.data('sl-user-control');
         var request = arche.do_request(this.action_url, {data: {'action': action, 'sl': list_name}});
         request.done(this.handle_response.bind(this));
+        request.fail(arche.flash_error);
     }
 
 }

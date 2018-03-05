@@ -21,7 +21,7 @@ class ManageSpeakers {
         request.fail(function(xhr) {
             $("[name='pn']").parent('.form-group').addClass('has-error');
             $("[name='pn']").focus();
-        })
+        });
     }
 
     handle_start(event) {
@@ -40,6 +40,7 @@ class ManageSpeakers {
         request.done(function(response) {
             speaker_list.handle_response(response);
         }.bind(this));
+        request.fail(arche.flash_error);
     }
 
     handle_finish(event) {
@@ -55,6 +56,7 @@ class ManageSpeakers {
             $('[data-speaker-time]').empty();
             manage_log.refresh();
         }.bind(this));
+        request.fail(arche.flash_error);
     }
 
     handle_undo(event) {
@@ -65,6 +67,7 @@ class ManageSpeakers {
             speaker_list.handle_response(response);
             $('[data-speaker-time]').empty();
         }.bind(this));
+        request.fail(arche.flash_error);
     }
 
     handle_remove(event) {
@@ -78,6 +81,7 @@ class ManageSpeakers {
         request.done(function(response) {
             speaker_list.handle_response(response);
         }.bind(this));
+        request.fail(arche.flash_error);
     }
 
     handle_shuffle(event) {
@@ -88,6 +92,7 @@ class ManageSpeakers {
         request.done(function(response) {
             speaker_list.handle_response(response);
         }.bind(this));
+        request.fail(arche.flash_error);
     }
 
     handle_rename(event) {
@@ -96,6 +101,7 @@ class ManageSpeakers {
         var sl_name = target.data('list-rename-form');
         $('form[data-list-rename-form="' + sl_name + '"]').toggleClass('hidden');
         $('[data-list-rename-title="' + sl_name + '"]').toggleClass('hidden');
+        request.fail(arche.flash_error);
     }
 }
 
