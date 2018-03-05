@@ -6,8 +6,7 @@
 
   <div class="list-group-item speaker-list" data-list-name="">
     <h4>
-      <span data-user-lists-state="open" class="glyphicon glyphicon-play-circle text-success"></span>
-      <span data-user-lists-state="closed" class="glyphicon glyphicon-lock text-danger"></span>
+      <span data-user-lists="closed" class="glyphicon glyphicon-lock text-danger"></span>
       <span data-user-lists="title"></span>
     </h4>
 
@@ -27,6 +26,13 @@
            class="btn btn-warning"
            i18n:translate="">Remove yourself</a>
     </div><!-- /user is in list -->
+
+    <!-- not_in_list_closed -->
+    <div data-user-list-case="not_in_list_closed">
+        <div class="text-muted" i18n:translate="">
+          List closed
+        </div>
+    </div><!-- /not_in_list_closed -->
 
     <!-- user isn't in list -->
     <div data-user-list-case="not_in_list">

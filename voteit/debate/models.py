@@ -36,7 +36,7 @@ class SpeakerLists(IterableUserDict):
     name = ""
     title = _("Default list handler")
     description = ""
-    _state_titles = {"open": _("Open"), "closed": _("Closed")}
+    state_titles = {"open": _("Open"), "closed": _("Closed")}
     templates = {
         'speaker': 'voteit.debate:templates/speaker_item.pt',
         'log': 'voteit.debate:templates/speaker_log_item.pt',
@@ -146,7 +146,7 @@ class SpeakerLists(IterableUserDict):
         return True
 
     def get_state_title(self, sl, translate=True):
-        title = self._state_titles.get(sl.state, '')
+        title = self.state_titles.get(sl.state, '')
         if translate:
             return self.request.localizer.translate(title)
         return title
@@ -306,29 +306,6 @@ def speaker_lists(request, meeting=None):
     name = ISpeakerListSettings(meeting, {}).get('speaker_list_plugin', '')
     return request.registry.getMultiAdapter([meeting, request], ISpeakerLists,
                                             name=name)
-
-
-# def populate_from_proposals(sl, request = None):
-#     if request is None:
-#         request = get_current_request()
-#     ai = find_interface(sl, IAgendaItem)
-#     assert ai
-#     meeting = find_interface(sl, IMeeting)
-#     assert meeting
-#     participant_numbers = request.registry.getAdapter(meeting, IParticipantNumbers)
-#     handled_userids = set()
-#     found = 0
-#     for prop in ai.get_content(content_type = 'Proposal', states = ['published'], sort_on = 'created'):
-#         userid = prop.creators[0]
-#         if userid in handled_userids:
-#             continue
-#         handled_userids.add(userid)
-#         pn = participant_numbers.userid_to_number.get(userid, None)
-#         if not pn or pn in sl.speakers:
-#             continue
-#         sl.add(pn, override = True)
-#         found += 1
-#     return found
 
 
 def includeme(config):

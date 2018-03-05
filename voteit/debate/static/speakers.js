@@ -104,12 +104,14 @@ class UserSpeakerLists {
         this.load_url = '';
         this.action_url = '';
         this.directive = {'.speaker-list': {'list<-speaker_lists':{
-            //'[data-user-lists-state]': '',
+            '[data-user-lists="closed"]@class+': function(a) {
+                //Hide this if lists are open
+                if (a.list.item.state == 'open') return ' hidden';
+            },
             '[data-user-lists="title"]': 'list.title',
             '[data-user-lists="list_len"]': 'list.list_len',
             '.@data-list-name': 'list.name',
             '[data-user-lists="before_user_count"]': 'list.before_user_count',
-            //Kolla av:
             '.@class+': function(a) {
                 if (a.list.item.active) return ' list-group-item-success';
             }
@@ -120,6 +122,7 @@ class UserSpeakerLists {
         this.update_callbacks = [];
         this.user_pn = null;
         this.request_active = false;
+        this.last_response = null;
     }
 
     refresh() {
@@ -142,6 +145,8 @@ class UserSpeakerLists {
     }
 
     handle_response(response) {
+        var response_string = JSON.stringify(response);
+        if (this.last_response == response_string) return;
         var target = $('[data-user-speaker-lists]');
         target.html($('[data-user-speaker-template]').html());
         target.find('[data-user-list-case]').hide();
@@ -152,6 +157,7 @@ class UserSpeakerLists {
         for (var i = 0, len = this.update_callbacks.length; i < len; i++) {
             this.update_callbacks[i](this);
         }
+        this.last_response = response_string;
     }
 
     start_update_timer() {
@@ -170,7 +176,6 @@ class UserSpeakerLists {
         var action = target.data('sl-user-control');
         var request = arche.do_request(this.action_url, {data: {'action': action, 'sl': list_name}});
         request.done(this.handle_response.bind(this));
-    //data-sl-user-control
     }
 
 }
@@ -193,10 +198,8 @@ function handle_list_action(event) {
 $(document).ready(function () {
     $('body').on("click", "[data-list-action]", handle_list_action);
     $('body').on("click", "[data-sl-user-control]",
-        user_speaker_lists.handle_user_action.bind(user_speaker_lists));
+    user_speaker_lists.handle_user_action.bind(user_speaker_lists));
 });
-
-
 
 /*
 function debug_callback(speaker_list) {

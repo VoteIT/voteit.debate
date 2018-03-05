@@ -1,253 +1,16 @@
-from six import StringIO
-import csv
-from datetime import timedelta
-from decimal import Decimal
-
-from arche.views.base import BaseView
-from arche.views.base import DefaultEditForm
-from betahaus.viewcomponent import view_action
-from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPForbidden, HTTPBadRequest, HTTPNotFound
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render
-from pyramid.response import Response
-from pyramid.security import NO_PERMISSION_REQUIRED
-from pyramid.traversal import find_interface
+from pyramid.traversal import resource_path
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+from repoze.catalog.query import Eq
 from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
-from voteit.core.models.interfaces import IMeeting
-from voteit.core.views.agenda_item import AgendaItemView
-from voteit.core.views.control_panel import control_panel_category
-from voteit.core.views.control_panel import control_panel_link
-from voteit.debate.views.base import BaseSLView
-from voteit.irl.models.interfaces import IParticipantNumbers
-from zope.interface.interfaces import ComponentLookupError
 
 from voteit.debate import _
-from voteit.debate.interfaces import ISpeakerLists, ISpeakerListSettings
-
-
-# @view_defaults(context=IMeeting,
-#                name="speaker_list_action",
-#                permission=security.MODERATE_MEETING,
-#                renderer='json')
-# class ListActions(BaseActionView):
-#     def _tmp_redirect_url(self):
-#         # FIXME: Remove this, all functions should load via js / json
-#         url = self.request.resource_url(self.context, self.ai_name, 'manage_speaker_list')
-#         return HTTPFound(location=url)
-#
-#     @view_config(request_param="action=add")
-#     def add(self):
-#         ai = self.get_ai()
-#         if ai:
-#             self.slists.add_contextual_list(ai)
-#             self.success()
-#         if not self.request.is_xhr:
-#             return HTTPFound(location=self.request.resource_url(ai))
-#         return self.response
-#
-#     @view_config(request_param="action=set_state")
-#     def set_state(self):
-#         # FIXME: proper js function
-#         state = self.request.params.get('state')
-#         if state:
-#             self.action_list.state = state
-#             self.success()
-#         return self._tmp_redirect_url()
-#
-#     @view_config(request_param="action=delete")
-#     def delete(self):
-#         # FIXME: proper js function
-#         if self.list_name in self.slists:
-#             del self.slists[self.list_name]
-#             self.success()
-#         return self._tmp_redirect_url()
-#
-#     @view_config(request_param="action=rename")
-#     def rename(self):
-#         new_name = self.request.params.get('list_title_rename')
-#         if new_name:
-#             self.action_list.title = new_name
-#             self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=active")
-#     def active(self):
-#         # FIXME: proper js function
-#         if self.list_name in self.slists:
-#             self.slists.active_list_name = self.list_name
-#             self.success()
-#         return self._tmp_redirect_url()
-#
-#     @view_config(request_param="action=undo")
-#     def undo(self):
-#         if self.action_list.speaker_undo() is not None:
-#             self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=shuffle")
-#     def shuffle(self):
-#         self.action_list.shuffle()
-#         self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=clear")
-#     def clear(self):
-#         self.action_list.speaker_log.clear()
-#         self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=populate_from_proposals")
-#     def populate_from_proposals(self):
-#         result = populate_from_proposals(self.action_list)
-#         msg = _("speakers_from_published_props",
-#                 default=u"Added ${count} speakers from published proposals.",
-#                 mapping={'count': result})
-#         self.response['message'] = msg
-#         self.success()
-#         return self._tmp_redirect_url()
-
-
-
-# @view_defaults(context=IMeeting, name="speaker_action", permission=security.MODERATE_MEETING,
-#                renderer="json")
-# class SpeakerActions(BaseActionView):
-#     def _get_pn(self):
-#         pn = self.request.params.get('pn', None)
-#         if pn:
-#             return int(pn)
-#
-#     @view_config(request_param="action=add")
-#     def add(self):
-#         pn = self.request.POST.get('pn', '')
-#         if not pn:
-#             return self.response
-#         try:
-#             pn = int(pn)
-#         except ValueError:
-#             self.response['message'] = self.request.localizer.translate(
-#                 _('${num} is not a valid number', mapping={'num': pn})
-#             )
-#             return self.response
-#         if pn in self.action_list.speakers:
-#             # Shouldn't happen since js handles this
-#             self.response['message'] = _("Already in list")
-#             return self.response
-#         self.action_list.add(pn, override=True)
-#         self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=active")
-#     def active(self):
-#         pn = self._get_pn()
-#         if pn is None and len(self.action_list.speakers) > 0:
-#             pn = self.action_list.speakers[0]
-#         if pn is not None and self.action_list.speaker_active(pn) is not None:
-#             self.success()
-#             userid = self.participant_numbers.number_to_userid.get(pn)
-#             self.response['active_speaker'] = speaker_item_moderator(pn, self, self.action_list,
-#                                                                      userid=userid)
-#         return self.response
-#
-#     @view_config(request_param="action=remove")
-#     def remove(self):
-#         pn = self._get_pn()
-#         if pn in self.action_list.speakers:
-#             self.action_list.speakers.remove(pn)
-#             self.success()
-#         return self.response
-#
-#     @view_config(request_param="action=finished")
-#     def finished(self):
-#         pn = self.action_list.current
-#         seconds = int(self.request.params['seconds'])
-#         if self.action_list.speaker_finished(pn, seconds) is not None:
-#             self.success()
-#         return self.response
-
-
-# @view_defaults(context=IMeeting,
-#                permission=security.MODERATE_MEETING)
-# class ManageSpeakerList(AgendaItemView):
-#
-#     @reify
-#     def slists(self):
-#         return ISpeakerLists(self.context)
-#
-#     @reify
-#     def participant_numbers(self):
-#         return IParticipantNumbers(self.context)
-#
-#     @reify
-#     def active_list(self):
-#         return self.slists.get(self.slists.active_list_name)
-#
-#     @view_config(name="manage_speaker_list",
-#                  permission=security.MODERATE_MEETING,
-#                  context=IAgendaItem,
-#                  renderer="voteit.debate:templates/manage_speaker_list.pt")
-#     def manage_speaker_list_view(self):
-#         voteit_debate_manage_speakers_js.need()
-#         voteit_debate_speaker_view_styles.need()
-#         response = {}
-#         response[
-#             'context_active'] = self.slists.active_list_name in self.slists.get_contexual_list_names(
-#             self.context)
-#         response['active_list'] = self.slists.get(self.slists.active_list_name)
-#         response['speaker_item'] = self.speaker_item
-#         response['speaker_list_controls'] = speaker_list_controls_moderator(self, self.slists,
-#                                                                             self.context)
-#         return response
-#
-#     @view_config(name="_speaker_queue_moderator",
-#                  permission=security.MODERATE_MEETING,
-#                  renderer="voteit.debate:templates/speaker_queue_moderator.pt")
-#     def speaker_queue_moderator(self):
-#         response = {}
-#         response['active_list'] = self.active_list
-#         response['speaker_item'] = self.speaker_item
-#         response['use_lists'] = self.request.meeting.get_field_value('speaker_list_count', 1)
-#         response['safe_pos'] = self.request.meeting.get_field_value('safe_positions', 0)
-#         return response
-#
-#     @view_config(name="_speaker_log_moderator",
-#                  permission=security.MODERATE_MEETING,
-#                  renderer="voteit.debate:templates/speaker_log_moderator.pt")
-#     def speaker_log_moderator(self):
-#         response = {}
-#         response['active_list'] = self.active_list
-#         number_to_profile_tag = {}
-#         for pn in self.active_list.speaker_log.keys():
-#             if pn in self.participant_numbers.number_to_userid:
-#                 userid = self.participant_numbers.number_to_userid[pn]
-#                 number_to_profile_tag[pn] = self.request.creators_info([userid], portrait=False)
-#             else:
-#                 number_to_profile_tag[pn] = '-'
-#         response['number_to_profile_tag'] = number_to_profile_tag
-#         response['format_secs'] = self.format_seconds
-#         return response
-#
-#     @view_config(name="_speaker_lists_moderator", context=IAgendaItem,
-#                  permission=security.MODERATE_MEETING)
-#     def speaker_lists(self):
-#         if self.request.is_xhr:
-#             return Response(speaker_list_controls_moderator(self, self.slists, self.context))
-#         # Fallback in case of js error
-#         return HTTPFound(location=self.request.resource_url(self.context, 'manage_speaker_list'))
-#
-#     def speaker_item(self, pn):
-#         userid = self.participant_numbers.number_to_userid.get(int(pn))
-#         return speaker_item_moderator(pn, self, self.active_list, userid=userid)
-#
-#     def format_seconds(self, secs):
-#         val = str(timedelta(seconds=int(secs)))
-#         try:
-#             return ":".join([x for x in val.split(':') if int(x)])
-#         except ValueError:
-#             return val
+from voteit.debate.interfaces import ISpeakerListSettings
+from voteit.debate.views.base import BaseSLView
 
 
 @view_defaults(
@@ -290,13 +53,61 @@ class ManageListsView(BaseSLView):
             return {}
         return HTTPFound(location=self.request.resource_url(self.context, 'manage_speaker_lists'))
 
-    @view_config(name='_activate_slist')
-    def activate_slist(self):
-        name = "/".join(self.request.subpath)
-        if name in self.request.speaker_lists:
-            self.request.speaker_lists.set_active_list(name)
-            return HTTPFound(location=self.request.resource_url(self.context, 'manage_speaker_lists'))
-        raise HTTPNotFound('No such list')
+    @view_config(name='_m_act')
+    def manage_action(self):
+        """ Common actions, followed as links.
+            Required params:
+            sl (list name)
+            action (what to do)
+        """
+        action_name = self.request.params.get('action')
+        action = getattr(self, 'action_%s' % action_name, None)
+        if not action:
+            raise HTTPBadRequest('No such action')
+        list_name = self.request.params.get('sl')
+        try:
+            sl = self.request.speaker_lists[list_name]
+        except KeyError:
+            raise HTTPBadRequest('No such list')
+        action(sl)
+        return HTTPFound(location=self.request.resource_url(self.context, 'manage_speaker_lists'))
+
+    def action_activate(self, sl):
+        self.request.speaker_lists.set_active_list(sl.name)
+
+    def action_delete(self, sl):
+        self.request.speaker_lists.pop(sl.name, None)
+
+    def action_state(self, sl):
+        state = self.request.params.get('state', None)
+        if state in self.request.speaker_lists.state_titles:
+            sl.state = state
+
+    def action_rename(self, sl):
+        title = self.request.params.get('list_title_rename', None)
+        if title:
+            sl.title = title
+
+    def action_populate(self, sl):
+        handled_userids = set()
+        found = 0
+        query = Eq('workflow_state', 'published') & \
+                Eq('type_name', 'Proposal')  & \
+                Eq('path', resource_path(self.context))
+        docids = self.request.root.catalog.query(query, sort_index = 'created')[1]
+        for proposal in self.request.resolve_docids(docids, perm=None):
+            if proposal.creator:
+                handled_userids.add(proposal.creator[0])
+        for userid in handled_userids:
+            pn = self.participant_numbers.userid_to_number.get(userid, None)
+            if pn and pn not in sl:
+                self.request.speaker_lists.add_to_list(pn, sl, override=True)
+                found += 1
+        if found:
+            self.flash_messages.add(_("Added ${num} speakers from proposals",
+                                      mapping={'num': found}))
+        else:
+            self.flash_messages.add(_("No speakers found"))
 
 
 @view_config(
@@ -327,6 +138,8 @@ class ListActionsView(BaseSLView):
 
     def action_add(self, sl):
         pn = self._get_pn()
+        if pn not in self.participant_numbers:
+            raise HTTPBadRequest('Bad participant number value')
         self.request.speaker_lists.add_to_list(pn, sl, override=True)
         return self.get_queue_response(sl)
 

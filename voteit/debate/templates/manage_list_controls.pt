@@ -14,62 +14,59 @@
       </button>
       <ul class="dropdown-menu" role="menu">
         <li>
-          <a href="${request.resource_url(request.meeting, 'speaker_list_action',
-                                          query = {'action': 'set_state', 'list_name': sl.name, 'state': 'closed', 'ai_name': context.__name__})}"
-             class="list_state" tal:condition="sl.state != u'closed'">
+          <a href="${request.resource_url(context, '_m_act',
+                query={'sl': sl.name, 'action': 'state', 'state': 'closed'})}"
+             class="list_state" tal:condition="sl.open()">
              <span class="glyphicon glyphicon-lock text-danger"></span>
              <span i18n:translate="">Close list</span>
            </a>
-          <a href="${request.resource_url(request.meeting, 'speaker_list_action',
-                                          query = {'action': 'set_state', 'list_name': sl.name, 'state': 'open', 'ai_name': context.__name__})}"
+          <a href="${request.resource_url(context, '_m_act',
+                query={'sl': sl.name, 'action': 'state', 'state': 'open'})}"
              class="list_state"
-             tal:condition="sl.state != u'open'">
+             tal:condition="not sl.open()">
              <span class="glyphicon glyphicon-play-circle text-success"></span>
              <span i18n:translate="">Open list</span>
            </a>
         </li>
         <li>
-          <a class="rename_sl">
+          <a data-list-action="rename" data-list-rename-form="${sl.name}" href="javascript:">
             <span class="glyphicon glyphicon-edit"></span>
             <span i18n:translate="">Rename</span>
           </a>
         </li>
         <li class="divider"></li>
         <li>
-          <a href="${request.resource_url(request.meeting, 'speaker_list_action',
-                     query = {'action': 'populate_from_proposals', 'list_name': sl.name, 'ai_name': context.__name__})}"
+          <a href="${request.resource_url(context, '_m_act', query={'sl': sl.name, 'action': 'populate'})}"
              i18n:translate="">Populate from proposals</a>
         </li>
         <li class="divider"></li>
         <li>
-          <a href="${request.resource_url(request.meeting, 'speaker_list_action',
-                     query = {'action': 'delete', 'list_name': sl.name, 'ai_name': context.__name__})}"
+          <a href="${request.resource_url(context, '_m_act', query={'sl': sl.name, 'action': 'delete'})}"
              i18n:translate="">Delete</a>
         </li>
       </ul>
     </div><!-- btn-group -->
 
-    <a href="${request.resource_url(context, '_activate_slist', sl.name)}"
-       class="sl_title">
+    <a data-list-rename-title="${sl.name}"
+       href="${request.resource_url(context, '_m_act', query = {'sl': sl.name, 'action': 'activate'})}">
        <span tal:attributes="class sl.state == 'open' and 'iconpadding icon ongoing' or 'iconpadding icon closed'">
        </span>
-       <span tal:condition="sl.state == 'open'" class="glyphicon glyphicon-play-circle"></span>
        <span tal:condition="sl.state == 'closed'" class="glyphicon glyphicon-lock"></span>
        ${sl.title}
     </a>
-    <form action="${request.resource_url(request.meeting, 'speaker_list_action', query = {'action': 'rename', 'list_name': sl.name})}"
-        method="GET" class="rename_form" style="display: none;">
-        <input name="list_title_rename" class="form-control" value="${sl.title}" />
+
+    <form action="${request.resource_url(context, '_m_act', query = {'sl': sl.name, 'action': 'rename'})}"
+        method="POST" class="hidden" data-list-rename-form="${sl.name}">
+        <div class="input-group">
+            <input type="text" class="form-control" name="list_title_rename" value="${sl.title}" />
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="submit" i18n:translate="">
+                    Save
+                </button>
+            </span>
+        </div><!-- /input-group -->
     </form>
   </div>
   </tal:iter>
 </div>
-
-<script language="javascript" type="text/javascript">
-    //$("#speaker_list_controls a").on("click", generic_speaker_list_get_actions);
-    /*
-    $(".rename_sl").on("click", rename_speaker_show);
-    $(".rename_form").on("submit", rename_speaker_submit);
-    */
-</script>
 </tal:main>

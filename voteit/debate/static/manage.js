@@ -1,16 +1,4 @@
-/*
-var spoken_time = 0;
-var timer = null;
-var reload_timer = null;
-*/
-//reload_interval var is part of init
-//Init js code in template!
-
-$(window).on('beforeunload', function() {
-    //FIXME
-    if (($('#speaker_active li .time_spoken').length > 0) && ($('#speaker_active li .time_spoken').html() !== "")) return "Unsaved changes";
-});
-
+'use strict';
 
 
 class ManageSpeakers {
@@ -101,7 +89,16 @@ class ManageSpeakers {
             speaker_list.handle_response(response);
         }.bind(this));
     }
+
+    handle_rename(event) {
+        event.preventDefault();
+        var target = $(event.currentTarget);
+        var sl_name = target.data('list-rename-form');
+        $('form[data-list-rename-form="' + sl_name + '"]').toggleClass('hidden');
+        $('[data-list-rename-title="' + sl_name + '"]').toggleClass('hidden');
+    }
 }
+
 
 class ManageLog {
     constructor() {
@@ -126,7 +123,6 @@ class ManageLog {
         console.log(response)
         var target = $('[data-speaker-log-list]');
         target.html($('[data-speaker-log-template]').html());
-        //debugger;
         target.render( response, this.directive );
     }
 }
@@ -138,7 +134,6 @@ var manage_log = new ManageLog();
 
 function update_speaker_time(speaker_list) {
     var spoken_time = speaker_list.elapsed_time()
-
     //Minutes, seconds and tenths
     var st_str = Math.floor(spoken_time / 60) + ':' +
         Math.floor((spoken_time % 60)) + '.' +
@@ -158,5 +153,6 @@ $(document).ready(function () {
     $('body').on("click", '[data-list-action="finish"]', manage_speakers.handle_finish.bind(manage_speakers));
     $('body').on("click", '[data-list-action="remove"]', manage_speakers.handle_remove.bind(manage_speakers));
     $('body').on("click", '[data-list-action="shuffle"]', manage_speakers.handle_shuffle.bind(manage_speakers));
+    $('body').on("click", '[data-list-action="rename"]', manage_speakers.handle_rename.bind(manage_speakers));
     speaker_list.add_timer_callback(update_speaker_time);
 });

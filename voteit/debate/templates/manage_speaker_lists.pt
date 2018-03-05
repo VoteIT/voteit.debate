@@ -77,8 +77,8 @@
         </div>
 
       </div>
-      <div id="right" class="col-xs-6">
-          <div id="slists" tal:content="structure list_controls"></div>
+      <div class="col-xs-6">
+          <div tal:content="structure list_controls"></div>
 
           <a href="${request.resource_url(context, '_add_slist')}"
              class="btn btn-primary" i18n:translate="">New list</a>
@@ -87,8 +87,6 @@
           <div class="list-group" data-speaker-log-list>
             <!-- tpl inserted here-->
           </div>
-          <a href="${request.resource_url(request.meeting, 'speaker_list_action', query = {'action': 'clear', 'list_name': 'xxx'})}"
-             tal:condition="view.context_active" class="btn btn-danger" id="clear_speaker_log" i18n:translate="">Clear</a>
       </div>
   </div>
 
