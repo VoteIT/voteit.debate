@@ -7,6 +7,7 @@ from pyramid.view import view_defaults
 from repoze.catalog.query import Eq
 from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
+from voteit.core.views.agenda_item import AgendaItemView
 
 from voteit.debate import _
 from voteit.debate.interfaces import ISpeakerListSettings
@@ -16,7 +17,7 @@ from voteit.debate.views.base import BaseSLView
 @view_defaults(
     context=IAgendaItem,
     permission=security.MODERATE_MEETING,)
-class ManageListsView(BaseSLView):
+class ManageListsView(BaseSLView, AgendaItemView):
     list_controls_tpl = 'voteit.debate:templates/manage_list_controls.pt'
 
     @view_config(

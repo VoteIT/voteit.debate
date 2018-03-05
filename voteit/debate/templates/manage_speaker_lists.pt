@@ -9,7 +9,7 @@
 <metal:actionbar fill-slot="actionbar"></metal:actionbar>
 
 <tal:agenda_actionbar metal:fill-slot="agenda_actionbar"
-    tal:replace="structure view.render_template('voteit.core:templates/menus/context_actions.pt')" />
+    tal:replace="structure view.render_template('voteit.core:templates/menus/context_actions.pt', view_name='manage_speaker_lists')" />
 
 <div metal:fill-slot="main-content">
 
