@@ -34,7 +34,7 @@ class ISpeakerLists(IDict):
             If override is true, add even if the list is closed.
         """
 
-    def get_state_title(sl):
+    def get_state_title(sl, translate = True):
         """ Return state title of sl."""
 
     def shuffle(sl):

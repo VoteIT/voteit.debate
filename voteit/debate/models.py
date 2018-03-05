@@ -41,6 +41,7 @@ class SpeakerLists(IterableUserDict):
         'speaker': 'voteit.debate:templates/speaker_item.pt',
         'log': 'voteit.debate:templates/speaker_log_item.pt',
         'fullscreen': 'voteit.debate:templates/speaker_item_fullscreen.pt',
+        'user': 'voteit.debate:templates/speaker_item_user.pt',
     }
 
     def __init__(self, context, request):
@@ -144,8 +145,11 @@ class SpeakerLists(IterableUserDict):
         #Make sure the adapter registers as true even if it's empty
         return True
 
-    def get_state_title(self, sl):
-        return self._state_titles.get(sl.state, '')
+    def get_state_title(self, sl, translate=True):
+        title = self._state_titles.get(sl.state, '')
+        if translate:
+            return self.request.localizer.translate(title)
+        return title
 
     def add_to_list(self, pn, sl, override = False):
         assert isinstance(pn, int)
@@ -254,6 +258,9 @@ class SpeakerList(PersistentList):
         start_ts = getattr(self, '_v_start_ts', None)
         if start_ts:
             return timegm(start_ts.timetuple())
+
+    def open(self):
+        return self.state == 'open'
 
     def start(self, pn):
         assert isinstance(pn, int)

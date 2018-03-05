@@ -283,9 +283,11 @@ class ManageListsView(BaseSLView):
             'context_lists': self.request.speaker_lists.get_lists_in(self.context.uid)
         }
 
-    @view_config(name='_add_slist')
+    @view_config(name='_add_slist', renderer='json')
     def add(self):
         self.request.speaker_lists.add_list_to(self.context)
+        if self.request.is_xhr:
+            return {}
         return HTTPFound(location=self.request.resource_url(self.context, 'manage_speaker_lists'))
 
     @view_config(name='_activate_slist')
@@ -314,7 +316,6 @@ class ListActionsView(BaseSLView):
             sl = self.request.speaker_lists[list_name]
         except KeyError:
             raise HTTPBadRequest('No such list')
-        print (self.request.params)
         return action(sl)
 
     def _get_pn(self):

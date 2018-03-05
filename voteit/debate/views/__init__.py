@@ -9,6 +9,7 @@ def includeme(config):
     config.include('.manage')
     config.include('.settings')
     config.include('.statistics')
+    config.include('.user')
 
 
 #FIXME

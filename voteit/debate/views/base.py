@@ -75,5 +75,5 @@ class BaseSLView(BaseView):
             list_users=list_users,
             start_ts_epoch=sl.start_ts_epoch,
             state=sl.state,
-            state_title=self.request.localizer.translate(self.request.speaker_lists.get_state_title(sl))
+            state_title=self.request.speaker_lists.get_state_title(sl)
         )

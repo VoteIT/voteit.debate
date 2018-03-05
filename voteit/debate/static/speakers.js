@@ -97,7 +97,106 @@ class SpeakerList {
 }
 
 
+/* Handles users interaction with the speaker list. */
+class UserSpeakerLists {
+
+    constructor() {
+        this.load_url = '';
+        this.action_url = '';
+        this.directive = {'.speaker-list': {'list<-speaker_lists':{
+            //'[data-user-lists-state]': '',
+            '[data-user-lists="title"]': 'list.title',
+            '[data-user-lists="list_len"]': 'list.list_len',
+            '.@data-list-name': 'list.name',
+            '[data-user-lists="before_user_count"]': 'list.before_user_count',
+            //Kolla av:
+            '.@class+': function(a) {
+                if (a.list.item.active) return ' list-group-item-success';
+            }
+        }}};
+        this.auto_update = false;
+        this.update_interval = 5000;
+        this.update_timer = null;
+        this.update_callbacks = [];
+        this.user_pn = null;
+        this.request_active = false;
+    }
+
+    refresh() {
+        if (this.request_active) return;
+        this.request_active = true
+        var request = arche.do_request(this.load_url);
+        request.done(this.handle_response.bind(this));
+        request.always(function() {
+            this.request_active = false;
+            if (this.update_timer == null && this.auto_update == true) {
+                this.update_timer = setTimeout(this.timer_refresh.bind(this), this.update_interval);
+            }
+        }.bind(this))
+        return request;
+    }
+
+    timer_refresh() {
+        this.update_timer = null;
+        this.refresh()
+    }
+
+    handle_response(response) {
+        var target = $('[data-user-speaker-lists]');
+        target.html($('[data-user-speaker-template]').html());
+        target.find('[data-user-list-case]').hide();
+        target.render( response, this.directive );
+        for (var i = 0, len = response.speaker_lists.length; i < len; i++) {
+            $('[data-list-name="' + response.speaker_lists[i].name + '"] [data-user-list-case="' + response.speaker_lists[i].user_case + '"]').show();
+        }
+        for (var i = 0, len = this.update_callbacks.length; i < len; i++) {
+            this.update_callbacks[i](this);
+        }
+    }
+
+    start_update_timer() {
+        this.auto_update = true;
+        if (this.update_timer == null) this.refresh()
+    }
+
+    stop_update_timer() {
+        this.auto_update = false;
+    }
+
+    handle_user_action(event) {
+        event.preventDefault();
+        var target = $(event.currentTarget);
+        var list_name = target.parents('[data-list-name]').data('list-name');
+        var action = target.data('sl-user-control');
+        var request = arche.do_request(this.action_url, {data: {'action': action, 'sl': list_name}});
+        request.done(this.handle_response.bind(this));
+    //data-sl-user-control
+    }
+
+}
+
 var speaker_list = new SpeakerList();
+var user_speaker_lists = new UserSpeakerLists();
+
+
+function handle_list_action(event) {
+    event.preventDefault();
+    var target = $(event.currentTarget);
+    var url = target.attr('href');
+    var request = arche.do_request(url);
+    request.done(function(response) {
+         user_speaker_lists.refresh();
+    });
+}
+
+
+$(document).ready(function () {
+    $('body').on("click", "[data-list-action]", handle_list_action);
+    $('body').on("click", "[data-sl-user-control]",
+        user_speaker_lists.handle_user_action.bind(user_speaker_lists));
+});
+
+
 
 /*
 function debug_callback(speaker_list) {

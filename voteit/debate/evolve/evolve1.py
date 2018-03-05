@@ -11,8 +11,10 @@ def evolve(root):
         'enable_voteit_debate',
         'speaker_list_count',
         'safe_positions',
-        'max_times_in_list',
         'reload_manager_interface',
+    )
+    keys_to_delete = (
+        'max_times_in_list',
         'reload_speaker_in_queue',
         'reload_speaker_not_in_queue',
     )
@@ -32,6 +34,11 @@ def evolve(root):
             val = obj.field_storage.pop(k, _marker)
             if val != _marker:
                 settings[k] = val
+        #Remove keys
+        for k in keys_to_delete:
+            obj.field_storage.pop(k, None)
+        #Add new defaults
+        settings['user_update_interval'] = 5
         #The speakers attribute contained the speakers before. It should be labeled data now
         for sl in getattr(obj, '_speaker_lists', {}).values():
             speakers = []

@@ -129,9 +129,6 @@ class ManageLog {
         //debugger;
         target.render( response, this.directive );
     }
-
-
-
 }
 
 

@@ -5,7 +5,7 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.view import view_config, view_defaults
 from voteit.core.models.interfaces import IAgendaItem, IMeeting
-from voteit.core.security import MODERATE_MEETING
+from voteit.core.security import MODERATE_MEETING, VIEW
 from voteit.debate.views.base import BaseSLView
 from voteit.debate import _
 
@@ -61,10 +61,42 @@ class JSONView(BaseSLView):
                 userid=userid,
                 fullname=fullname,
                 total=sum(entries),
-                times=len(entries),
-
             ))
         return log_entries
+
+    @view_config(name='context_list_stats.json', context=IAgendaItem, permission=VIEW)
+    def context_list_stats_view(self):
+        speaker_lists = []
+        userid = self.request.authenticated_userid
+        pn = None
+        if userid:
+            pn = self.participant_numbers.userid_to_number.get(userid, None)
+        for sl in self.request.speaker_lists.get_lists_in(self.context.uid):
+            user_in_list = pn != None and pn in sl
+            # Return the users relation to this list expressed as:
+            # in_list, not_in_list, no_pn
+            before_user_count = None
+            if pn is None:
+                user_case = 'no_pn'
+            elif user_in_list:
+                user_case = 'in_list'
+                before_user_count = sl.index(pn)
+            else:
+                user_case = 'not_in_list'
+            speaker_lists.append({
+                'name': sl.name,
+                'title': sl.title,
+                'active': sl.name == self.active_name,
+                'user_in_list': user_in_list,
+                'before_user_count': before_user_count,
+                'list_len': len(sl),
+                'state': sl.state,
+                'state_title': self.request.speaker_lists.get_state_title(sl),
+                'user_case': user_case,
+            })
+
+        return {'speaker_lists': speaker_lists}
+
 
     # @view_config(context=IMeeting, name='speaker_data.json')
     # def users_view(self):
