@@ -13,11 +13,14 @@
       <span data-speaker-log="fullname">(Name and userid)</span>
 
       <div class="text-right">
-        Times spoken:
-        <span data-speaker-log="times"></span>
-
-        Total seconds:
-        <span data-speaker-log="total"></span>
+          <span i18n:translate="">
+            Entries:
+            <span data-speaker-log="times" i18n:name="count"></span>
+          </span>
+        <span i18n:translate="">
+            Total seconds:
+            <span data-speaker-log="total" i18n:name="secs"></span>
+        </span>
 
       </div>
 </div>

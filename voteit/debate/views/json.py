@@ -66,6 +66,7 @@ class JSONView(BaseSLView):
                 userid=userid,
                 fullname=fullname,
                 total=sum(entries),
+                times=len(entries),
             ))
         return log_entries
 
