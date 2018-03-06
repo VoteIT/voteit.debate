@@ -45,8 +45,8 @@ class BaseSLView(BaseView):
         if total:
             # Calculate total entries for all users.
             # FIXME: Should be cached later on
-            for sl in self.request.speaker_lists.values():
-                for (k, v) in sl.speaker_log.items():
+            for x in self.request.speaker_lists.values():
+                for (k, v) in x.speaker_log.items():
                     if k in user_pns:
                         total_count[k] = total_count.get(k, 0) + len(v)
         for pn in user_pns:
@@ -76,7 +76,7 @@ class BaseSLView(BaseView):
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
                 img_url=img_url,
-                total=total_count.get(pn, None),
+                total_times_spoken=total_count.get(pn, None),
                 is_safe=safe_count > user_pns.index(pn),
             ))
         return dict(

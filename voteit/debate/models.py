@@ -77,6 +77,9 @@ class SpeakerLists(IterableUserDict):
     def get_active_list(self, category='default'):
         return getattr(self.context, '_v_active_lists', {}).get(category, '')
 
+    def del_active_list(self, category='default'):
+        getattr(self.context, '_v_active_lists', {}).pop(category, None)
+
     def get_list_names(self, uid):
         results = []
         for name in self:
@@ -119,8 +122,8 @@ class SpeakerLists(IterableUserDict):
         self.data[key] = sl
 
     def __delitem__(self, key): #dict api
-        if self.active_list_name == key:
-            self.active_list_name = None
+        if self.get_active_list() == key:
+            self.del_active_list()
         del self.data[key]
 
     def __nonzero__(self):

@@ -9,7 +9,7 @@ class SpeakerList {
         this.queue = [];
         this.current = null;
         this.title = '';
-        this.list_users = [];
+        //this.list_users = [];
         this.moderator = false;
         this.start_ts_epoch = null;
         this.directive = {'div.speaker-item': {'speaker<-':{
@@ -26,7 +26,7 @@ class SpeakerList {
             '[data-speaker="fullname"]': 'speaker.fullname'
         }}};
         this.moderator_extras_directive = {
-            '[data-speaker="total"]': 'speaker.total'
+            '[data-speaker="total_times_spoken"]': 'speaker.total_times_spoken'
         };
         this.update_timer = null;
         this.timer_callbacks = [];
@@ -56,7 +56,6 @@ class SpeakerList {
         this.state = response['state'];
         this.state_title = response['state_title'];
         this.list_users = response['list_users'];
-        this.img_url = response['img_url'];
         if (this.start_ts_epoch != response['start_ts_epoch']) {
             this.start_ts_epoch = response['start_ts_epoch'];
             this.toggle_update_timer();

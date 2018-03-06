@@ -18,7 +18,7 @@ class JSONView(BaseSLView):
     def queue_view(self, sl_name=None, image=False, total=False):
         #Inject category here
         if sl_name is None:
-            sl_name = self.request.GET.get('sl', self.request.speaker_lists.get_active_list())
+            sl_name = self.request.params.get('sl', None)
         try:
             sl = self.request.speaker_lists[sl_name]
         except KeyError:
