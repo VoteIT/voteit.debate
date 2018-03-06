@@ -15,6 +15,9 @@
     <div class="col-xs-${controls and '8' or '10'}">
       <b data-speaker="pn">pn:</b>:
       <span data-speaker="fullname">(Name and userid)</span>
+      <div tal:condition="controls" class="small" i18n:translate="">
+        Times spoken total: <span data-speaker="total" i18n:name="count"></span>
+      </div>
     </div>
     <div tal:condition="controls" class="col-xs-2 text-right"
          data-speaker="moderator_controls">

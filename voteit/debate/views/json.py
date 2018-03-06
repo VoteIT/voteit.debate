@@ -15,7 +15,7 @@ from voteit.debate import _
 class JSONView(BaseSLView):
 
     @view_config(name='speaker_queue.json')
-    def queue_view(self, sl_name=None, image=False):
+    def queue_view(self, sl_name=None, image=False, total=False):
         #Inject category here
         if sl_name is None:
             sl_name = self.request.GET.get('sl', self.request.speaker_lists.get_active_list())
@@ -23,11 +23,11 @@ class JSONView(BaseSLView):
             sl = self.request.speaker_lists[sl_name]
         except KeyError:
             raise HTTPBadRequest('No such list')
-        return self.get_queue_response(sl, image=image)
+        return self.get_queue_response(sl, image=image, total=total)
 
     @view_config(name='speaker_queue_moderator.json', permission=MODERATE_MEETING)
     def queue_moderator_view(self):
-        return self.queue_view()
+        return self.queue_view(total=True)
 
     @view_config(name='speaker_queue_current.json')
     def queue_current_view(self):

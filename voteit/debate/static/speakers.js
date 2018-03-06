@@ -25,7 +25,9 @@ class SpeakerList {
             '[data-speaker="pn"]': 'speaker.pn',
             '[data-speaker="fullname"]': 'speaker.fullname'
         }}};
-        this.moderator_extras_directive = {};
+        this.moderator_extras_directive = {
+            '[data-speaker="total"]': 'speaker.total'
+        };
         this.update_timer = null;
         this.timer_callbacks = [];
         this.update_callbacks = [];

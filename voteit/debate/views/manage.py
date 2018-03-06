@@ -128,7 +128,8 @@ class ListActionsView(BaseSLView):
             sl = self.request.speaker_lists[list_name]
         except KeyError:
             raise HTTPBadRequest('No such list')
-        return action(sl)
+        action(sl)
+        return self.get_queue_response(sl, total=True)
 
     def _get_pn(self):
         pn = self.request.params.get('pn', None)
@@ -142,33 +143,27 @@ class ListActionsView(BaseSLView):
         if pn not in self.participant_numbers:
             raise HTTPBadRequest('Bad participant number value')
         self.request.speaker_lists.add_to_list(pn, sl, override=True)
-        return self.get_queue_response(sl)
 
     def action_start(self, sl):
         pn = self._get_pn()
         if sl.current != None:
             raise HTTPBadRequest("Another speaker is already active")
         sl.start(pn)
-        return self.get_queue_response(sl)
 
     def action_finish(self, sl):
         pn = self._get_pn()
         sl.finish(pn)
-        return self.get_queue_response(sl)
 
     def action_undo(self, sl):
         sl.undo()
-        return self.get_queue_response(sl)
 
     def action_remove(self, sl):
         pn = self._get_pn()
         if pn in sl:
             sl.remove(pn)
-        return self.get_queue_response(sl)
 
     def action_shuffle(self, sl):
         self.request.speaker_lists.shuffle(sl)
-        return self.get_queue_response(sl)
 
 
 def _manage_speaker_list(context, request, va, **kw):

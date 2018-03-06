@@ -33,7 +33,7 @@ class BaseSLView(BaseView):
     def no_user_txt(self):
         return self.request.localizer.translate(_("(No user registered)"))
 
-    def get_queue_response(self, sl, image=False):
+    def get_queue_response(self, sl, image=False, total=False):
         list_users = []
         n2u = self.participant_numbers.number_to_userid
         user_pns = list(sl)
@@ -41,6 +41,14 @@ class BaseSLView(BaseView):
         if sl.current:
             user_pns.insert(0, sl.current)
         base_img_url = self.request.static_url('voteit.debate:static/default_user.png')
+        total_count = dict([(x, 0) for x in user_pns])
+        if total:
+            # Calculate total entries for all users.
+            # FIXME: Should be cached later on
+            for sl in self.request.speaker_lists.values():
+                for (k, v) in sl.speaker_log.items():
+                    if k in user_pns:
+                        total_count[k] = total_count.get(k, 0) + len(v)
         for pn in user_pns:
             try:
                 pn = int(pn)
@@ -68,6 +76,7 @@ class BaseSLView(BaseView):
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
                 img_url=img_url,
+                total=total_count.get(pn, None),
                 is_safe=safe_count > user_pns.index(pn),
             ))
         return dict(
