@@ -17,6 +17,9 @@ class SpeakerList {
             '.@class+': function(a) {
                 if (a.item.active) return ' active'
             },
+            '[data-speaker="is_safe"]@class+': function(a) {
+                if (!a.item.is_safe) return ' hidden'
+            },
             '.@data-speaker-pn': 'speaker.pn',
             '[data-speaker="listno"]': 'speaker.listno',
             '[data-speaker="pn"]': 'speaker.pn',
@@ -28,6 +31,7 @@ class SpeakerList {
         this.update_timer = null;
         this.timer_callbacks = [];
         this.update_callbacks = [];
+        this.last_response = null;
     }
 
     refresh() {
@@ -37,6 +41,8 @@ class SpeakerList {
     }
 
     handle_response(response) {
+        var response_string = JSON.stringify(response);
+        if (this.last_response == response_string) return;
         this.name = response['name'];
         this.queue = response['queue'];
         this.current = response['current'];
@@ -50,6 +56,7 @@ class SpeakerList {
             this.toggle_update_timer();
         }
         this.update_queue();
+        this.last_response = response_string;
     }
 
     toggle_update_timer() {

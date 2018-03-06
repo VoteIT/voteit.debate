@@ -37,9 +37,11 @@ class BaseSLView(BaseView):
         list_users = []
         n2u = self.participant_numbers.number_to_userid
         user_pns = list(sl)
+        safe_count = self.request.speaker_lists.settings.get('safe_positions', 1)
         if sl.current:
             user_pns.insert(0, sl.current)
         total_count = dict([(x, 0) for x in user_pns])
+        base_img_url = self.request.static_url('voteit.debate:static/default_user.png')
         if total:
             #Calculate total entries for all users.
             #FIXME: Should be cached later on
@@ -53,7 +55,7 @@ class BaseSLView(BaseView):
             except (ValueError, TypeError):
                 continue
             userid = n2u.get(pn, '')
-            img_url = ''
+            img_url = base_img_url
             if userid:
                 user = self.request.root['users'].get(userid, None)
                 if user:
@@ -75,6 +77,7 @@ class BaseSLView(BaseView):
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
                 img_url=img_url,
                 total=total_count.get(pn, None),
+                is_safe=safe_count > user_pns.index(pn),
             ))
         return dict(
             name=sl.name,

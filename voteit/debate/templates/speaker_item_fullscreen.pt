@@ -8,20 +8,15 @@
     <div class="col-xs-2">
       <!-- This will cause active speaker, if in list too, to display an empty circle... -->
       <span class="list-status-circle">
-        <span data-speaker="listno">
-        </span>
-        <!--
-        <span class="glyphicon glyphicon-lock"></span>
-        <span class="glyphicon glyphicon-bullhorn"></span>
-        -->
+        <span data-speaker="listno"></span>
       </span>
     </div>
     <div class="col-xs-10">
-      <div>
-        <img data-speaker="img_url" src="" />
-      </div>
-      <div data-speaker="fullname">(Name and userid)</div>
-      <span data-speaker="pn">pn:</span>
+      <img data-speaker="img_url" class="pull-left fullscreen-img"
+           height="40" width="40" src="" />
+      <span data-speaker="is_safe" class="glyphicon glyphicon-lock"></span>
+      <span data-speaker="pn">pn:</span>:
+      <span data-speaker="fullname">(Name and userid)</span>
     </div>
   </div>
 </div>

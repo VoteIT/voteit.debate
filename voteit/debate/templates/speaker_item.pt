@@ -10,21 +10,17 @@
       <span class="list-status-circle">
         <span data-speaker="listno">
         </span>
-        <!--
-        <span class="glyphicon glyphicon-lock"></span>
-        <span class="glyphicon glyphicon-bullhorn"></span>
-        -->
       </span>
     </div>
     <div class="col-xs-${controls and '8' or '10'}">
-      <div data-speaker="fullname">(Name and userid)</div>
-      <span data-speaker="pn">pn:</span>
-      <tal:total condition="controls">
-        Total: <span data-speaker="total"></span>
-      </tal:total>
-
+      <span data-speaker="is_safe" class="glyphicon glyphicon-lock"></span>
+      <span data-speaker="pn">pn:</span>:
+      <span data-speaker="fullname">(Name and userid)</span>
+      <div tal:condition="controls" class="small" i18n:translate="">
+        <span data-speaker="total" i18n:name="count"></span> times spoken before
+      </div>
     </div>
-    <div tal:condition="controls" class="col-xs-2"
+    <div tal:condition="controls" class="col-xs-2 text-right"
          data-speaker="moderator_controls">
       <a href="javascript:" data-list-action="start">
         <span class="glyphicon glyphicon-play"></span>
