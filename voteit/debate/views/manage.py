@@ -10,6 +10,7 @@ from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.views.agenda_item import AgendaItemView
 
 from voteit.debate import _
+from voteit.debate.fanstaticlib import manage_static
 from voteit.debate.interfaces import ISpeakerListSettings
 from voteit.debate.views.base import BaseSLView
 
@@ -24,6 +25,7 @@ class ManageListsView(BaseSLView, AgendaItemView):
         name='manage_speaker_lists',
         renderer='voteit.debate:templates/manage_speaker_lists.pt')
     def main(self):
+        manage_static.need()
         list_controls = render(
             self.list_controls_tpl,
             self.list_controls(),

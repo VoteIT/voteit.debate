@@ -32,8 +32,6 @@ def include_user_resources(view, event):
     if view.request.meeting:
         #We don't check if it's enabled or anything here.
         main_static.need()
-        if view.request.is_moderator:
-            manage_static.need()
 
 
 def includeme(config):

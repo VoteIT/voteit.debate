@@ -16,9 +16,8 @@ class ManageSpeakers {
         request.done(function(response) {
             console.log('posted: ', speaker_id);
             $("[name='pn']").val("");
-//            speaker_list.handle_response(response);
-            speaker_list.refresh();
-
+            speaker_list.handle_response(response);
+            //speaker_list.refresh();
         });
         request.fail(function(xhr) {
             $("[name='pn']").parent('.form-group').addClass('has-error');
@@ -40,8 +39,8 @@ class ManageSpeakers {
         var data = {'pn': pn, 'action': 'start'};
         var request = arche.do_request(this.action_url, {data: data});
         request.done(function(response) {
-            speaker_list.refresh();
-            //speaker_list.handle_response(response);
+            //speaker_list.refresh();
+            speaker_list.handle_response(response);
         }.bind(this));
         request.fail(arche.flash_error);
     }
@@ -56,8 +55,8 @@ class ManageSpeakers {
         var request = arche.do_request(this.action_url, {data: data});
         request.done(function(response) {
             $('[data-speaker-time]').empty();
-            speaker_list.refresh();
-            //speaker_list.handle_response(response);
+            //speaker_list.refresh();
+            speaker_list.handle_response(response);
             manage_log.refresh();
         }.bind(this));
         request.fail(arche.flash_error);
@@ -68,8 +67,8 @@ class ManageSpeakers {
         var data = {'action': 'undo'};
         var request = arche.do_request(this.action_url, {data: data});
         request.done(function(response) {
-            speaker_list.refresh();
-            //speaker_list.handle_response(response);
+            //speaker_list.refresh();
+            speaker_list.handle_response(response);
             $('[data-speaker-time]').empty();
         }.bind(this));
         request.fail(arche.flash_error);
@@ -84,8 +83,8 @@ class ManageSpeakers {
         var data = {'action': 'remove', 'pn': pn};
         var request = arche.do_request(this.action_url, {data: data});
         request.done(function(response) {
-            speaker_list.refresh();
-            //speaker_list.handle_response(response);
+            //speaker_list.refresh();
+            speaker_list.handle_response(response);
         }.bind(this));
         request.fail(arche.flash_error);
     }
@@ -96,8 +95,8 @@ class ManageSpeakers {
         var data = {'action': 'shuffle'};
         var request = arche.do_request(this.action_url, {data: data});
         request.done(function(response) {
-            speaker_list.refresh();
-            //speaker_list.handle_response(response);
+            //speaker_list.refresh();
+            speaker_list.handle_response(response);
         }.bind(this));
         request.fail(arche.flash_error);
     }
