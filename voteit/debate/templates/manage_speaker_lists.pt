@@ -68,7 +68,7 @@
         </form>
         </div>
 
-        <div class="list-group">
+        <div class="list-group" tal:condition="view.context_active">
           <div class="list-group-item" i18n:translate="">
             Elapsed time:
             <span data-speaker-time i18n:name="time"></span>
