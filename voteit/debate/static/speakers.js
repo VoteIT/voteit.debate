@@ -32,11 +32,17 @@ class SpeakerList {
         this.timer_callbacks = [];
         this.update_callbacks = [];
         this.last_response = null;
+        this.request_active = false;
     }
 
     refresh() {
+        if (this.request_active) return;
+        this.request_active = true
         var request = arche.do_request(this.load_url);
         request.done(this.handle_response.bind(this));
+        request.always(function() {
+            this.request_active = false;
+        }.bind(this))
         return request;
     }
 

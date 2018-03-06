@@ -8,13 +8,12 @@
     <div class="col-xs-2">
       <!-- This will cause active speaker, if in list too, to display an empty circle... -->
       <span class="list-status-circle">
-        <span data-speaker="listno">
-        </span>
+        <span data-speaker="listno"></span>
+        <span data-speaker="is_safe" class="annotation glyphicon glyphicon-lock"></span>
       </span>
     </div>
     <div class="col-xs-${controls and '8' or '10'}">
-      <span data-speaker="is_safe" class="glyphicon glyphicon-lock"></span>
-      <span data-speaker="pn">pn:</span>:
+      <b data-speaker="pn">pn:</b>:
       <span data-speaker="fullname">(Name and userid)</span>
       <div tal:condition="controls" class="small" i18n:translate="">
         <span data-speaker="total" i18n:name="count"></span> times spoken before

@@ -14,9 +14,20 @@
     text-align: center;
     border: solid 1px #ccc;
     line-height: 18px;
+    position: relative;
 
     > * {
         font-size: 18px;
         font-weight: bold;
+    }
+
+    .annotation {
+        font-size: 10px;
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 10px;
+        width: 10px;
     }
 }

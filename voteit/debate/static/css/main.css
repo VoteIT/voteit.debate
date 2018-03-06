@@ -11,9 +11,18 @@
   padding: 10px;
   text-align: center;
   border: solid 1px #ccc;
-  line-height: 18px; }
+  line-height: 18px;
+  position: relative; }
   .list-status-circle > * {
     font-size: 18px;
     font-weight: bold; }
+  .list-status-circle .annotation {
+    font-size: 10px;
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 10px;
+    width: 10px; }
 
 /*# sourceMappingURL=main.css.map */
