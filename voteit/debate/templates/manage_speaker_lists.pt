@@ -93,8 +93,8 @@
 <!-- FIXME: Allow any name to load -->
 <script tal:condition="view.context_active">
 $(document).ready(function () {
-  speaker_list.load_url = "${request.resource_url(request.meeting, 'speaker_queue.json', query={'sl': view.active_name})}";
-  speaker_list.moderator = ${request.is_moderator and 'true' or 'false'};
+  speaker_list.load_url = "${request.resource_url(request.meeting, 'speaker_queue_moderator.json', query={'sl': view.active_name})}";
+  speaker_list.enable_moderator();
   speaker_list.refresh();
   manage_speakers.action_url = "${request.resource_url(context, '_list_act', query = {'sl': view.active_name})}";
   manage_log.log_url = "${request.resource_url(request.meeting, 'speaker_log.json')}";

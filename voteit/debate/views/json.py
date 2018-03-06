@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from pyramid.decorator import reify
-from pyramid.httpexceptions import HTTPNotFound
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.view import view_config, view_defaults
-from voteit.core.models.interfaces import IAgendaItem, IMeeting
-from voteit.core.security import MODERATE_MEETING, VIEW
+from voteit.core.models.interfaces import IAgendaItem
+from voteit.core.models.interfaces import IMeeting
+from voteit.core.security import MODERATE_MEETING
+from voteit.core.security import VIEW
+
 from voteit.debate.views.base import BaseSLView
 from voteit.debate import _
 
@@ -14,7 +15,7 @@ from voteit.debate import _
 class JSONView(BaseSLView):
 
     @view_config(name='speaker_queue.json')
-    def queue_view(self, sl_name=None, image=False):
+    def queue_view(self, sl_name=None, image=False, total=False):
         #Inject category here
         if sl_name is None:
             sl_name = self.request.GET.get('sl', self.request.speaker_lists.get_active_list())
@@ -22,7 +23,11 @@ class JSONView(BaseSLView):
             sl = self.request.speaker_lists[sl_name]
         except KeyError:
             raise HTTPBadRequest('No such list')
-        return self.get_queue_response(sl, image=image)
+        return self.get_queue_response(sl, image=image, total=total)
+
+    @view_config(name='speaker_queue_moderator.json', permission=MODERATE_MEETING)
+    def queue_moderator_view(self):
+        return self.queue_view(total=True)
 
     @view_config(name='speaker_queue_current.json')
     def queue_current_view(self):

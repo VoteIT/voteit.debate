@@ -19,6 +19,10 @@
     <div class="col-xs-${controls and '8' or '10'}">
       <div data-speaker="fullname">(Name and userid)</div>
       <span data-speaker="pn">pn:</span>
+      <tal:total condition="controls">
+        Total: <span data-speaker="total"></span>
+      </tal:total>
+
     </div>
     <div tal:condition="controls" class="col-xs-2"
          data-speaker="moderator_controls">

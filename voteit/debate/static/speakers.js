@@ -18,12 +18,13 @@ class SpeakerList {
                 if (a.item.active) return ' active'
             },
             '.@data-speaker-pn': 'speaker.pn',
-            // -
             '[data-speaker="listno"]': 'speaker.listno',
             '[data-speaker="pn"]': 'speaker.pn',
-            '[data-speaker="fullname"]': 'speaker.fullname',
+            '[data-speaker="fullname"]': 'speaker.fullname'
         }}};
-        this.moderator_directive = {};
+        this.moderator_extras_directive = {
+            '[data-speaker="total"]': 'speaker.total'
+        };
         this.update_timer = null;
         this.timer_callbacks = [];
         this.update_callbacks = [];
@@ -93,6 +94,12 @@ class SpeakerList {
         } catch(e) {
             return;
         }
+    }
+
+    enable_moderator() {
+        //Permission checks aren't done here of course, but update the template
+        $.extend( this.directive['div.speaker-item']['speaker<-'], this.moderator_extras_directive );
+        this.moderator = true;
     }
 }
 
