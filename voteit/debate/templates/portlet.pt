@@ -16,7 +16,7 @@
         <div class="col-sm-6">
           <a tal:condition="request.is_moderator"
             href="${request.resource_url(context, '_add_slist')}"
-             data-list-action
+             data-href-list-action
             class="btn btn-default btn-sm"
             i18n:translate="">New</a>
           <a tal:condition="request.is_moderator"

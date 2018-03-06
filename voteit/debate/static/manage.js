@@ -126,7 +126,6 @@ class ManageLog {
     }
 
     handle_response(response) {
-        console.log(response)
         var target = $('[data-speaker-log-list]');
         target.html($('[data-speaker-log-template]').html());
         target.render( response, this.directive );

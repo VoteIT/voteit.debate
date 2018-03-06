@@ -25,9 +25,7 @@ class SpeakerList {
             '[data-speaker="pn"]': 'speaker.pn',
             '[data-speaker="fullname"]': 'speaker.fullname'
         }}};
-        this.moderator_extras_directive = {
-            '[data-speaker="total"]': 'speaker.total'
-        };
+        this.moderator_extras_directive = {};
         this.update_timer = null;
         this.timer_callbacks = [];
         this.update_callbacks = [];
@@ -217,7 +215,7 @@ function handle_list_action(event) {
 
 
 $(document).ready(function () {
-    $('body').on("click", "[data-list-action]", handle_list_action);
+    $('body').on("click", "[data-href-list-action]", handle_list_action);
     $('body').on("click", "[data-sl-user-control]",
     user_speaker_lists.handle_user_action.bind(user_speaker_lists));
 });
