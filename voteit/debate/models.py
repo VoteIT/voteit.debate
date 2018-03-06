@@ -1,32 +1,25 @@
 # -*- coding: utf-8 -*-
 from UserDict import IterableUserDict
-from UserList import UserList
 from calendar import timegm
-from datetime import timedelta
 from random import shuffle
 
-from BTrees.OOBTree import OOBTree
 from BTrees.IOBTree import IOBTree
-from persistent import Persistent
-
-from arche.interfaces import IObjectUpdatedEvent
-from arche.portlets import get_portlet_manager
+from BTrees.OOBTree import OOBTree
 from arche.utils import AttributeAnnotations
 from arche.utils import utcnow
 from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.interfaces import IRequest
 from pyramid.renderers import render
-from six import string_types
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.irl.models.interfaces import IParticipantNumbers
 from zope.component import adapter
 from zope.interface import implementer
 
+from voteit.debate import _
 from voteit.debate.interfaces import ISpeakerList, ISpeakerListSettings
 from voteit.debate.interfaces import ISpeakerLists
-from voteit.debate import _
 
 
 @implementer(ISpeakerLists)
@@ -83,17 +76,6 @@ class SpeakerLists(IterableUserDict):
 
     def get_active_list(self, category='default'):
         return getattr(self.context, '_v_active_lists', {}).get(category, '')
-
-    # @property
-    # def active_list_name(self, default = None):
-    #     return getattr(self.context, '__active_speaker_list__', default)
-    #
-    # @active_list_name.setter
-    # def active_list_name(self, key):
-    #     if key is None or key in self.speaker_lists:
-    #         self.context.__active_speaker_list__ = key
-    #         return key
-    #     raise KeyError("No list named '%s'" % key)
 
     def get_list_names(self, uid):
         results = []
@@ -199,19 +181,6 @@ class SpeakerLists(IterableUserDict):
     def render_tpl(self, name, **kw):
         return render(self.templates[name], kw, request=self.request)
 
-    # def render_speaker_item(self, pn, sl, controls=True):
-    #     safe_positions = self.settings['safe_positions']
-    #     userid = self._pn_to_userid.get(pn, None)
-    #     response = dict(
-    #         sl=sl,
-    #         pn=pn,
-    #         userid=userid,
-    #         is_active=pn == sl.current,
-    #         is_locked=pn in sl and sl.index(pn) < safe_positions,
-    #         controls=controls and self.request.is_moderator,
-    #     )
-    #     return render(self.speaker_tpl, response, request=self.request)
-
     @reify
     def _pn_to_userid(self):
         return IParticipantNumbers(self.context).number_to_userid
@@ -313,5 +282,3 @@ def includeme(config):
     # The default one won't have a name
     config.registry.registerAdapter(SpeakerLists, name=SpeakerLists.name)
     config.registry.registerAdapter(SpeakerListSettings)
-
- #   config.add_subscriber(insert_portlet_when_enabled, [IMeeting, IObjectUpdatedEvent])
