@@ -471,6 +471,7 @@ class UserSpeakerLists(BaseView):
 
         response['get_perc'] = _get_percentage
         response['has_gender_stats'] = 'voteit.irl.plugins.gender' in self.request.registry.settings.get('plugins', '')
+        response['seconds_to_time'] = lambda s: timedelta(seconds=int(s))
         return response
 
     @view_config(name='speaker_statistics.csv', context=IMeeting, permission=security.VIEW)
