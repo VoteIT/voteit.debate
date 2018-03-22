@@ -1,0 +1,18 @@
+.gender-stats-bar
+    height: 40px
+    div
+        height: 40px
+        float: left
+        background-color: #ccc
+
+        &.female
+            background-color: #f99
+        &.male
+            background-color: #99f
+        &.other
+            background-color: #9f9
+
+        &:first-child
+            border-radius: 4px 0 0 4px
+        &:last-child
+            border-radius: 0 4px 4px 0

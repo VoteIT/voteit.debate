@@ -15,6 +15,7 @@ from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.traversal import find_interface
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+
 from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
@@ -22,10 +23,12 @@ from voteit.core.views.agenda_item import AgendaItemView
 from voteit.core.views.control_panel import control_panel_category
 from voteit.core.views.control_panel import control_panel_link
 from voteit.irl.models.interfaces import IParticipantNumbers
+from voteit.irl.plugins.gender import GenderStatistics
 
 from voteit.debate import _
 from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_css
 from voteit.debate.fanstaticlib import voteit_debate_fullscreen_speakers_js
+from voteit.debate.fanstaticlib import voteit_debate_gender_statistics_css
 from voteit.debate.fanstaticlib import voteit_debate_manage_speakers_js
 from voteit.debate.fanstaticlib import voteit_debate_speaker_view_styles
 from voteit.debate.interfaces import ISpeakerLists
@@ -487,6 +490,36 @@ class UserSpeakerLists(BaseView):
         contents = output.getvalue()
         output.close()
         return Response(content_type='text/csv', body=contents)
+
+    @view_config(name="gender_statistics", context=IMeeting, permission=security.VIEW,
+                 renderer="voteit.debate:templates/gender_statistics.pt")
+    def gender_statistics_view(self):
+        voteit_debate_gender_statistics_css.need()
+        results = {
+            'expected': GenderStatistics(),
+            'entries': GenderStatistics(),
+            'people': GenderStatistics(),
+            'time': GenderStatistics(),
+            'seconds_to_time': lambda s: timedelta(seconds=int(s)),
+        }
+        for sl in self.slists.speaker_lists.values():
+            for (pn, entries) in sl.speaker_log.items():
+                uid = self.participant_numbers.number_to_userid.get(pn)
+                user = self.request.root['users'].get(uid)
+                if user:
+                    gender = user.gender
+                else:
+                    gender = ''
+                results['entries'].add(gender, len(entries))
+                results['people'].add(gender, 1)
+                results['time'].add(gender, sum(entries))
+
+            for uid in self.participant_numbers.number_to_userid.values():
+                user = self.request.root['users'].get(uid)
+                if user:
+                    results['expected'].add(user.gender, 1)
+
+        return results
 
 
 def _debate_is_active(context, request, va):
