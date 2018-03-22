@@ -9,7 +9,7 @@
 <div metal:fill-slot="main-content">
   <h2 i18n:translate="">Gender statistics</h2>
 
-  <a href="${request.resource_url(context)}" class="btn btn-default" i18n:translate="">Back</a>
+  <a href="${request.resource_url(context, 'speaker_statistics')}" class="btn btn-default" i18n:translate="">Back</a>
 
   <tal:statistics define="stats expected.sums">
     <h3 i18n:translate="">Expected result</h3>

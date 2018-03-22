@@ -10,7 +10,12 @@
   <h2 i18n:translate="">Speaker statistics</h2>
 
   <a href="${request.resource_url(context)}" class="btn btn-default" i18n:translate="">Back</a>
-  
+
+  <a href="${request.resource_url(context, 'gender_statistics')}"
+     class="btn btn-default"
+     tal:condition="has_gender_stats"
+     i18n:translate="">Gender statistics</a>
+
   <a href="${request.resource_url(context, 'speaker_statistics.csv')}"
      class="btn btn-default" i18n:translate="">Export CSV, one entry per row</a>
 
