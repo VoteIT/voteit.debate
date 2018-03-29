@@ -1,6 +1,7 @@
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.httpexceptions import HTTPFound
 from pyramid.renderers import render
+from pyramid.response import Response
 from pyramid.traversal import resource_path
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -15,10 +16,46 @@ from voteit.debate.interfaces import ISpeakerListSettings
 from voteit.debate.views.base import BaseSLView
 
 
+class ManageQueueView(BaseSLView):
+
+    @view_config(context=IAgendaItem, name='_manage_speaker_item', permission=security.MODERATE_MEETING)
+    def queue_view(self, sl=None):
+        if sl is None:
+            sl = self.sl
+        # total_count = dict([(x, 0) for x in user_pns])
+        # if total:
+        #     # Calculate total entries for all users.
+        #     # FIXME: Should be cached later on
+        #     for x in self.request.speaker_lists.values():
+        #         for (k, v) in x.speaker_log.items():
+        #             if k in user_pns:
+        #                 total_count[k] = total_count.get(k, 0) + len(v)
+        user_pns = list(sl)
+        if sl.current:
+           user_pns.insert(0, sl.current)
+        pn2u = self.participant_numbers.number_to_userid
+        pn2user = {}
+        for pn in user_pns:
+            userid = pn2u.get(pn, None)
+            if userid:
+                user = self.request.root['users'].get(userid, None)
+                if user:
+                    pn2user[pn] = user
+        response = dict(
+            safe_count=self.request.speaker_lists.settings.get('safe_positions', 1),
+            default_img=self.request.static_url('voteit.debate:static/default_user.png'),
+            sl=sl,
+            user_pns=user_pns,
+            pn2user=pn2user,
+        )
+        tpl = self.request.speaker_lists.templates['manage_speaker_item']
+        return render(tpl, response, request=self.request)
+
+
 @view_defaults(
     context=IAgendaItem,
     permission=security.MODERATE_MEETING,)
-class ManageListsView(BaseSLView, AgendaItemView):
+class ManageListsView(ManageQueueView, AgendaItemView):
     list_controls_tpl = 'voteit.debate:templates/manage_list_controls.pt'
 
     @view_config(
@@ -37,7 +74,11 @@ class ManageListsView(BaseSLView, AgendaItemView):
                 'speaker_list': self.request.speaker_lists.get_active_list(),
             }
         )
-        return {'list_controls': list_controls, 'context_active': True, 'edit_log_item_url': edit_log_item_url}
+        response = {'list_controls': list_controls, 'edit_log_item_url': edit_log_item_url}
+        if self.context_active:
+            sl = self.request.speaker_lists[self.active_name]
+            response['rendered_queue'] = self.queue_view(sl=sl)
+        return response
 
     @view_config(
         name='_manage_list_controls',
@@ -79,7 +120,8 @@ class ManageListsView(BaseSLView, AgendaItemView):
         self.request.speaker_lists.set_active_list(sl.name)
 
     def action_delete(self, sl):
-        self.request.speaker_lists.pop(sl.name, None)
+        if sl.name in self.request.speaker_lists:
+            del self.request.speaker_lists[sl.name]
 
     def action_state(self, sl):
         state = self.request.params.get('state', None)
@@ -116,9 +158,8 @@ class ManageListsView(BaseSLView, AgendaItemView):
 @view_config(
     context=IAgendaItem,
     permission=security.MODERATE_MEETING,
-    name='_list_act',
-    renderer='json')
-class ListActionsView(BaseSLView):
+    name='_list_act')
+class ListActionsView(ManageQueueView):
 
     def __call__(self):
         action_name = self.request.params.get('action')
@@ -131,7 +172,10 @@ class ListActionsView(BaseSLView):
         except KeyError:
             raise HTTPBadRequest('No such list')
         action(sl)
-        return self.get_queue_response(sl, total=True)
+        if self.use_websockets:
+            return Response(render('json', {'sockets': True}), request=self.request)
+        else:
+            return Response(self.queue_view(sl))
 
     def _get_pn(self):
         pn = self.request.params.get('pn', None)
@@ -153,8 +197,8 @@ class ListActionsView(BaseSLView):
         sl.start(pn)
 
     def action_finish(self, sl):
-        pn = self._get_pn()
-        sl.finish(pn)
+        if sl.current:
+            sl.finish(sl.current)
 
     def action_undo(self, sl):
         sl.undo()
@@ -166,6 +210,9 @@ class ListActionsView(BaseSLView):
 
     def action_shuffle(self, sl):
         self.request.speaker_lists.shuffle(sl)
+
+    def action_refresh(self, sl):
+        pass
 
 
 def _manage_speaker_list(context, request, va, **kw):

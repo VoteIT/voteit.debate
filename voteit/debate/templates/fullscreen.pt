@@ -13,7 +13,7 @@
                 src="${request.static_url('voteit.core:static/images/logo.png')}" />
         </a>
         <a tal:condition="request.meeting"
-          class="navbar-brand text-overflow greedy"
+          class="navbar-brand text-overflow greedy text-center"
           href="${request.resource_url(request.meeting)}">
           ${request.meeting.title}
         </a>
@@ -24,14 +24,16 @@
 
     <h1 class="text-center">
       <span data-list="title"></span>
-      <small class="pull-right">
+    </h1>
+    <h3 class="text-center" style="margin-top: 0px;">
+      <small>
         <span data-list-state="open"
               class="glyphicon glyphicon-play-circle text-success"></span>
         <span data-list-state="closed"
               class="glyphicon glyphicon-lock text-danger"></span>
         <span data-list="state_title"></span>
       </small>
-    </h1>
+    </h3>
 
     <div id="speakers-fullscreen" class="list-group" data-speaker-list>
     </div>
@@ -40,15 +42,24 @@
   <div class="hidden" data-speaker-template
        tal:content="structure request.speaker_lists.render_tpl('fullscreen')">
     The speaker template goes here, it will be populated by json
-    The base template lives at templates/speaker_item.pt
   </div>
 
   <script>
   $(document).ready(function () {
-    speaker_list.load_url = "${request.resource_url(request.meeting, 'speaker_queue_current.json')}";
+    $('[data-list-state]').hide();
+    fullscreen_speakers.inactive_list_title = '${inactive_list_title}';
+    fullscreen_speakers.load_url = "${request.resource_url(request.meeting, 'speakers_current_queue.json')}";
   });
   </script>
-
+  <script tal:condition="view.use_websockets">
+  $(document).ready(function () {
+  });
+  </script>
+  <script tal:condition="not view.use_websockets">
+  $(document).ready(function () {
+    fullscreen_speakers.init_polling();
+  });
+  </script>
 
 </body>
 </html>

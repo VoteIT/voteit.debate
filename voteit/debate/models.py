@@ -31,10 +31,10 @@ class SpeakerLists(IterableUserDict):
     description = ""
     state_titles = {"open": _("Open"), "closed": _("Closed")}
     templates = {
-        'speaker': 'voteit.debate:templates/speaker_item.pt',
-        'log': 'voteit.debate:templates/speaker_log_item.pt',
-        'fullscreen': 'voteit.debate:templates/speaker_item_fullscreen.pt',
-        'user': 'voteit.debate:templates/speaker_item_user.pt',
+        'manage_speaker_item': 'voteit.debate:templates/snippets/manage_speaker_item.pt',
+        'log': 'voteit.debate:templates/snippets/speaker_log_item.pt',
+        'fullscreen': 'voteit.debate:templates/snippets/speaker_item_fullscreen.pt',
+        'user': 'voteit.debate:templates/snippets/speaker_item_user.pt',
     }
 
     def __init__(self, context, request):
@@ -125,6 +125,11 @@ class SpeakerLists(IterableUserDict):
         if self.get_active_list() == key:
             self.del_active_list()
         del self.data[key]
+
+    def pop(self, key, *args):
+        if self.get_active_list() == key:
+            self.del_active_list()
+        return self.data.pop(key, *args)
 
     def __nonzero__(self):
         #Make sure the adapter registers as true even if it's empty

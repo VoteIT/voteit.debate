@@ -60,3 +60,16 @@ class StatisticsView(BaseSLView):
 
 def includeme(config):
     config.scan(__name__)
+
+
+#FIXME
+#More suitable as view code
+# def get_stats(self, pn, sl, format = True):
+#     assert isinstance(pn, int)
+#     assert ISpeakerList.providedBy(sl)
+#     if pn not in sl.speaker_log:
+#         return (0, 0)
+#     time = sum(sl.speaker_log[pn])
+#     if format:
+#         time = unicode(timedelta(seconds = time))
+#     return (len(sl.speaker_log[pn]), time)

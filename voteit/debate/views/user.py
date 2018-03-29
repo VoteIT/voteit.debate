@@ -3,7 +3,6 @@ from pyramid.view import view_config
 from voteit.core import security
 from voteit.core.models.interfaces import IAgendaItem
 
-from voteit.debate.views.base import BaseSLView
 from voteit.debate.views.json import JSONView
 
 

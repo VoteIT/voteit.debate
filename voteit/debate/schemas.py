@@ -69,6 +69,13 @@ class SpeakerListSettingsSchema(colander.Schema):
                                   "plugin capable of adjusting speaker list behaviour. "),
         widget = deferred_speaker_list_plugin_widget,
         missing = "")
+    #FIXME: Validator, check installed/configured etc
+    # use_websockets =  colander.SchemaNode(
+    #     colander.Bool(),
+    #     default = False,
+    #     title = "Enable experimental websockets",
+    #     tab = 'advanced',
+    # )
     reload_manager_interface = colander.SchemaNode(
         colander.Int(),
         default = 4,
