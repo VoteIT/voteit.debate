@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="voteit.debate">
+<body>
+<div metal:fill-slot="main-content">
+  <h2 i18n:translate="">Gender statistics</h2>
+
+  <a href="${request.resource_url(context, 'speaker_statistics')}" class="btn btn-default" i18n:translate="">Back</a>
+
+  <tal:statistics define="stats expected.sums">
+    <h3 i18n:translate="">Expected result</h3>
+    <div class="gender-stats-bar">
+      <tal:gender repeat="item stats">
+        <div style="width: ${item.percentage}%;" class="${item.gender}"></div>
+      </tal:gender>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th i18n:translate="">Gender</th>
+          <th i18n:translate="">Percentage</th>
+          <th i18n:translate="">Participants</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="item stats">
+          <td>${item.name}</td>
+          <td>${str(item.percentage)[:4]}%</td>
+          <td>${item.sum}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="well"><span class="glyphicon glyphicon-info-sign"></span> <em i18n:translate="gender_statistics_expected_explanation">
+      Expected result: The number of participants in this meeting of each gender.
+    </em></p>
+  </tal:statistics>
+  <tal:statistics define="stats people.sums">
+    <h3 i18n:translate="">People spoken</h3>
+    <div class="gender-stats-bar">
+      <tal:gender repeat="item stats">
+        <div style="width: ${item.percentage}%;" class="${item.gender}"></div>
+      </tal:gender>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th i18n:translate="">Gender</th>
+          <th i18n:translate="">Percentage</th>
+          <th i18n:translate="">People spoken</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="item stats">
+          <td>${item.name}</td>
+          <td>${str(item.percentage)[:4]}%</td>
+          <td>${item.sum}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="well"><span class="glyphicon glyphicon-info-sign"></span>
+      <em i18n:translate="gender_statistics_people_explanation">
+      People spoken: The number of persons of each gender that has spoken in this meeting.
+    </em></p>
+  </tal:statistics>
+  <tal:statistics define="stats entries.sums">
+    <h3 i18n:translate="">Times spoken</h3>
+    <div class="gender-stats-bar">
+      <tal:gender repeat="item stats">
+        <div style="width: ${item.percentage}%;" class="${item.gender}"></div>
+      </tal:gender>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th i18n:translate="">Gender</th>
+          <th i18n:translate="">Percentage</th>
+          <th i18n:translate="">Times spoken</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="item stats">
+          <td>${item.name}</td>
+          <td>${str(item.percentage)[:4]}%</td>
+          <td>${item.sum}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="well"><span class="glyphicon glyphicon-info-sign"></span>
+      <em i18n:translate="gender_statistics_entries_explanation">
+      Times spoken: The number of times spoken per gender in this meeting.
+    </em></p>
+  </tal:statistics>
+  <tal:statistics define="stats time.sums">
+    <h3 i18n:translate="">Time used</h3>
+    <div class="gender-stats-bar">
+      <tal:gender repeat="item stats">
+        <div style="width: ${item.percentage}%;" class="${item.gender}"></div>
+      </tal:gender>
+    </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th i18n:translate="">Gender</th>
+          <th i18n:translate="">Percentage</th>
+          <th i18n:translate="">Time used</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr tal:repeat="item stats">
+          <td>${item.name}</td>
+          <td>${str(item.percentage)[:4]}%</td>
+          <td>${seconds_to_time(item.sum)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="well"><span class="glyphicon glyphicon-info-sign"></span>
+      <em i18n:translate="gender_statistics_time_explanation">
+      Time used: The sum of spoken time per gender in this meeting.
+    </em></p>
+  </tal:statistics>
+
+</div>
+</body>
+</html>
+

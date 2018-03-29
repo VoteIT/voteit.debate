@@ -20,12 +20,11 @@ speakers_js = Resource(voteit_debate_lib, 'speakers.js', depends=(base_js, pure_
 manage_js = Resource(voteit_debate_lib, 'manage.js', depends = (speakers_js,))
 fullscreen_js = Resource(voteit_debate_lib, 'fullscreen.js', depends = (speakers_js,))
 
-
-#voteit_debate_user_speaker_js = Resource(voteit_debate_lib, 'user_speaker.js', depends = (base_js,))
-
 main_static = Group([main_speaker_css, speakers_js])
 fullscreen_static = Group([fullscreen_css, fullscreen_js])
 manage_static = Group([manage_css, manage_js])
+
+voteit_debate_gender_statistics_css = Resource(voteit_debate_lib, 'css/gender_statistics.css', depends=(voteit_main_css,))
 
 
 def include_user_resources(view, event):

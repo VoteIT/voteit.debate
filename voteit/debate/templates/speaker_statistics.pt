@@ -10,7 +10,12 @@
   <h2 i18n:translate="">Speaker statistics</h2>
 
   <a href="${request.resource_url(context)}" class="btn btn-default" i18n:translate="">Back</a>
-  
+
+  <a href="${request.resource_url(context, 'gender_statistics')}"
+     class="btn btn-default"
+     tal:condition="has_gender_stats"
+     i18n:translate="">Gender statistics</a>
+
   <a href="${request.resource_url(context, 'speaker_statistics.csv')}"
      class="btn btn-default" i18n:translate="">Export CSV, one entry per row</a>
 
@@ -20,7 +25,7 @@
         <th>#</th>
         <th i18n:translate="">Name</th>
         <th i18n:translate="">Times spoken</th>
-        <th i18n:translate="">Total s</th>
+        <th i18n:translate="">Total time</th>
         <th style="min-width: 200px;">&nbsp;</th>
       </tr>
     </thead>
@@ -30,10 +35,11 @@
           <td tal:content="pn">1</td>
           <td tal:content="structure request.creators_info([number_to_userid[pn]], portrait = False)|pn">Hen Henysson</td>
           <td tal:content="len(spoken_list)">3</td>
-          <td tal:content="sum(spoken_list)">60</td>
+          <td tal:content="seconds_to_time(sum(spoken_list))">0:01:00</td>
           <td>
             <div class="progress">
-              <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: ${get_perc(sum(spoken_list))}%;"></div>
+              <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
+                   style="width: ${get_perc(sum(spoken_list))}%;"></div>
             </div>
           </td>
         </tr>
