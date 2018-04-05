@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from UserDict import IterableUserDict
-from calendar import timegm
 from random import shuffle
 
 from BTrees.IOBTree import IOBTree
@@ -13,12 +12,12 @@ from pyramid.interfaces import IRequest
 from pyramid.renderers import render
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
-from voteit.irl.models.interfaces import IParticipantNumbers
 from zope.component import adapter
 from zope.interface import implementer
 
 from voteit.debate import _
-from voteit.debate.interfaces import ISpeakerList, ISpeakerListSettings
+from voteit.debate.interfaces import ISpeakerList
+from voteit.debate.interfaces import ISpeakerListSettings
 from voteit.debate.interfaces import ISpeakerLists
 
 
@@ -51,17 +50,9 @@ class SpeakerLists(IterableUserDict):
 
     @reify
     def settings(self):
-#        schema = self.request.get_schema(context, context.type_name, 'edit', bind=None, event=True)
-        #from voteit.debate.schemas import SpeakerListSettingsSchema
-        #schema = SpeakerListSettingsSchema()
-        #FIXME: use get_schema on request instead
-        #Should map default values from schema
-
-        #Fallback to default class
+        schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
         settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
-        settings.setdefault('speaker_list_count', 9)
-        settings.setdefault('safe_positions',1)
-        return settings
+        return self.request.validate_appstruct(schema, settings)
 
     def set_active_list(self, list_name, category='default'):
         try:
@@ -88,7 +79,7 @@ class SpeakerLists(IterableUserDict):
         def _sorter(obj):
             try:
                 return int(obj.split("/")[1])
-            except IndexError:
+            except IndexError: # pragma: no cover
                 return 0 #b/c compat
         return sorted(results, key = _sorter)
 
@@ -117,7 +108,7 @@ class SpeakerLists(IterableUserDict):
 
     def __setitem__(self, key, sl): #dict api
         if not ISpeakerList.providedBy(sl):
-            raise TypeError("Only objects implementing ISpeakerList allowed")
+            raise TypeError("Only objects implementing ISpeakerList allowed") # pragma: no cover
         assert sl.__parent__ is not None
         self.data[key] = sl
 
@@ -169,7 +160,7 @@ class SpeakerLists(IterableUserDict):
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
         compare_val = self.get_list_number_for(pn, sl)
-        pos = len(self)
+        pos = len(sl)
         for speaker in reversed(sl):
             if pos == safe_pos:
                 break
@@ -188,10 +179,6 @@ class SpeakerLists(IterableUserDict):
 
     def render_tpl(self, name, **kw):
         return render(self.templates[name], kw, request=self.request)
-
-    @reify
-    def _pn_to_userid(self):
-        return IParticipantNumbers(self.context).number_to_userid
 
 
 @implementer(ISpeakerListSettings)
@@ -227,14 +214,8 @@ class SpeakerList(PersistentList):
             if self._v_start_ts is not None:
                 ts = utcnow() - self._v_start_ts
                 return ts.seconds
-        except AttributeError:
+        except AttributeError: # pragma: no cover
             pass
-
-    @property
-    def start_ts_epoch(self):
-        start_ts = getattr(self, '_v_start_ts', None)
-        if start_ts:
-            return timegm(start_ts.timetuple())
 
     def open(self):
         return self.state == 'open'

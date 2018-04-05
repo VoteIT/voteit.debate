@@ -68,7 +68,6 @@ class JSONView(BaseSLView):
             current=sl.current,
             queue=list(sl),
             list_users=list_users,
-            #start_ts_epoch=sl.start_ts_epoch,
             state=sl.state,
             state_title=self.request.speaker_lists.get_state_title(sl)
         )

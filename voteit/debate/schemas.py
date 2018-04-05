@@ -26,6 +26,7 @@ def deferred_speaker_list_plugin_widget(node, kw):
 class SpeakerListSettingsSchema(colander.Schema):
     enable_voteit_debate = colander.SchemaNode(
         colander.Bool(),
+        missing=False,
         title = _("Enable speaker lists for this meeting?"),
     )
     speaker_list_count = colander.SchemaNode(
