@@ -80,11 +80,7 @@ var UserSpeakerLists = function() {
         request.done(this.handle_response.bind(this));
         request.fail(arche.flash_error);
     }
-
 }
-
-
-var user_speaker_lists = new UserSpeakerLists();
 
 
 function handle_list_action(event) {
@@ -98,19 +94,11 @@ function handle_list_action(event) {
 }
 
 
+var user_speaker_lists = new UserSpeakerLists();
+
 
 $(document).ready(function () {
     $('body').on("click", "[data-href-list-action]", handle_list_action);
     $('body').on("click", "[data-sl-user-control]",
     user_speaker_lists.handle_user_action.bind(user_speaker_lists));
 });
-
-/*
-function debug_callback(speaker_list) {
-    var nowsecs = Math.round((new Date).getTime() / 1000);
-    nowsecs - speaker_list.start_ts_epoch
-    console.log('timer ping: ', nowsecs - speaker_list.start_ts_epoch);
-}
-*/
-
-//speaker_list.add_timer_callback(debug_callback);
