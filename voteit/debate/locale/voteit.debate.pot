@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2018-03-06 12:39+0100\n"
+"POT-Creation-Date: 2018-04-12 16:01+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Lingua 4.13\n"
 
+#: ./voteit/debate/models.py:29
+msgid "Default list handler"
+msgstr ""
+
+#: ./voteit/debate/models.py:31
+msgid "Open"
+msgstr ""
+
+#: ./voteit/debate/models.py:31
+msgid "Closed"
+msgstr ""
+
 #: ./voteit/debate/__init__.py:25
 msgid "Nothing to start"
 msgstr ""
@@ -24,27 +36,11 @@ msgstr ""
 msgid "Speaker already in this list"
 msgstr ""
 
-#: ./voteit/debate/models.py:30
-msgid "Default list handler"
-msgstr ""
-
-#: ./voteit/debate/models.py:32
-msgid "Open"
-msgstr ""
-
-#: ./voteit/debate/models.py:32
-msgid "Closed"
-msgstr ""
-
-#: ./voteit/debate/portlet.py:13
-msgid "Debate"
-msgstr ""
-
-#: ./voteit/debate/schemas.py:29
+#: ./voteit/debate/schemas.py:30
 msgid "Enable speaker lists for this meeting?"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:33
+#: ./voteit/debate/schemas.py:34
 msgid "Number of speaker lists to use"
 msgstr ""
 
@@ -54,11 +50,11 @@ msgstr ""
 #. will get to speak before everyone who's spoken 1 or more times. However,
 #. when entering the queue someone who's spoken 2 times and 4 will be treated
 #. equally.
-#: ./voteit/debate/schemas.py:34
+#: ./voteit/debate/schemas.py:35
 msgid "speaker_lists_to_use_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:49
+#: ./voteit/debate/schemas.py:50
 msgid "Safe positions"
 msgstr ""
 
@@ -66,30 +62,105 @@ msgstr ""
 #. their place. For instance, if 1 is entered here and 2 speaker lists are
 #. used, the next speaker in line will never be moved down regardless of what
 #. list they're on.
-#: ./voteit/debate/schemas.py:50
+#: ./voteit/debate/schemas.py:51
 msgid "safe_positions_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:66
+#: ./voteit/debate/schemas.py:67
 msgid "Plugin to handle speaker lists"
 msgstr ""
 
 #. Default: If you've registered anything esle as a plugin capable of adjusting
 #. speaker list behaviour.
-#: ./voteit/debate/schemas.py:67
+#: ./voteit/debate/schemas.py:68
 msgid "speaker_list_functionality_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:75
+#: ./voteit/debate/schemas.py:83
 msgid "Managers speaker list reload interval"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:76 ./voteit/debate/schemas.py:83
+#: ./voteit/debate/schemas.py:84 ./voteit/debate/schemas.py:91
 msgid "In seconds. After this timeout the list will be updated."
 msgstr ""
 
-#: ./voteit/debate/schemas.py:82
+#: ./voteit/debate/schemas.py:90
 msgid "Update interval for users"
+msgstr ""
+
+#: ./voteit/debate/portlet.py:13
+msgid "Debate"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:10
+#: ./voteit/debate/templates/speaker_statistics.pt:17
+msgid "Gender statistics"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:12
+#: ./voteit/debate/templates/speaker_statistics.pt:12
+msgid "Back"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:15
+msgid "Expected result"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:24
+#: ./voteit/debate/templates/gender_statistics.pt:51
+#: ./voteit/debate/templates/gender_statistics.pt:79
+#: ./voteit/debate/templates/gender_statistics.pt:107
+msgid "Gender"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:25
+#: ./voteit/debate/templates/gender_statistics.pt:52
+#: ./voteit/debate/templates/gender_statistics.pt:80
+#: ./voteit/debate/templates/gender_statistics.pt:108
+msgid "Percentage"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:26
+msgid "Participants"
+msgstr ""
+
+#. Default: Expected result: The number of participants in this meeting of each
+#. gender.
+#: ./voteit/debate/templates/gender_statistics.pt:37
+msgid "gender_statistics_expected_explanation"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:42
+#: ./voteit/debate/templates/gender_statistics.pt:53
+msgid "People spoken"
+msgstr ""
+
+#. Default: People spoken: The number of persons of each gender that has spoken
+#. in this meeting.
+#: ./voteit/debate/templates/gender_statistics.pt:65
+msgid "gender_statistics_people_explanation"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:70
+#: ./voteit/debate/templates/gender_statistics.pt:81
+#: ./voteit/debate/templates/speaker_statistics.pt:27
+msgid "Times spoken"
+msgstr ""
+
+#. Default: Times spoken: The number of times spoken per gender in this
+#. meeting.
+#: ./voteit/debate/templates/gender_statistics.pt:93
+msgid "gender_statistics_entries_explanation"
+msgstr ""
+
+#: ./voteit/debate/templates/gender_statistics.pt:98
+#: ./voteit/debate/templates/gender_statistics.pt:109
+msgid "Time used"
+msgstr ""
+
+#. Default: Time used: The sum of spoken time per gender in this meeting.
+#: ./voteit/debate/templates/gender_statistics.pt:121
+msgid "gender_statistics_time_explanation"
 msgstr ""
 
 #: ./voteit/debate/templates/manage_list_controls.pt:21
@@ -114,6 +185,28 @@ msgstr ""
 
 #: ./voteit/debate/templates/manage_list_controls.pt:63
 msgid "Save"
+msgstr ""
+
+#: ./voteit/debate/templates/portlet.pt:13
+msgid "Speaker list"
+msgstr ""
+
+#: ./voteit/debate/templates/portlet.pt:21
+msgid "New"
+msgstr ""
+
+#: ./voteit/debate/templates/portlet.pt:25
+msgid "Manage"
+msgstr ""
+
+#: ./voteit/debate/templates/portlet.pt:30
+#: ./voteit/debate/views/control_panel.py:24
+msgid "Settings"
+msgstr ""
+
+#: ./voteit/debate/templates/portlet.pt:35
+#: ./voteit/debate/views/control_panel.py:31
+msgid "Statistics"
 msgstr ""
 
 #: ./voteit/debate/templates/manage_speaker_lists.pt:19
@@ -148,131 +241,66 @@ msgstr ""
 msgid "Elapsed time: ${time}"
 msgstr ""
 
-#: ./voteit/debate/templates/manage_speaker_lists.pt:84
+#: ./voteit/debate/templates/manage_speaker_lists.pt:88
 msgid "New list"
 msgstr ""
 
-#: ./voteit/debate/templates/manage_speaker_lists.pt:86
+#: ./voteit/debate/templates/manage_speaker_lists.pt:90
 msgid "Speaker log"
 msgstr ""
 
-#: ./voteit/debate/templates/portlet.pt:13
-#: ./voteit/debate/templates/user_speaker.pt:13
-msgid "Speaker list"
+#: ./voteit/debate/templates/speaker_statistics.pt:10
+#: ./voteit/debate/views/statistics.py:55
+msgid "Speaker statistics"
 msgstr ""
 
-#: ./voteit/debate/templates/portlet.pt:21
-#: ./voteit/debate/templates/user_speaker.pt:21
-msgid "New"
+#: ./voteit/debate/templates/speaker_statistics.pt:20
+msgid "Export CSV, one entry per row"
 msgstr ""
 
-#: ./voteit/debate/templates/portlet.pt:25
-#: ./voteit/debate/templates/user_speaker.pt:25
-msgid "Manage"
+#: ./voteit/debate/templates/speaker_statistics.pt:26
+msgid "Name"
 msgstr ""
 
-#: ./voteit/debate/templates/portlet.pt:30
-#: ./voteit/debate/templates/user_speaker.pt:30
-#: ./voteit/debate/views/control_panel.py:24
-msgid "Settings"
+#: ./voteit/debate/templates/speaker_statistics.pt:28
+msgid "Total time"
 msgstr ""
 
-#: ./voteit/debate/templates/portlet.pt:35
-#: ./voteit/debate/templates/user_speaker.pt:35
-#: ./voteit/debate/views/control_panel.py:31
-msgid "Statistics"
+#: ./voteit/debate/templates/snippets/speaker_log_item.pt:16
+msgid "Entries: ${count}"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_item.pt:18
-msgid "Times spoken total: ${count}"
+#: ./voteit/debate/templates/snippets/speaker_log_item.pt:20
+msgid "Total seconds: ${secs}"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_item_user.pt:13
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:14
 msgid "${num} in queue"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_item_user.pt:19
-#: ./voteit/debate/templates/user_speaker.pt:65
-msgid "${num} speakers before you"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_item_user.pt:27
-#: ./voteit/debate/templates/user_speaker.pt:90
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:24
 msgid "Remove yourself"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_item_user.pt:32
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:26
+msgid "${num} speakers before you"
+msgstr ""
+
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:35
 msgid "List closed"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_item_user.pt:39
-#: ./voteit/debate/templates/user_speaker.pt:58
-msgid "You will enter list att position ${num} if you wish to speak"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_item_user.pt:48
-#: ./voteit/debate/templates/user_speaker.pt:80
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:45
 msgid "Add yourself"
 msgstr ""
 
 #. Default: You need a participant number to use this.
-#: ./voteit/debate/templates/speaker_item_user.pt:54
-#: ./voteit/debate/templates/user_speaker.pt:74
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:58
 msgid "need_pn_to_enter_list"
 msgstr ""
 
-#: ./voteit/debate/templates/speaker_log_item.pt:16
-msgid "Entries: ${count}"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_log_item.pt:20
-msgid "Total seconds: ${secs}"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_queue_moderator.pt:9
-msgid "Error: Connection timeout. Will try again."
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:10
-#: ./voteit/debate/views/statistics.py:46
-msgid "Speaker statistics"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:12
-msgid "Back"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:15
-msgid "Export CSV, one entry per row"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:21
-msgid "Name"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:22
-msgid "Times spoken"
-msgstr ""
-
-#: ./voteit/debate/templates/speaker_statistics.pt:23
-msgid "Total s"
-msgstr ""
-
-#: ./voteit/debate/templates/user_speaker.pt:47
-msgid "Currently active"
-msgstr ""
-
-#: ./voteit/debate/templates/user_speaker.pt:54
-msgid "in queue"
-msgstr ""
-
-#. Default: You've already spoken ${count} times.
-#: ./voteit/debate/templates/user_speaker.pt:82
-msgid "over_limit_notice"
-msgstr ""
-
-#: ./voteit/debate/views/base.py:34
-msgid "(No user registered)"
+#: ./voteit/debate/views/log.py:23
+msgid "Edit speaker log"
 msgstr ""
 
 #: ./voteit/debate/views/control_panel.py:17
@@ -283,31 +311,35 @@ msgstr ""
 msgid "Fullscreen"
 msgstr ""
 
-#: ./voteit/debate/views/json.py:43
-msgid "No active list"
-msgstr ""
-
-#: ./voteit/debate/views/log.py:23
-msgid "Edit speaker log"
-msgstr ""
-
-#: ./voteit/debate/views/manage.py:108
-#, python-format
-msgid "Added ${num} speakers from proposals"
-msgstr ""
-
-#: ./voteit/debate/views/manage.py:111
-msgid "No speakers found"
-msgstr ""
-
-#: ./voteit/debate/views/manage.py:184
-msgid "Speakers"
+#: ./voteit/debate/views/fullscreen.py:20
+msgid "No list active"
 msgstr ""
 
 #: ./voteit/debate/views/settings.py:20
 msgid "Speaker list settings"
 msgstr ""
 
-#: ./voteit/debate/views/statistics.py:47
+#: ./voteit/debate/views/manage.py:152
+#, python-format
+msgid "Added ${num} speakers from proposals"
+msgstr ""
+
+#: ./voteit/debate/views/manage.py:155
+msgid "No speakers found"
+msgstr ""
+
+#: ./voteit/debate/views/manage.py:233
+msgid "Speakers"
+msgstr ""
+
+#: ./voteit/debate/views/statistics.py:56
 msgid "Seconds"
+msgstr ""
+
+#: ./voteit/debate/views/base.py:39
+msgid "(No user registered)"
+msgstr ""
+
+#: ./voteit/debate/views/base.py:50
+msgid "No such list"
 msgstr ""
