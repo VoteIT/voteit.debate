@@ -52,6 +52,7 @@
       user_speaker_lists.update_interval = ${user_update_interval * 1000};
       user_speaker_lists.user_pn = ${pn and pn or 'null'};
       user_speaker_lists.auto_update = true;
+      user_speaker_lists.last_response = null;
       user_speaker_lists.refresh();
     </script>
 
