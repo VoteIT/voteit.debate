@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-
-
 from arche.models.evolver import BaseEvolver
-
-from voteit.core.evolve import VERSION
 
 
 VERSION = 1
