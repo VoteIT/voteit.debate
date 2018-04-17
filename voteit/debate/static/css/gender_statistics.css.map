@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAAA,iBAAiB;EACb,MAAM,EAAE,IAAI;EACZ,qBAAG;IACC,MAAM,EAAE,IAAI;IACZ,KAAK,EAAE,IAAI;IACX,gBAAgB,EAAE,IAAI;IAEtB,4BAAQ;MACJ,gBAAgB,EAAE,IAAI;IAC1B,0BAAM;MACF,gBAAgB,EAAE,IAAI;IAC1B,2BAAO;MACH,gBAAgB,EAAE,IAAI;IAE1B,iCAAa;MACT,aAAa,EAAE,WAAW;IAC9B,gCAAY;MACR,aAAa,EAAE,WAAW",
+"sources": ["../scss/gender_statistics.sass"],
+"names": [],
+"file": "gender_statistics.css"
+}

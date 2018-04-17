@@ -1,0 +1,33 @@
+
+.speaker-item {
+    font-size: 18px;
+}
+
+.list-status-circle {
+    width: 40px;
+    height: 40px;
+    -webkid-border-radius: 20px;
+    -mox-border-radius: 20px;
+    border-radius: 20px;
+    display: block;
+    padding: 10px;
+    text-align: center;
+    border: solid 1px #ccc;
+    line-height: 18px;
+    position: relative;
+
+    > * {
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .annotation {
+        font-size: 10px;
+        display: inline-block;
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        height: 10px;
+        width: 10px;
+    }
+}

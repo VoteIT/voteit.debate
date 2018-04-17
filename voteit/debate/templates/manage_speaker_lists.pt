@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="view.macro('arche:templates/base_view.pt', 'arche:templates/inline.pt')"
+      i18n:domain="voteit.debate">
+<body>
+<metal:actionbar fill-slot="actionbar"></metal:actionbar>
+
+<tal:agenda_actionbar metal:fill-slot="agenda_actionbar"
+    tal:replace="structure view.render_template('voteit.core:templates/menus/context_actions.pt',
+        view_name='manage_speaker_lists')" />
+
+<div metal:fill-slot="main-content">
+    <div class="row">
+      <div class="col-xs-6">
+        <tal:not_active condition="not view.context_active">
+            <h3 i18n:translate="">(Activate list to show controls)</h3>
+        </tal:not_active>
+
+        <div class="btn-group btn-group-justified btn-group-lg"
+             role="group">
+          <a class="btn btn-default ${not view.context_active and 'disabled' or None}"
+            title="Start" i18n:attributes="title"
+            href="javascript:" data-list-action="start">
+            <span class="glyphicon glyphicon-play"></span>
+          </a>
+          <a title="Finish" i18n:attributes="title"
+             data-list-action="finish"
+             class="btn btn-default"
+             href="javascript:">
+            <span class="glyphicon glyphicon-stop"></span>
+          </a>
+          <a href="javascript:"
+             data-list-action="undo"
+            class="btn btn-default"
+            title="Undo start" i18n:attributes="title">
+            <span class="glyphicon glyphicon-arrow-left"></span>
+          </a>
+          <a href="javascript:"
+             data-list-action="shuffle"
+            class="btn btn-default"
+            title="Shuffle queue" i18n:attributes="title">
+            <span class="glyphicon glyphicon-random"></span>
+          </a>
+        </div>
+
+        <div class="well">
+        <form tal:condition="view.context_active"
+          method="POST" data-add-speaker
+          enctype="multipart/form-data"
+          accept-charset="utf-8"
+          action="${request.resource_url(context, '_list_act', query = {'action': 'add', 'sl': view.active_name})}">
+          <div class="row">
+            <div class="col-xs-6">
+              <div class="form-group">
+                <input type="text" name="pn" class="form-control" placeholder="Add number" i18n:attributes="placeholder;">
+              </div>
+            </div>
+            <div class="col-xs-6">
+              <button id="add_speakeradd" name="add"
+                type="submit" class="btn btn-primary btn-block"
+                value="add"
+                i18n:translate="">Add</button>
+            </div>
+          </div>
+        </form>
+        </div>
+
+        <div class="list-group">
+          <div class="list-group-item" i18n:translate="">
+            Elapsed time:
+            <span data-speaker-time i18n:name="time"></span>
+          </div>
+          <div data-speaker-list="${view.context_active and view.active_name or None}">
+            <tal:list tal:condition="view.context_active">
+              ${structure: rendered_queue}
+            </tal:list>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-xs-6">
+          <div tal:content="structure list_controls"></div>
+
+          <a href="${request.resource_url(context, '_add_slist')}"
+             class="btn btn-primary" i18n:translate="">New list</a>
+
+          <h3 i18n:translate="">Speaker log</h3>
+          <div class="list-group" data-speaker-log-list>
+            <!-- tpl inserted here-->
+          </div>
+      </div>
+  </div>
+
+<!-- FIXME: Allow any name to load -->
+<tal:active condition="view.context_active">
+  <script tal:condition="not request.is_xhr">
+  $(document).ready(function () {
+    manage_speakers.action_url = "${request.resource_url(context, '_list_act', query = {'sl': view.active_name})}";
+    manage_log.log_url = "${request.resource_url(request.meeting, 'speaker_log.json')}";
+    manage_log.refresh();
+  });
+  </script>
+  <script tal:condition="request.is_xhr">
+    manage_speakers.action_url = "${request.resource_url(context, '_list_act', query = {'sl': view.active_name})}";
+    manage_log.log_url = "${request.resource_url(request.meeting, 'speaker_log.json')}";
+    manage_log.refresh();
+  </script>
+  <script tal:condition="view.use_websockets">
+    //manage_speakers.init_sockets();
+  </script>
+  <script tal:condition="not view.use_websockets">
+    manage_speakers.init_polling();
+  </script>
+</tal:active>
+
+<script tal:condition="not view.context_active">
+  if (manage_speakers) {
+    manage_speakers.disable();
+  }
+</script>
+
+  <div class="hidden" data-speaker-log-template
+       tal:content="structure request.speaker_lists.render_tpl('log', edit_url=edit_log_item_url)">
+    And the log here
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AACI,oCAAgB;EACZ,YAAY,EAAE,IAAI",
+"sources": ["../scss/fullscreen.scss"],
+"names": [],
+"file": "fullscreen.css"
+}

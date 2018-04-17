@@ -1,0 +1,23 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:define="controls controls|False"
+      i18n:domain="voteit.debate">
+<div class="list-group-item speaker-item" data-speaker-pn="">
+  <div class="row">
+    <div class="col-xs-2">
+      <!-- This will cause active speaker, if in list too, to display an empty circle... -->
+      <span class="list-status-circle">
+        <span data-speaker="listno"></span>
+        <span data-speaker="is_safe" class="annotation glyphicon glyphicon-lock"></span>
+      </span>
+    </div>
+    <div class="col-xs-10">
+      <img data-speaker="img_url" class="pull-left fullscreen-img"
+           height="40" width="40" src="" />
+      <b data-speaker="pn">pn:</b>:
+      <span data-speaker="fullname">(Name and userid)</span>
+    </div>
+  </div>
+</div>
+</tal:main>

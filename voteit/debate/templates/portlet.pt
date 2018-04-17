@@ -2,13 +2,60 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       i18n:domain="voteit.debate">
-<div id="user_speaker_lists"><!-- Don't put anything here! --></div>
-<script language="javascript" type="text/javascript">
-  var user_speaker_list_url = "${request.resource_url(context, '_user_speaker_lists')}";
-  $(document).ready(function () {
-    reload_speaker_in_queue = ${request.meeting.get_field_value('reload_speaker_in_queue', 5) * 1000};
-    reload_speaker_not_in_queue = ${request.meeting.get_field_value('reload_speaker_not_in_queue', 15) * 1000};
-    load_user_speaker_lists();
-  });
-</script>
+<div id="ai-debate-portlet" class="col-sm-12">
+
+  <div class="list-group">
+    <div class="list-group-item">
+      <div class="row">
+        <div class="col-sm-6">
+          <h4>
+            <span class="glyphicon glyphicon-bullhorn"></span>
+            <span i18n:translate="">Speaker list</span>
+          </h4>
+        </div>
+        <div class="col-sm-6">
+          <a tal:condition="request.is_moderator"
+            href="${request.resource_url(context, '_add_slist')}"
+             data-href-list-action
+            class="btn btn-default btn-sm"
+            i18n:translate="">New</a>
+          <a tal:condition="request.is_moderator"
+            class="btn btn-default btn-sm"
+            href="${request.resource_url(context, 'manage_speaker_lists')}"
+            i18n:translate="">Manage</a>
+          <a tal:condition="request.is_moderator"
+            href="${request.resource_url(request.meeting, 'speaker_list_settings')}"
+            class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-cog"></span>
+            <span i18n:translate="">Settings</span>
+          </a>
+          <a href="${request.resource_url(request.meeting, 'speaker_statistics')}"
+            class="btn btn-default btn-sm">
+            <span class="glyphicon glyphicon-stats"></span>
+            <span i18n:translate="">Statistics</span>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <div data-user-speaker-lists></div>
+
+    <div class="hidden" data-user-speaker-template
+         tal:content="structure request.speaker_lists.render_tpl('user')">
+        Template for user controls for speaker lists goes here, it will be populated by json
+    </div>
+
+    <script language="javascript" type="text/javascript">
+      user_speaker_lists.load_url = "${request.resource_url(context, 'context_list_stats.json')}";
+      user_speaker_lists.action_url = "${request.resource_url(context, '_user_list_act')}";
+      user_speaker_lists.update_interval = ${user_update_interval * 1000};
+      user_speaker_lists.user_pn = ${pn and pn or 'null'};
+      user_speaker_lists.auto_update = true;
+      user_speaker_lists.last_response = null;
+      user_speaker_lists.refresh();
+    </script>
+
+  </div>
+</div>
 </tal:main>

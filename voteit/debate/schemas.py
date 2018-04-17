@@ -1,9 +1,11 @@
+from __future__ import unicode_literals
+
 import colander
 import deform
 from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
-from voteit.debate.models import get_speaker_list_plugins
+from voteit.debate.interfaces import ISpeakerLists
 
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
@@ -12,17 +14,19 @@ _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
 
 @colander.deferred
 def deferred_speaker_list_plugin_widget(node, kw):
-    """ Return a radio choice widget or a hidden widget if it's the default one. """
+    """ Return a radio choice widget."""
     request = kw['request']
-    values = get_speaker_list_plugins(request)
-    if len(values) > 1:
-        return deform.widget.RadioChoiceWidget(values = values)
-    return deform.widget.HiddenWidget()
+    values = []
+    for x in request.registry.registeredAdapters():
+        if x.provided == ISpeakerLists:
+            values.append((x.name, x.factory.title))
+    return deform.widget.RadioChoiceWidget(values = values)
 
 
 class SpeakerListSettingsSchema(colander.Schema):
     enable_voteit_debate = colander.SchemaNode(
         colander.Bool(),
+        missing=False,
         title = _("Enable speaker lists for this meeting?"),
     )
     speaker_list_count = colander.SchemaNode(
@@ -49,14 +53,30 @@ class SpeakerListSettingsSchema(colander.Schema):
                             u"For instance, if 1 is entered here and 2 speaker lists are used, the next speaker "
                             u"in line will never be moved down regardless of what list they're on.")
     )
-    max_times_in_list = colander.SchemaNode(
-        colander.Int(),
-        default = 0,
-        title = _(u"Maximum times allowed to speak per list"),
-        description = _(u"max_times_in_list_description",
-                        default = u"If anything else than '0', "
-                                  u"users aren't able to add themselves to the list when they've "
-                        u"spoken more times that this number."))
+    # max_times_in_list = colander.SchemaNode(
+    #     colander.Int(),
+    #     default = 0,
+    #     title = _(u"Maximum times allowed to speak per list"),
+    #     description = _(u"max_times_in_list_description",
+    #                     default = u"If anything else than '0', "
+    #                               u"users aren't able to add themselves to the list when they've "
+    #                     u"spoken more times that this number."))
+    speaker_list_plugin = colander.SchemaNode(
+        colander.String(),
+        default = "",
+        title = _("Plugin to handle speaker lists"),
+        description = _("speaker_list_functionality_description",
+                        default = "If you've registered anything esle as a "
+                                  "plugin capable of adjusting speaker list behaviour. "),
+        widget = deferred_speaker_list_plugin_widget,
+        missing = "")
+    #FIXME: Validator, check installed/configured etc
+    # use_websockets =  colander.SchemaNode(
+    #     colander.Bool(),
+    #     default = False,
+    #     title = "Enable experimental websockets",
+    #     tab = 'advanced',
+    # )
     reload_manager_interface = colander.SchemaNode(
         colander.Int(),
         default = 4,
@@ -64,30 +84,13 @@ class SpeakerListSettingsSchema(colander.Schema):
         description = _(u"In seconds. After this timeout the list will be updated."),
         tab = 'advanced',
     )
-    reload_speaker_in_queue = colander.SchemaNode(
+    user_update_interval = colander.SchemaNode(
         colander.Int(),
         default = 5,
-        title = _(u"Reload interval for spekers in queue"),
+        title = _(u"Update interval for users"),
         description = _(u"In seconds. After this timeout the list will be updated."),
         tab = 'advanced',
     )
-    reload_speaker_not_in_queue = colander.SchemaNode(
-        colander.Int(),
-        default = 15,
-        title = _(u"Reload interval for anyone not in queue"),
-        description = _(u"In seconds. After this timeout the list will be updated."),
-        tab = 'advanced',
-    )
-    speaker_list_plugin = colander.SchemaNode(
-        colander.String(),
-        default = u"",
-        title = _(u"Plugin to handle speaker lists"),
-        description = _(u"speaker_list_functionality_description",
-                        default = u"If you've registered anything esle as a "
-                                  u"plugin capable of adjusting speaker list behaviour. "),
-        widget = deferred_speaker_list_plugin_widget,
-        missing = u"",
-        tab = 'advanced')
 
 
 class LogEntries(colander.SequenceSchema):

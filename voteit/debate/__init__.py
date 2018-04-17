@@ -14,6 +14,7 @@ def includeme(config):
     config.include('.portlet')
     config.include('.schemas')
     config.include('.views')
+    config.include('.evolve')
     config.add_translation_dirs('%s:locale/' % PROJECTNAME)
     cache_max_age = int(config.registry.settings.get('arche.cache_max_age', 60*60*24))
     config.add_static_view('debate_static', '%s:static' % PROJECTNAME, cache_max_age = cache_max_age)

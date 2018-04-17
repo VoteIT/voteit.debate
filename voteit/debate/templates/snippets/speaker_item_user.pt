@@ -1,0 +1,73 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:define="controls controls|False"
+      i18n:domain="voteit.debate">
+
+  <div class="list-group-item speaker-list" data-list-name="">
+      <div class="row">
+          <div class="col-sm-6">
+            <h4>
+              <span data-user-lists="closed" class="glyphicon glyphicon-lock text-danger"></span>
+              <span data-user-lists="title"></span>
+            </h4>
+            <span i18n:translate="">
+              <span data-user-lists="list_len" i18n:name="num"></span> in queue
+            </span>
+          </div>
+          <div class="col-sm-6">
+            <!-- user is in list -->
+            <div data-user-list-case="in_list">
+                <a href="javascript:"
+                   data-sl-user-control="remove"
+                   class="btn btn-warning"
+                   i18n:translate="">Remove yourself</a>
+
+                <div class="text-muted" i18n:translate="">
+                  <b data-user-lists="before_user_count" i18n:name="num"></b>
+                  speakers before you
+                </div>
+
+            </div><!-- /user is in list -->
+
+            <!-- not_in_list_closed -->
+            <div data-user-list-case="not_in_list_closed">
+                <div class="text-muted" i18n:translate="">
+                  List closed
+                </div>
+            </div><!-- /not_in_list_closed -->
+
+            <!-- user isn't in list -->
+            <div data-user-list-case="not_in_list">
+                <a data-sl-user-control="add"
+                   href="javascript:"
+                   class="btn btn-success"
+                   i18n:translate="">Add yourself</a>
+
+                <!--
+                <div class="text-muted" i18n:translate="">
+                  You will enter list att position
+                  <b i18n:name="num">xxx</b>
+                  if you wish to speak
+                </div>
+                -->
+            </div><!-- /user isn't in list -->
+
+            <!-- user is active speaker -->
+            <div data-user-list-case="current_speaker">
+              <span  i18n:translate="">
+                You're the active speaker
+              </span>
+            </div><!-- /user is active speaker -->
+
+            <!-- user has no pn -->
+            <div data-user-list-case="no_pn">
+              <span class="text-muted" i18n:translate="need_pn_to_enter_list">
+                You need a participant number to use this.
+              </span>
+            </div><!-- /user has no pn -->
+          </div>
+      </div>
+  </div>
+
+</tal:main>
