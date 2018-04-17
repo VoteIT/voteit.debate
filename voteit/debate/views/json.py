@@ -116,7 +116,10 @@ class JSONView(BaseSLView):
                 user_case = 'in_list'
                 before_user_count = sl.index(pn)
             elif sl.open():
-                user_case = 'not_in_list'
+                if sl.current == pn:
+                    user_case = 'current_speaker'
+                else:
+                    user_case = 'not_in_list'
             else:
                 user_case = 'not_in_list_closed'
             speaker_lists.append({

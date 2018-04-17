@@ -53,6 +53,13 @@
                 -->
             </div><!-- /user isn't in list -->
 
+            <!-- user is active speaker -->
+            <div data-user-list-case="current_speaker">
+              <span  i18n:translate="">
+                You're the active speaker
+              </span>
+            </div><!-- /user is active speaker -->
+
             <!-- user has no pn -->
             <div data-user-list-case="no_pn">
               <span class="text-muted" i18n:translate="need_pn_to_enter_list">

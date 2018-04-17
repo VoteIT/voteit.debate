@@ -148,6 +148,11 @@ class SpeakerListsTests(unittest.TestCase):
         self.assertIn(2, sl)
         #No exceptions on double add
         obj.add_to_list(2, sl, override=True)
+        #No exception on add when speaker is current
+        sl.start(2)
+        self.assertNotIn(2, sl)
+        obj.add_to_list(2, sl, override=True)
+        self.assertNotIn(2, sl)
 
     def test_shuffle(self):
         self.config.include('voteit.debate.models')

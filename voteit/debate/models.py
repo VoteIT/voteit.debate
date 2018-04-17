@@ -138,6 +138,8 @@ class SpeakerLists(IterableUserDict):
             return
         if pn in sl:
             return
+        if pn == sl.current:
+            return
         pos = self.get_position(pn, sl)
         sl.insert(pos, pn)
         return pos
