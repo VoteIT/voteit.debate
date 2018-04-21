@@ -4,7 +4,6 @@
       i18n:domain="voteit.debate">
 <tal:counter define="total_count request.speaker_lists.total_count(user_pns)|0;
                      time_restrict bool(request.speaker_lists.time_restrictions)|False;">
-  ${request.speaker_lists.time_restrictions}
 <tal:iter repeat="pn user_pns">
 <tal:def define="user pn2user.get(pn, None)">
   <div class="list-group-item speaker-item ${pn == sl.current and 'active' or None}"
