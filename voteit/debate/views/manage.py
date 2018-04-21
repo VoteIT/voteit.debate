@@ -22,14 +22,6 @@ class ManageQueueView(BaseSLView):
     def queue_view(self, sl=None):
         if sl is None:
             sl = self.sl
-        # total_count = dict([(x, 0) for x in user_pns])
-        # if total:
-        #     # Calculate total entries for all users.
-        #     # FIXME: Should be cached later on
-        #     for x in self.request.speaker_lists.values():
-        #         for (k, v) in x.speaker_log.items():
-        #             if k in user_pns:
-        #                 total_count[k] = total_count.get(k, 0) + len(v)
         user_pns = list(sl)
         if sl.current:
            user_pns.insert(0, sl.current)
@@ -48,7 +40,7 @@ class ManageQueueView(BaseSLView):
             user_pns=user_pns,
             pn2user=pn2user,
         )
-        tpl = self.request.speaker_lists.templates['manage_speaker_item']
+        tpl = self.request.speaker_lists.tpl_manage_speaker_item
         return render(tpl, response, request=self.request)
 
 

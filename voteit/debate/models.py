@@ -23,18 +23,16 @@ from voteit.debate.interfaces import ISpeakerLists
 
 @implementer(ISpeakerLists)
 @adapter(IMeeting, IRequest)
-class SpeakerLists(IterableUserDict):
+class SpeakerLists(IterableUserDict, object):
     """ See .interfaces.ISpeakerLists """
     name = ""
     title = _("Default list handler")
     description = ""
     state_titles = {"open": _("Open"), "closed": _("Closed")}
-    templates = {
-        'manage_speaker_item': 'voteit.debate:templates/snippets/manage_speaker_item.pt',
-        'log': 'voteit.debate:templates/snippets/speaker_log_item.pt',
-        'fullscreen': 'voteit.debate:templates/snippets/speaker_item_fullscreen.pt',
-        'user': 'voteit.debate:templates/snippets/speaker_item_user.pt',
-    }
+    tpl_manage_speaker_item = 'voteit.debate:templates/snippets/manage_speaker_item.pt'
+    tpl_log = 'voteit.debate:templates/snippets/speaker_log_item.pt'
+    tpl_fullscreen = 'voteit.debate:templates/snippets/speaker_item_fullscreen.pt'
+    tpl_user = 'voteit.debate:templates/snippets/speaker_item_user.pt'
 
     def __init__(self, context, request):
         self.context = context
@@ -76,12 +74,14 @@ class SpeakerLists(IterableUserDict):
         for name in self:
             if uid in name:
                 results.append(name)
+
         def _sorter(obj):
             try:
                 return int(obj.split("/")[1])
-            except IndexError: # pragma: no cover
-                return 0 #b/c compat
-        return sorted(results, key = _sorter)
+            except IndexError:  # pragma: no cover
+                return 0  # b/c compat
+
+        return sorted(results, key=_sorter)
 
     def get_lists_in(self, uid):
         return [self.get(x) for x in self.get_list_names(uid)]
@@ -97,22 +97,22 @@ class SpeakerLists(IterableUserDict):
             items = last_list.split("/")
             try:
                 i = int(items[1]) + 1
-            except IndexError: # pragma: no cover
-                i = 1 #b/c compat
+            except IndexError:  # pragma: no cover
+                i = 1  # b/c compat
             key = "%s/%s" % (context.uid, i)
             title = "%s - %s" % (context.title, i)
-        sl = SpeakerList(key, title = title)
+        sl = SpeakerList(key, title=title)
         sl.__parent__ = context
         self[key] = sl
         return sl
 
-    def __setitem__(self, key, sl): #dict api
+    def __setitem__(self, key, sl):  # dict api
         if not ISpeakerList.providedBy(sl):
-            raise TypeError("Only objects implementing ISpeakerList allowed") # pragma: no cover
+            raise TypeError("Only objects implementing ISpeakerList allowed")  # pragma: no cover
         assert sl.__parent__ is not None
         self.data[key] = sl
 
-    def __delitem__(self, key): #dict api
+    def __delitem__(self, key):  # dict api
         if self.get_active_list() == key:
             self.del_active_list()
         del self.data[key]
@@ -123,7 +123,7 @@ class SpeakerLists(IterableUserDict):
         return self.data.pop(key, *args)
 
     def __nonzero__(self):
-        #Make sure the adapter registers as true even if it's empty
+        # Make sure the adapter registers as true even if it's empty
         return True
 
     def get_state_title(self, sl, translate=True):
@@ -132,7 +132,7 @@ class SpeakerLists(IterableUserDict):
             return self.request.localizer.translate(title)
         return title
 
-    def add_to_list(self, pn, sl, override = False):
+    def add_to_list(self, pn, sl, override=False):
         assert isinstance(pn, int)
         if not override and sl.state == "closed":
             return
@@ -180,7 +180,8 @@ class SpeakerLists(IterableUserDict):
         return cmp_val <= use_lists and cmp_val or use_lists
 
     def render_tpl(self, name, **kw):
-        return render(self.templates[name], kw, request=self.request)
+        tpl = getattr(self, "tpl_%s" % name, None)
+        return render(tpl, kw, request=self.request)
 
 
 @implementer(ISpeakerListSettings)
@@ -196,7 +197,7 @@ class SpeakerList(PersistentList):
     state = ""
     __parent__ = None
 
-    def __init__(self, name, title = "", state = "open"):
+    def __init__(self, name, title="", state="open"):
         super(SpeakerList, self).__init__()
         self.name = name
         self.speaker_log = IOBTree()
@@ -206,6 +207,7 @@ class SpeakerList(PersistentList):
     @property
     def current(self):
         return getattr(self, '_v_current', None)
+
     @current.setter
     def current(self, value):
         self._v_current = value
@@ -216,7 +218,7 @@ class SpeakerList(PersistentList):
             if self._v_start_ts is not None:
                 ts = utcnow() - self._v_start_ts
                 return ts.seconds
-        except AttributeError: # pragma: no cover
+        except AttributeError:  # pragma: no cover
             pass
 
     def open(self):
@@ -252,7 +254,7 @@ class SpeakerList(PersistentList):
         self._v_start_ts = None
         return pn
 
-    def __repr__(self): # pragma : no cover
+    def __repr__(self):  # pragma : no cover
         return "<%s> '%s' with %s speakers" % (self.__class__.__name__, self.name, len(self))
 
 
