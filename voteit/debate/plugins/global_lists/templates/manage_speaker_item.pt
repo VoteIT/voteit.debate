@@ -20,8 +20,8 @@
       <div class="col-xs-8">
         <b>${pn}</b>:
         <span tal:condition="user">
-          ${user.title} (${user.userid}) T: ${total_count[pn]}
-
+          ${user.title} (${user.userid})
+          <span class="glyphicon glyphicon-globe"></span> ${total_count[pn]}
         </span>
       </div>
       <div class="col-xs-2 text-right">
