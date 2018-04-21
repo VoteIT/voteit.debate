@@ -58,16 +58,16 @@ class SpeakerLists(IterableUserDict, object):
         except AssertionError:
             raise KeyError("No list named %r" % list_name)
         try:
-            active = self.context._v_active_lists
+            active = self.context._active_lists
         except AttributeError:
-            active = self.context._v_active_lists = OOBTree()
+            active = self.context._active_lists = OOBTree()
         active[category] = list_name
 
     def get_active_list(self, category='default'):
-        return getattr(self.context, '_v_active_lists', {}).get(category, '')
+        return getattr(self.context, '_active_lists', {}).get(category, '')
 
     def del_active_list(self, category='default'):
-        getattr(self.context, '_v_active_lists', {}).pop(category, None)
+        getattr(self.context, '_active_lists', {}).pop(category, None)
 
     def get_list_names(self, uid):
         results = []
@@ -195,6 +195,7 @@ class SpeakerList(PersistentList):
     name = ""
     title = ""
     state = ""
+    current = None
     __parent__ = None
 
     def __init__(self, name, title="", state="open"):
@@ -203,14 +204,6 @@ class SpeakerList(PersistentList):
         self.speaker_log = IOBTree()
         self.title = title
         self.state = state
-
-    @property
-    def current(self):
-        return getattr(self, '_v_current', None)
-
-    @current.setter
-    def current(self, value):
-        self._v_current = value
 
     @property
     def current_secs(self):
