@@ -196,6 +196,7 @@ class SpeakerList(PersistentList):
     title = ""
     state = ""
     current = None
+    start_ts = None
     __parent__ = None
 
     def __init__(self, name, title="", state="open"):
@@ -208,8 +209,8 @@ class SpeakerList(PersistentList):
     @property
     def current_secs(self):
         try:
-            if self._v_start_ts is not None:
-                ts = utcnow() - self._v_start_ts
+            if self.start_ts is not None:
+                ts = utcnow() - self.start_ts
                 return ts.seconds
         except AttributeError:  # pragma: no cover
             pass
@@ -222,7 +223,7 @@ class SpeakerList(PersistentList):
         if pn in self:
             self.current = pn
             self.remove(pn)
-            self._v_start_ts = utcnow()
+            self.start_ts = utcnow()
             return pn
 
     def finish(self, pn):
@@ -234,7 +235,7 @@ class SpeakerList(PersistentList):
         # While this is a volatile attr, current is also volatile.
         # So if it doesn't exist, neither will current!
         self.speaker_log[self.current].append(self.current_secs)
-        self._v_start_ts = None
+        self.start_ts = None
         self.current = None
         return pn
 
@@ -244,7 +245,7 @@ class SpeakerList(PersistentList):
         self.insert(0, self.current)
         pn = self.current
         self.current = None
-        self._v_start_ts = None
+        self.start_ts = None
         return pn
 
     def __repr__(self):  # pragma : no cover

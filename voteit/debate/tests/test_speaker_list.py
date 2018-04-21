@@ -39,7 +39,7 @@ class SpeakerListTests(unittest.TestCase):
         obj = self._cut('name')
         obj.append(1)
         obj.start(1)
-        obj._v_start_ts = utcnow() - timedelta(seconds=10)
+        obj.start_ts = utcnow() - timedelta(seconds=10)
         obj.finish(1)
         self.assertEqual(obj.current, None)
         self.assertEqual(sum(obj.speaker_log[1]), 10)
