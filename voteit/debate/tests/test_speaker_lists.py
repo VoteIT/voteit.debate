@@ -3,15 +3,13 @@ import unittest
 
 from pyramid import testing
 from pyramid.request import apply_request_extensions
-from pyramid.traversal import find_interface
 from voteit.core.models.agenda_item import AgendaItem
-from voteit.core.models.interfaces import IAgendaItem
-from voteit.core.models.interfaces import IMeeting
 from voteit.core.models.meeting import Meeting
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 
-from voteit.debate.interfaces import ISpeakerLists, ISpeakerListSettings
+from voteit.debate.interfaces import ISpeakerLists
+from voteit.debate.interfaces import ISpeakerListSettings
 
 
 class SpeakerListsTests(unittest.TestCase):
