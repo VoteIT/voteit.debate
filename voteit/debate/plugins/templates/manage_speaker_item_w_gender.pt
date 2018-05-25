@@ -1,0 +1,39 @@
+<tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      tal:define="female_pns request.speaker_lists.female_pns(sl)"
+      i18n:domain="voteit.debate">
+<tal:iter repeat="pn user_pns">
+<tal:def define="user pn2user.get(pn, None)">
+  <div class="list-group-item speaker-item ${pn == sl.current and 'active' or None}"
+       data-speaker-pn="${pn}"
+       data-speaker-active="${str(pn == sl.current).lower()}">
+    <div class="row">
+      <div class="col-xs-2">
+        <!-- This will cause active speaker, if in list too, to display an empty circle... -->
+        <span class="list-status-circle">
+          <span>${request.speaker_lists.get_list_number_for(pn, sl)}</span>
+          <span tal:condition="safe_count > user_pns.index(pn)"
+                class="annotation glyphicon glyphicon-lock"></span>
+        </span>
+      </div>
+      <div class="col-xs-8">
+        <b>${pn}</b>:
+        <span tal:condition="user">
+          ${user.title} (${user.userid})
+        </span>
+        <i tal:condition="pn in female_pns" class="text-success" i18n:translate="">Female</i>
+      </div>
+      <div class="col-xs-2 text-right">
+        <a href="javascript:" data-list-action="start">
+          <span class="glyphicon glyphicon-play"></span>
+        </a>
+        <a href="javascript:" data-list-action="remove">
+          <span class="glyphicon glyphicon-remove text-danger"></span>
+        </a>
+      </div>
+    </div>
+  </div>
+</tal:def>
+</tal:iter>
+</tal:main>

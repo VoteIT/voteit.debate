@@ -17,6 +17,7 @@ class FemalePriorityLists(SpeakerLists):
                            "the new female speaker will be moved up until she's "
                            "2 positions after any female before her. "
                            "(I.e. pos 3 if pos 1 is female)")
+    tpl_manage_speaker_item = 'voteit.debate:plugins/templates/manage_speaker_item_w_gender.pt'
 
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
