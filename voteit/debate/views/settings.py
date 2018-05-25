@@ -1,3 +1,4 @@
+from BTrees._OOBTree import OOBTree
 from arche.portlets import get_portlet_manager
 from arche.views.base import DefaultEditForm
 from pyramid.decorator import reify
@@ -53,6 +54,38 @@ class SpeakerListSettingsForm(DefaultEditForm):
                 current_order.remove(new_portlet.uid)
                 current_order.insert(pos, new_portlet.uid)
                 ai_slot.order = current_order
+
+
+@view_config(context=IMeeting,
+             name="speaker_list_category_settings",
+             renderer="arche:templates/form.pt",
+             permission=security.MODERATE_MEETING)
+class SpeakerListCategorySettingsForm(DefaultEditForm):
+    schema_name = 'category_settings'
+    type_name = 'SpeakerLists'
+    title = _("Speaker list category settings")
+
+    @reify
+    def settings(self):
+        return ISpeakerListSettings(self.context)
+
+    def mapping_iter(self):
+        return iter(('item-%d' % i, name) for (i, name) in enumerate(self.settings['multiple_lists']))
+
+    def save_success(self, appstruct):
+        # if isinstance(self.settings.get('category_users'), dict):
+        #     self.settings['category_users'] = OOBTree()
+        for _id, name in self.mapping_iter():
+            self.settings.setdefault('category_users', OOBTree())[name] = appstruct.get(_id)
+        self.flash_messages.add(self.default_success, type="success")
+        return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_category_settings'))
+
+    def appstruct(self):
+        appstruct = {}
+        category_users = self.settings.get('category_users', {})
+        for _id, name in self.mapping_iter():
+            appstruct[_id] = category_users.get(name, ())
+        return appstruct
 
 
 def includeme(config):

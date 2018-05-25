@@ -10,6 +10,14 @@ def _debate_is_active(context, request, va):
     return bool(ISpeakerListSettings(request.meeting, {}).get('enable_voteit_debate', None))
 
 
+def _categories_link(context, request, va, **kw):
+    if ISpeakerListSettings(request.meeting, {}).get('multiple_lists', None):
+        return """<li><a href="%s">%s</a></li>""" % (
+            request.resource_url(request.meeting, va.kwargs['view_name']),
+            request.localizer.translate(va.title),
+        )
+
+
 def includeme(config):
     config.add_view_action(
         control_panel_category,
@@ -24,6 +32,12 @@ def includeme(config):
         title=_("Settings"),
         permission=security.MODERATE_MEETING,
         view_name='speaker_list_settings'
+    )
+    config.add_view_action(
+        _categories_link,
+        'debate_control_panel', 'speaker_list_categories',
+        title=_("Manage categories"),
+        view_name='speaker_list_category_settings'
     )
     config.add_view_action(
         control_panel_link,

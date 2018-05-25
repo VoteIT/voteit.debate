@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from UserDict import IterableUserDict
 from random import shuffle
 
@@ -48,22 +50,35 @@ class SpeakerLists(IterableUserDict, object):
 
     @reify
     def settings(self):
-        schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
-        settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
-        return self.request.validate_appstruct(schema, settings)
+        return ISpeakerListSettings(self.context)
+        # TODO Figure out why this was as below
+        # schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
+        # settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
+        # return self.request.validate_appstruct(schema, settings)
+
+    def get_user_category(self, default):
+        categories = self.settings.get('multiple_lists')
+        category_users = self.settings.get('category_users')
+        if categories and category_users:
+            for cat in categories:
+                if self.request.authenticated_userid in category_users.get(cat, ()):
+                    return cat
+        return default
 
     def set_active_list(self, list_name, category='default'):
-        try:
-            assert list_name in self
-        except AssertionError:
+        category = self.get_user_category(category)
+
+        if list_name not in self:
             raise KeyError("No list named %r" % list_name)
         try:
             active = self.context._active_lists
         except AttributeError:
             active = self.context._active_lists = OOBTree()
         active[category] = list_name
+        print('activated {} in category {}'.format(list_name, category))
 
     def get_active_list(self, category='default'):
+        category = self.get_user_category(category)
         return getattr(self.context, '_active_lists', {}).get(category, '')
 
     def del_active_list(self, category='default'):

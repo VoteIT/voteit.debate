@@ -1,12 +1,15 @@
 from __future__ import unicode_literals
 
+from collections import Counter
+
 import colander
 import deform
+from arche.interfaces import ISchemaCreatedEvent
+from arche.schemas import userid_hinder_widget
 from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
-from voteit.debate.interfaces import ISpeakerLists
-
+from voteit.debate.interfaces import ISpeakerLists, ISpeakerListSettings
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
@@ -91,6 +94,54 @@ class SpeakerListSettingsSchema(colander.Schema):
         description = _(u"In seconds. After this timeout the list will be updated."),
         tab = 'advanced',
     )
+    multiple_lists = colander.SchemaNode(
+        colander.Sequence(),
+        colander.SchemaNode(
+            colander.String(),
+            name='not_used',
+            title=_("category"),
+        ),
+        title=_('Speaker list categories'),
+        description=_('multiple_lists_description',
+                      default='Add speaker list categories to enable multiple '
+                      'active speaker lists.'),
+        tab='advanced',
+        missing=())
+
+
+class SpeakerListCategoriesSchema(colander.Schema):
+    def validator(self, form, value):
+        exc = colander.Invalid(form, _('Users can only have one category'))
+        userid_counter = Counter()
+        for userids in value.values():
+            for userid in userids:
+                userid_counter[userid] += 1
+        multiple = set([userid for userid, count in userid_counter.items() if count > 1])
+
+        if multiple:
+            for cat, userids in value.items():
+                intersect = multiple.intersection(userids)
+                if intersect:
+                    exc[cat] = _('User(s) ${users} have more than one group',
+                                 mapping={'users': ', '.join(intersect)})
+            raise exc
+
+
+def _categories_changes(schema, event):
+    settings = ISpeakerListSettings(event.context)
+    for i, cat in enumerate(settings.get('multiple_lists', ())):
+        schema.add(colander.SchemaNode(
+            colander.Sequence(),
+            colander.SchemaNode(
+                colander.String(),
+                name='not used',
+                title='User',
+                widget=userid_hinder_widget
+            ),
+            name='item-%d' % i,
+            title=cat,
+            missing=()
+        ))
 
 
 class LogEntries(colander.SequenceSchema):
@@ -104,4 +155,6 @@ class EditSpeakerLogSchema(colander.Schema):
 
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
+    config.add_content_schema('SpeakerLists', SpeakerListCategoriesSchema, 'category_settings')
     config.add_content_schema('SpeakerLists', EditSpeakerLogSchema, 'edit_speaker_log')
+    config.add_subscriber(_categories_changes, [SpeakerListCategoriesSchema, ISchemaCreatedEvent])
