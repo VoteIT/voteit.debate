@@ -66,6 +66,15 @@ class StatisticsView(BaseSLView):
         output.close()
         return Response(content_type='text/csv', body=contents)
 
+    def userid_to_gender(self, userid):
+        users = self.request.root['users']
+        if userid:
+            try:
+                return users[userid].gender
+            except (KeyError, AttributeError):
+                pass
+        return ''
+
     @view_config(name="gender_statistics", context=IMeeting, permission=security.VIEW,
                  renderer="voteit.debate:templates/gender_statistics.pt")
     def gender_statistics_view(self):
@@ -80,25 +89,18 @@ class StatisticsView(BaseSLView):
             'seconds_to_time': lambda s: timedelta(seconds=int(s)),
         }
         pn2u = self.participant_numbers.number_to_userid
-        users = self.request.root['users']
+        all_pn_entries = {}
         for sl in self.request.speaker_lists.values():
-            for (pn, entries) in sl.speaker_log.items():
-                userid = pn2u.get(pn)
-                gender = ''
-                if userid:
-                    try:
-                        gender = users[userid].gender
-                    except (KeyError, AttributeError):
-                        pass
-                results['entries'].add(gender, len(entries))
-                results['people'].add(gender, 1)
-                results['time'].add(gender, sum(entries))
+            for pn, entries in sl.speaker_log.items():
+                all_pn_entries.setdefault(pn, []).extend(entries)
+        for pn, entries in all_pn_entries.items():
+            userid = pn2u.get(pn)
+            gender = self.userid_to_gender(userid)
+            results['entries'].add(gender, len(entries))
+            results['people'].add(gender, 1)
+            results['time'].add(gender, sum(entries))
         for userid in pn2u.values():
-            try:
-                gender = users[userid].gender
-                results['expected'].add(gender, 1)
-            except (KeyError, AttributeError):
-                pass
+            results['expected'].add(self.userid_to_gender(userid), 1)
         return results
 
 
