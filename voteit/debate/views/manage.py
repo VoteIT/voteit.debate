@@ -199,6 +199,8 @@ class ListActionsView(ManageQueueView):
         pn = self._get_pn()
         if pn in sl:
             sl.remove(pn)
+            sl.chronological.remove(pn)
+            self.request.speaker_lists.update_order(sl)
 
     def action_shuffle(self, sl):
         self.request.speaker_lists.shuffle(sl)

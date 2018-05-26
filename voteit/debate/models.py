@@ -140,24 +140,33 @@ class SpeakerLists(IterableUserDict, object):
             return
         if pn == sl.current:
             return
-        pos = self.get_position(pn, sl)
-        sl.insert(pos, pn)
-        return pos
+        sl.chronological.append(pn)
+        self.update_order(sl)
+        # Done for all in update_order
+        # pos = self.get_position(pn, sl)
+        # sl.insert(pos, pn)
+        return sl.index(pn) + 1
+
+    def update_order(self, sl):
+        del sl[:]  # Clear list
+        for pn in sl.chronological:
+            sl.insert(self.get_position(pn, sl), pn)
 
     def shuffle(self, sl):
         use_lists = self.settings.get('speaker_list_count')
         lists = {}
-        for speaker in sl:
+        for speaker in sl.chronological:
             cmp_val = len(sl.speaker_log.get(speaker, ())) + 1
             if cmp_val > use_lists:
                 cmp_val = use_lists
             cur = lists.setdefault(cmp_val, [])
             cur.append(speaker)
-        del sl[:]
+        del sl.chronological[:]
         for i in range(1, use_lists + 1):
             if i in lists:
                 shuffle(lists[i])
-                sl.extend(lists[i])
+                sl.chronological.extend(lists[i])
+        self.update_order(sl)
 
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
@@ -207,6 +216,14 @@ class SpeakerList(PersistentList):
         self.state = state
 
     @property
+    def chronological(self):
+        try:
+            return self._chronological
+        except AttributeError:
+            self._chronological = PersistentList()
+            return self._chronological
+
+    @property
     def current_secs(self):
         try:
             if self.start_ts is not None:
@@ -223,6 +240,7 @@ class SpeakerList(PersistentList):
         if pn in self:
             self.current = pn
             self.remove(pn)
+            self.chronological.remove(pn)
             self.start_ts = utcnow()
             return pn
 
@@ -243,6 +261,7 @@ class SpeakerList(PersistentList):
         if self.current == None:
             return
         self.insert(0, self.current)
+        self.chronological.insert(0, self.current)
         pn = self.current
         self.current = None
         self.start_ts = None
