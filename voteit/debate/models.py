@@ -147,10 +147,12 @@ class SpeakerLists(IterableUserDict, object):
         # sl.insert(pos, pn)
         return sl.index(pn) + 1
 
-    def update_order(self, sl):
-        del sl[:]  # Clear list
+    def update_order(self, sl, use_safe=True):
+        safe_pos = use_safe and self.settings.get('safe_positions') or 0
+        del sl[safe_pos:]  # Clear list
         for pn in sl.chronological:
-            sl.insert(self.get_position(pn, sl), pn)
+            if pn not in sl:
+                sl.insert(self.get_position(pn, sl), pn)
 
     def shuffle(self, sl):
         use_lists = self.settings.get('speaker_list_count')
@@ -166,7 +168,7 @@ class SpeakerLists(IterableUserDict, object):
             if i in lists:
                 shuffle(lists[i])
                 sl.chronological.extend(lists[i])
-        self.update_order(sl)
+        self.update_order(sl, use_safe=False)
 
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
@@ -231,6 +233,16 @@ class SpeakerList(PersistentList):
                 return ts.seconds
         except AttributeError:  # pragma: no cover
             pass
+
+    # FIXME: This needs to be adjusted by SpeakerLists
+    def append(self, item):
+        self.chronological.append(item)
+        super(SpeakerList, self).append(item)
+
+    # FIXME: This needs to be adjusted by SpeakerLists
+    def extend(self, iterable):
+        self.chronological.extend(iterable)
+        super(SpeakerList, self).extend(iterable)
 
     def open(self):
         return self.state == 'open'
