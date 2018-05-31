@@ -13,10 +13,22 @@
                 src="${request.static_url('voteit.core:static/images/logo.png')}" />
         </a>
         <a tal:condition="request.meeting"
-          class="navbar-brand text-overflow greedy text-center"
+          class="navbar-brand text-overflow greedy"
           href="${request.resource_url(request.meeting)}">
-          ${request.meeting.title}
+          ${current_category or request.meeting.title}
         </a>
+        <ul tal:condition="categories" class="nav navbar-nav navbar-right" role="navigation">
+          <li tal:attributes="class None if previous_category else 'disabled'">
+            <a href="${previous_category and request.resource_path(context, 'fullscreen_speaker_list', query={'category': previous_category}) or None}">
+              <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+          </li>
+          <li tal:attributes="class None if next_category else 'disabled'">
+            <a href="${next_category and request.resource_path(context, 'fullscreen_speaker_list', query={'category': next_category}) or None}">
+              <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+          </li>
+        </ul>
       </div>
     </div><!-- /.container-->
   </nav>
@@ -48,7 +60,7 @@
   $(document).ready(function () {
     $('[data-list-state]').hide();
     fullscreen_speakers.inactive_list_title = '${inactive_list_title}';
-    fullscreen_speakers.load_url = "${request.resource_url(request.meeting, 'speakers_current_queue.json')}";
+    fullscreen_speakers.load_url = "${request.resource_url(request.meeting, 'speakers_current_queue.json', query={'category': current_category or 'default'})}";
   });
   </script>
   <script tal:condition="view.use_websockets">

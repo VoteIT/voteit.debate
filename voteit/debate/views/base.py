@@ -27,8 +27,12 @@ class BaseSLView(BaseView):
         return self.active_name and self.context.uid in self.active_name
 
     @reify
+    def current_category(self):
+        return self.request.GET.get('category', 'default')
+
+    @reify
     def active_name(self):
-        return self.request.speaker_lists.get_active_list()
+        return self.request.speaker_lists.get_active_list(self.current_category)
 
     @reify
     def participant_numbers(self):

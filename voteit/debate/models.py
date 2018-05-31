@@ -78,7 +78,7 @@ class SpeakerLists(IterableUserDict, object):
         print('activated {} in category {}'.format(list_name, category))
 
     def get_active_list(self, category='default'):
-        category = self.get_user_category(category)
+        # category = self.get_user_category(category)
         return getattr(self.context, '_active_lists', {}).get(category, '')
 
     def del_active_list(self, category='default'):
