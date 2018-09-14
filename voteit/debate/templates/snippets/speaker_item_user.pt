@@ -7,7 +7,7 @@
   <div class="list-group-item speaker-list" data-list-name="">
       <div class="row">
           <div class="col-sm-6">
-            <h2>
+            <h2 class="h4">
               <span data-user-lists="closed" class="glyphicon glyphicon-lock text-danger"></span>
               <span data-user-lists="title"></span>
             </h2>
