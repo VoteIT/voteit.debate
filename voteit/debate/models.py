@@ -249,7 +249,7 @@ class SpeakerList(PersistentList):
         return pn
 
     def __repr__(self):  # pragma : no cover
-        return "<%s> '%s' with %s speakers" % (self.__class__.__name__, self.name, len(self))
+        return "<%s> '%s' with %s" % (self.__class__.__name__, self.name, super(SpeakerList, self).__repr__())
 
 
 def speaker_lists(request, meeting=None):
