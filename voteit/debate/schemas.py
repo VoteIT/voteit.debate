@@ -97,10 +97,10 @@ class SpeakerListSettingsSchema(colander.Schema):
         if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
             if request.root.site_settings.get('pronoun_active'):
                 title = _('Show gender or pronoun in speaker list')
-                values = (('', 'No'), ('gender', 'Gender'), ('pronoun', 'Pronoun'))
+                values = (('', _('No')), ('gender', _('Gender')), ('pronoun', _('Pronoun')))
             else:
                 title = _('Show gender in speaker list')
-                values = (('', 'No'), ('gender', 'Yes'))
+                values = (('', _('No')), ('gender', _('Yes')))
 
             schema.add(colander.SchemaNode(
                 colander.String(),

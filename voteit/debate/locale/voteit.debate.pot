@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2018-10-01 10:30+0200\n"
+"POT-Creation-Date: 2018-10-01 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -88,8 +88,28 @@ msgstr ""
 msgid "Show gender or pronoun in speaker list"
 msgstr ""
 
+#: ./voteit/debate/schemas.py:100 ./voteit/debate/schemas.py:103
+msgid "No"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:100
+#: ./voteit/debate/templates/gender_statistics.pt:24
+#: ./voteit/debate/templates/gender_statistics.pt:51
+#: ./voteit/debate/templates/gender_statistics.pt:79
+#: ./voteit/debate/templates/gender_statistics.pt:107
+msgid "Gender"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:100
+msgid "Pronoun"
+msgstr ""
+
 #: ./voteit/debate/schemas.py:102
 msgid "Show gender in speaker list"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:103
+msgid "Yes"
 msgstr ""
 
 #: ./voteit/debate/views/log.py:23
@@ -258,13 +278,6 @@ msgstr ""
 
 #: ./voteit/debate/templates/gender_statistics.pt:15
 msgid "Expected result"
-msgstr ""
-
-#: ./voteit/debate/templates/gender_statistics.pt:24
-#: ./voteit/debate/templates/gender_statistics.pt:51
-#: ./voteit/debate/templates/gender_statistics.pt:79
-#: ./voteit/debate/templates/gender_statistics.pt:107
-msgid "Gender"
 msgstr ""
 
 #: ./voteit/debate/templates/gender_statistics.pt:25
