@@ -2,4 +2,20 @@
     .fullscreen-img {
         margin-right: 30px;
     }
+    [data-speaker="fullname"] {
+        margin-right: .15em;
+    }
+    [data-speaker="gender"] {
+        color: gray;
+        text-transform: lowercase;
+    }
+    [data-speaker="gender"]::before {
+        content: "(";
+    }
+    [data-speaker="gender"]::after {
+        content: ")";
+    }
+    [data-speaker="gender"]:empty {
+        display: none;
+    }
 }
