@@ -55,61 +55,6 @@ class ISpeakerListSettings(IDict):
     pass
 
 
-# class ISpeakerListPlugin(Interface):
-#     """ pn is short for participant number. """
-#     name = Attribute("The name of the wrapped list - not the name of the adapter!")
-#     plugin_name = Attribute("Same as the adapters name")
-#     plugin_title = Attribute("Title used when selecting this plugin.")
-#     plugin_description = Attribute("Description of the plugin.")
-#     title = Attribute("Title of the wrapped object")
-#     speakers = Attribute("Same as the wrapped object")
-#     speaker_log = Attribute("Same as the wrapped speaker list")
-#     current = Attribute("Same as the wrapped speaker list")
-#     state = Attribute("Set and get the state for the wrapped speaker list")
-#     settings = Attribute("Get all values that the current SpeakerListSettingsSchema stores on a meeting. "
-#                          "It also injects default values for speaker_list_count and safe_positions if they aren't present.")
-#
-#     def add(pn, override = False):
-#         """ Add pn to list. It won't fail if pn is already in the list or if the list is closed.
-#
-#             override
-#                 Bool - if true, pn will be added to speakers even if the list is closed. (Useful for moderators)
-#         """
-#
-#     def get_position(pn):
-#         """ Get the position for pn if pn would enter the list. """
-#
-#     def get_stats(pn, format = True):
-#         """ Returns a tuple consisting of number of spoken times and total number of seconds spoken for 'pn'.
-#             If format is True, return a string instead -> HH:MM:SS.
-#         """
-#
-#     def shuffle():
-#         """ Shuffle speakers in queue. Speaker lists are taken into consideration. """
-#
-#     def get_number_for(pn):
-#         """ Get list number for 'pn'. Note that this is not number of times in the log, but
-#             the speaker list number. A person who's spoken 5 times in a meeting with 2
-#             speaker lists still has a number of 2.
-#         """
-#
-#     def speaker_active(pn):
-#         """ Set a speaker from speakers list as active.
-#             Will also remove speaker from speakers list.
-#         """
-#
-#     def speaker_finished(pn, seconds):
-#         """ Set pn as finished. Both pn and seconds must be in int. """
-#
-#     def speaker_undo():
-#         """ Undo starting the active speaker. The active speaker - if it exists - will
-#             be placed first int the queue.
-#         """
-#
-#     def get_state_title():
-#         """ Return title of current speaker list state. """
-
-
 class ISpeakerList(Interface):
     """ A persistent speaker list. Implements all list like things."""
     name = Attribute("Internal id of this speaker list.")

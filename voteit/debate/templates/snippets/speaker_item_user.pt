@@ -7,10 +7,10 @@
   <div class="list-group-item speaker-list" data-list-name="">
       <div class="row">
           <div class="col-sm-6">
-            <h4>
+            <h2 class="h4">
               <span data-user-lists="closed" class="glyphicon glyphicon-lock text-danger"></span>
               <span data-user-lists="title"></span>
-            </h4>
+            </h2>
             <span i18n:translate="">
               <span data-user-lists="list_len" i18n:name="num"></span> in queue
             </span>
