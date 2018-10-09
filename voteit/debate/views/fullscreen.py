@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from pyramid.decorator import reify
+from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.view import view_config
 from pyramid.view import view_defaults
@@ -36,7 +37,10 @@ class FullscreenSpeakerList(BaseSLView):
             if current_category is None:
                 current_category = categories[0]
 
-            current_index = categories.index(current_category)
+            try:
+                current_index = categories.index(current_category)
+            except ValueError:
+                raise HTTPBadRequest(_('No speaker list "${name}" found.', mapping={'name': current_category}))
             if current_index > 0:
                 previous = categories[current_index-1]
             if current_index < len(categories)-1:

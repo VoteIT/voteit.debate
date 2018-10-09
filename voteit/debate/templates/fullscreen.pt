@@ -36,7 +36,7 @@
             <ul class="dropdown-menu" id="speaker-lists-menu">
               <li role="presentation" class="dropdown-header">
                 <span class="glyphicon glyphicon-bullhorn"></span>
-                <tal:ts i18n:translate="">Kategorier</tal:ts>
+                <tal:ts i18n:translate="">Categories</tal:ts>
               </li>
               <li role="presentation" tal:repeat="cat categories">
                 <a role="menuitem" href="${request.resource_path(context, 'fullscreen_speaker_list', query={'category': cat})}">
