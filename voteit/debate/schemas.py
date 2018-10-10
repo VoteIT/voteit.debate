@@ -6,6 +6,7 @@ import colander
 import deform
 from arche.interfaces import ISchemaCreatedEvent
 from arche.schemas import userid_hinder_widget
+from arche.widgets import UserReferenceWidget
 from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
@@ -131,14 +132,9 @@ def _categories_changes(schema, event):
     settings = ISpeakerListSettings(event.context)
     for i, cat in enumerate(settings.get('multiple_lists', ())):
         schema.add(colander.SchemaNode(
-            colander.Sequence(),
-            colander.SchemaNode(
-                colander.String(),
-                name='not used',
-                title='User',
-                widget=userid_hinder_widget
-            ),
+            colander.List(),
             name='item-%d' % i,
+            widget=UserReferenceWidget(),
             title=cat,
             missing=()
         ))
