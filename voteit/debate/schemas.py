@@ -111,6 +111,10 @@ class SpeakerListSettingsSchema(colander.Schema):
 
 
 class SpeakerListCategoriesSchema(colander.Schema):
+    description = _('speaker_lists_category_settings_description',
+                    default='Select users that should manage each category of speaker lists. '
+                            'A user can only manage one category.')
+
     def validator(self, form, value):
         exc = colander.Invalid(form, _('Users can only have one category'))
         userid_counter = Counter()
@@ -123,7 +127,7 @@ class SpeakerListCategoriesSchema(colander.Schema):
             for cat, userids in value.items():
                 intersect = multiple.intersection(userids)
                 if intersect:
-                    exc[cat] = _('User(s) ${users} have more than one group',
+                    exc[cat] = _('User(s) ${users} have more than one category',
                                  mapping={'users': ', '.join(intersect)})
             raise exc
 
@@ -136,7 +140,7 @@ def _categories_changes(schema, event):
             name='item-%d' % i,
             widget=UserReferenceWidget(),
             title=cat,
-            missing=()
+            missing=(),
         ))
 
 

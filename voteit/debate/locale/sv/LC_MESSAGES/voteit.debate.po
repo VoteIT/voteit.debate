@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-10-09 15:28+0200\n"
-"PO-Revision-Date: 2018-10-09 15:27+0200\n"
+"POT-Creation-Date: 2018-11-02 16:00+0100\n"
+"PO-Revision-Date: 2018-11-02 16:02+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.0.6\n"
+"X-Generator: Poedit 2.1.1\n"
 "Generated-By: Babel 1.3\n"
 
 #: voteit/debate/portlet.py:13
@@ -36,11 +36,11 @@ msgstr "Öppen"
 msgid "Closed"
 msgstr "Stängd"
 
-#: voteit/debate/schemas.py:33
+#: voteit/debate/schemas.py:34
 msgid "Enable speaker lists for this meeting?"
 msgstr "Aktivera talarlistor för mötet?"
 
-#: voteit/debate/schemas.py:37
+#: voteit/debate/schemas.py:38
 msgid "Number of speaker lists to use"
 msgstr "Antal talarlistor att använda"
 
@@ -50,7 +50,7 @@ msgstr "Antal talarlistor att använda"
 #. will get to speak before everyone who's spoken 1 or more times. However,
 #. when entering the queue someone who's spoken 2 times and 4 will be treated
 #. equally.
-#: voteit/debate/schemas.py:38
+#: voteit/debate/schemas.py:39
 msgid "speaker_lists_to_use_description"
 msgstr ""
 "Med fler talarlistor prioriteras de som har pratat mindre än någon annan, "
@@ -58,7 +58,7 @@ msgstr ""
 "någon som inte ha pratat få prata före alla som har pratat förut. Men någon "
 "som har pratat 2 gånger får inte gå före någon som pratat 4 gånger."
 
-#: voteit/debate/schemas.py:53
+#: voteit/debate/schemas.py:54
 msgid "Safe positions"
 msgstr "Säkra positioner"
 
@@ -66,60 +66,68 @@ msgstr "Säkra positioner"
 #. their place. For instance, if 1 is entered here and 2 speaker lists are
 #. used, the next speaker in line will never be moved down regardless of what
 #. list they're on.
-#: voteit/debate/schemas.py:54
+#: voteit/debate/schemas.py:55
 msgid "safe_positions_description"
 msgstr ""
 "Flytta inte ner användare från denna position även om de borde förlora sin "
 "plats. Exempel, om 1 skrivs här och 2 talarlistor används så kommer "
 "nästkommande talare aldrig flyttas ner oavsett vilken talarlista de är i."
 
-#: voteit/debate/schemas.py:70
+#: voteit/debate/schemas.py:71
 msgid "Plugin to handle speaker lists"
 msgstr "Plugin som ska hantera talarlista"
 
 #. Default: If you've registered anything esle as a plugin capable of adjusting
 #. speaker list behaviour.
-#: voteit/debate/schemas.py:71
+#: voteit/debate/schemas.py:72
 msgid "speaker_list_functionality_description"
 msgstr ""
 "Om du har registrerat någonting som kan justera betéendet hos talarlistorna."
 
-#: voteit/debate/schemas.py:86
+#: voteit/debate/schemas.py:87
 msgid "Managers speaker list reload interval"
 msgstr "Intervall för omladdning av administratörers talarlista"
 
-#: voteit/debate/schemas.py:87 voteit/debate/schemas.py:94
+#: voteit/debate/schemas.py:88 voteit/debate/schemas.py:95
 msgid "In seconds. After this timeout the list will be updated."
 msgstr "I sekunder. Efter denna timeout kommer listan uppdateras."
 
-#: voteit/debate/schemas.py:93
+#: voteit/debate/schemas.py:94
 msgid "Update interval for users"
 msgstr "Omladdningsintervall för användare"
 
-#: voteit/debate/schemas.py:102
+#: voteit/debate/schemas.py:103
 msgid "category"
 msgstr "kategori"
 
-#: voteit/debate/schemas.py:104
+#: voteit/debate/schemas.py:105
 msgid "Speaker list categories"
 msgstr "Kategorier för talarlistor"
 
 #. Default: Add speaker list categories to enable multiple active speaker
 #. lists.
-#: voteit/debate/schemas.py:105
+#: voteit/debate/schemas.py:106
 msgid "multiple_lists_description"
 msgstr ""
 "Lägg till kategorier för talarlistor för att möjliggöra flera talarlistor "
-"samtidigt."
+"samtidigt. Varje kategori kan bara ha en aktiv talarlista."
 
+#. Default: Select users that should manage each category of speaker lists. A
+#. user can only manage one category.
 #: voteit/debate/schemas.py:114
+msgid "speaker_lists_category_settings_description"
+msgstr ""
+"Välj användare som ska hantera de olika kategorierna för talarlistor. En "
+"användare kan bara hantera en kategori."
+
+#: voteit/debate/schemas.py:119
 msgid "Users can only have one category"
 msgstr "Användare kan bara ha en kategori"
 
-#: voteit/debate/schemas.py:125
+#: voteit/debate/schemas.py:130
 #, python-format
-msgid "User(s) ${users} have more than one group"
-msgstr "Användare ${users} har mer än en grupp"
+msgid "User(s) ${users} have more than one category"
+msgstr "Användare ${users} har mer än en kategori"
 
 #: voteit/debate/views/log.py:23
 msgid "Edit speaker log"
@@ -162,7 +170,7 @@ msgstr "Talarlistinställningar"
 
 #: voteit/debate/views/settings.py:66
 msgid "Speaker list category settings"
-msgstr "Inställningar för talarlistor"
+msgstr "Hantera kategorier för talarlistor"
 
 #: voteit/debate/views/statistics.py:55
 #: voteit/debate/templates/speaker_statistics.pt:10
@@ -446,6 +454,9 @@ msgstr ""
 #: voteit/debate/plugins/templates/manage_speaker_item_w_gender.pt:25
 msgid "Female"
 msgstr "Kvinna"
+
+#~ msgid "Select users that should manage this category"
+#~ msgstr "Välj användare som ska hantera denna kategori."
 
 #~ msgid "Nothing to start"
 #~ msgstr "Inget att starta"
