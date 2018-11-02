@@ -25,6 +25,21 @@ class JSONView(BaseSLView):
         if sl.current:
             user_pns.insert(0, sl.current)
         base_img_url = self.request.static_url('voteit.debate:static/default_user.png')
+
+        def get_gender_display(user):
+            pass
+
+        if 'voteit.irl.plugins.gender' in self.request.registry.settings.get('plugins', ''):
+            show_gender = self.request.speaker_lists.settings.get('show_gender_in_speaker_list', False)
+            if show_gender:
+                if show_gender == 'gender':
+                    from voteit.irl.plugins.gender import GENDER_NAME_DICT as GENDER_DICT
+                elif show_gender == 'pronoun':
+                    from voteit.irl.plugins.gender import PRONOUN_NAME_DICT as GENDER_DICT
+
+                def get_gender_display(user):
+                    return self.request.localizer.translate(GENDER_DICT.get(getattr(user, show_gender)))
+
         #total_count = dict([(x, 0) for x in user_pns])
         # if total:
         #     # Calculate total entries for all users.
@@ -40,24 +55,26 @@ class JSONView(BaseSLView):
                 continue
             userid = n2u.get(pn, '')
             img_url = base_img_url
+            fullname = self.no_user_txt
+            gender = None
             if userid:
                 user = self.request.root['users'].get(userid, None)
                 if user:
                     fullname = user.title
+                    gender = get_gender_display(user)
                     plugin = user.get_image_plugin(self.request)
                     if plugin:
                         try:
                             img_url = plugin.url(60, self.request)
                         except:
                             pass
-            else:
-                fullname = self.no_user_txt
             list_users.append(dict(
                 pn=pn,
                 userid=userid,
                 fullname=fullname,
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
+                gender=gender,
                 img_url=img_url,
                 #total_times_spoken=total_count.get(pn, None),
                 is_safe=safe_count > user_pns.index(pn),

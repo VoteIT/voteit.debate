@@ -1,4 +1,15 @@
 #speakers-fullscreen .fullscreen-img {
   margin-right: 30px; }
+#speakers-fullscreen [data-speaker="fullname"] {
+  margin-right: .15em; }
+#speakers-fullscreen [data-speaker="gender"] {
+  color: gray;
+  text-transform: lowercase; }
+#speakers-fullscreen [data-speaker="gender"]::before {
+  content: "("; }
+#speakers-fullscreen [data-speaker="gender"]::after {
+  content: ")"; }
+#speakers-fullscreen [data-speaker="gender"]:empty {
+  display: none; }
 
 /*# sourceMappingURL=fullscreen.css.map */
