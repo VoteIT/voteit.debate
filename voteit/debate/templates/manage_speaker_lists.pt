@@ -82,15 +82,27 @@
 
       </div>
       <div class="col-xs-6">
-          <div tal:content="structure list_controls"></div>
+        <tal:multi condition="len(request.speaker_lists.categories)">
+        <tal:def define="cat_name request.speaker_lists.user_category">
+          <p tal:condition="cat_name != 'default'" i18n:translate="">You're managing:
+            <tal:ts i18n:name="title"
+                    replace="request.speaker_lists.categories.get(cat_name).title|'Unknown category'" />
+          </p>
+          <p tal:condition="cat_name == 'default'" i18n:translate="">
+            You're managing the main list
+          </p>
+        </tal:def>
+        </tal:multi>
 
-          <a href="${request.resource_url(context, '_add_slist')}"
-             class="btn btn-primary" i18n:translate="">New list</a>
+        <div tal:content="structure list_controls"></div>
 
-          <h3 i18n:translate="">Speaker log</h3>
-          <div class="list-group" data-speaker-log-list>
-            <!-- tpl inserted here-->
-          </div>
+        <a href="${request.resource_url(context, '_add_slist')}"
+           class="btn btn-primary" i18n:translate="">New list</a>
+
+        <h3 i18n:translate="">Speaker log</h3>
+        <div class="list-group" data-speaker-log-list>
+          <!-- tpl inserted here-->
+        </div>
       </div>
   </div>
 

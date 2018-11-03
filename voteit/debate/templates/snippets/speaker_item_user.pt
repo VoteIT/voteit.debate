@@ -11,6 +11,7 @@
               <span data-user-lists="closed" class="glyphicon glyphicon-lock text-danger"></span>
               <span data-user-lists="title"></span>
             </h2>
+            <div data-user-lists="cat_title"></div>
             <span i18n:translate="">
               <span data-user-lists="list_len" i18n:name="num"></span> in queue
             </span>

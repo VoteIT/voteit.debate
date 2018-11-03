@@ -139,10 +139,17 @@ class JSONView(BaseSLView):
                     user_case = 'not_in_list'
             else:
                 user_case = 'not_in_list_closed'
+            active = sl.name in self.all_active_lists
+            cat_title = ''
+            if active:
+                cat = self.request.speaker_lists.get_category_for_list(sl)
+                if cat:
+                    cat_title = cat.title
             speaker_lists.append({
                 'name': sl.name,
                 'title': sl.title,
-                'active': sl.name == self.active_name,
+                'active': active,
+                'cat_title': cat_title,
                 'user_in_list': user_in_list,
                 'before_user_count': before_user_count,
                 'list_len': len(sl),

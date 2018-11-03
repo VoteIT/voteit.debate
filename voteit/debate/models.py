@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from UserDict import IterableUserDict
 from random import shuffle
+from uuid import uuid4
 
 from BTrees.IOBTree import IOBTree
 from BTrees.OOBTree import OOBTree
@@ -13,12 +14,15 @@ from pyramid.decorator import reify
 from pyramid.interfaces import IRequest
 from pyramid.renderers import render
 from voteit.core.models.interfaces import IAgendaItem
+from voteit.core.models.interfaces import IFlashMessages
 from voteit.core.models.interfaces import IMeeting
 from zope.component import adapter
 from zope.interface import implementer
 
 from voteit.debate import _
+from voteit.debate.interfaces import ISLCategory
 from voteit.debate.interfaces import ISpeakerList
+from voteit.debate.interfaces import ISpeakerListCategories
 from voteit.debate.interfaces import ISpeakerListSettings
 from voteit.debate.interfaces import ISpeakerLists
 
@@ -50,39 +54,78 @@ class SpeakerLists(IterableUserDict, object):
 
     @reify
     def settings(self):
-        return ISpeakerListSettings(self.context)
-        # TODO Figure out why this was as below
-        # schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
-        # settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
-        # return self.request.validate_appstruct(schema, settings)
+        schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
+        settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
+        return self.request.validate_appstruct(schema, settings)
 
-    def get_user_category(self, default):
-        categories = self.settings.get('multiple_lists')
-        category_users = self.settings.get('category_users')
-        if categories and category_users:
-            for cat in categories:
-                if self.request.authenticated_userid in category_users.get(cat, ()):
-                    return cat
-        return default
+    @reify
+    def categories(self):
+        return ISpeakerListCategories(self.context)
 
-    def set_active_list(self, list_name, category='default'):
-        category = self.get_user_category(category)
+    @reify
+    def user_category(self):
+        for cat in self.categories.values():
+            if self.request.authenticated_userid in cat:
+                return cat.uid
+        return 'default'
 
+    @reify
+    def category_order(self):
+        order = sorted(self.categories.keys(), key=lambda x: self.categories[x].title.lower())
+        order.insert(0, 'default')
+        return order
+
+    def set_active_list(self, list_name, category=None):
+        if category is None:
+            category = self.user_category
         if list_name not in self:
             raise KeyError("No list named %r" % list_name)
         try:
             active = self.context._active_lists
         except AttributeError:
             active = self.context._active_lists = OOBTree()
+        if active.get(category, object()) == list_name:
+            return
+        for (other_cat, other_list) in active.items():
+            if other_cat == category:
+                continue
+            if other_list == list_name:
+                if other_cat == 'default':
+                    title = _("Default")
+                    disabled_uid = 'default'
+                else:
+                    sl_cat = self.categories[other_cat]
+                    title = sl_cat.title
+                    disabled_uid = sl_cat.uid
+                fm = IFlashMessages(self.request)
+                msg = _("List was active within '${title}' but was activated here instead.",
+                        mapping={'title': title})
+                fm.add(msg, type='warning')
+                self.del_active_list(disabled_uid)
         active[category] = list_name
-        print('activated {} in category {}'.format(list_name, category))
 
-    def get_active_list(self, category='default'):
-        # category = self.get_user_category(category)
-        return getattr(self.context, '_active_lists', {}).get(category, '')
+    def get_active_list(self, category=None):
+        if category is None:
+            category = self.user_category
+        return self.active_lists.get(category, '')
 
-    def del_active_list(self, category='default'):
-        getattr(self.context, '_active_lists', {}).pop(category, None)
+    def del_active_list(self, category=None):
+        if category is None:
+            category = self.user_category
+        self.active_lists.pop(category, None)
+
+    @property
+    def active_lists(self):
+        return getattr(self.context, '_active_lists', {})
+
+    def get_category_for_list(self, sl):
+        found_category = None
+        for (category, name) in self.active_lists.items():
+            if sl.name == name:
+                found_category = category
+                break
+        if found_category:
+            return self.categories.get(found_category)
 
     def get_list_names(self, uid):
         results = []
@@ -205,6 +248,12 @@ class SpeakerListSettings(AttributeAnnotations):
     attr_name = '_voteit_debate_settings'
 
 
+@implementer(ISpeakerListCategories)
+@adapter(IMeeting)
+class SpeakerListCategories(AttributeAnnotations):
+    attr_name = '_voteit_debate_categories'
+
+
 @implementer(ISpeakerList)
 class SpeakerList(PersistentList):
     name = ""
@@ -270,6 +319,20 @@ class SpeakerList(PersistentList):
         return True
 
 
+@implementer(ISLCategory)
+class SLCategory(PersistentList):
+    """ Keeps track of moderators who're using a specific list category. """
+    title = ""
+    uid = ""
+
+    def __init__(self, title="", uid=None):
+        super(SLCategory, self).__init__()
+        self.title = title
+        if uid is None:
+            uid = str(uuid4())
+        self.uid = uid
+
+
 def speaker_lists(request, meeting=None):
     """ Will fetch currently set ISpeakerLists adapter.
         Since this will be a cached property on the request object,
@@ -287,3 +350,4 @@ def includeme(config):
     # The default one won't have a name
     config.registry.registerAdapter(SpeakerLists, name=SpeakerLists.name)
     config.registry.registerAdapter(SpeakerListSettings)
+    config.registry.registerAdapter(SpeakerListCategories)

@@ -1,15 +1,14 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
-from collections import Counter
 
 import colander
 import deform
 from arche.interfaces import ISchemaCreatedEvent
 from arche.widgets import UserReferenceWidget
-from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
-from voteit.debate.interfaces import ISpeakerLists, ISpeakerListSettings
+from voteit.debate.interfaces import ISpeakerLists
+
 
 _list_alts = [(unicode(x), unicode(x)) for x in range(1, 10)]
 _safe_pos_list_alts = [(unicode(x), unicode(x)) for x in range(0, 4)]
@@ -94,85 +93,64 @@ class SpeakerListSettingsSchema(colander.Schema):
         description = _(u"In seconds. After this timeout the list will be updated."),
         tab = 'advanced',
     )
-    multiple_lists = colander.SchemaNode(
-        colander.Sequence(),
-        colander.SchemaNode(
-            colander.String(),
-            name='not_used',
-            title=_("category"),
-        ),
-        title=_('Speaker list categories'),
-        description=_('multiple_lists_description',
-                      default='Add speaker list categories to enable multiple '
-                      'active speaker lists.'),
-        tab='advanced',
-        missing=())
 
 
-class SpeakerListCategoriesSchema(colander.Schema):
-    description = _('speaker_lists_category_settings_description',
-                    default='Select users that should manage each category of speaker lists. '
-                            'A user can only manage one category.')
-
-    def validator(self, form, value):
-        exc = colander.Invalid(form, _('Users can only have one category'))
-        userid_counter = Counter()
-        for userids in value.values():
-            for userid in userids:
-                userid_counter[userid] += 1
-        multiple = set([userid for userid, count in userid_counter.items() if count > 1])
-
-        if multiple:
-            for cat, userids in value.items():
-                intersect = multiple.intersection(userids)
-                if intersect:
-                    exc[cat] = _('User(s) ${users} have more than one category',
-                                 mapping={'users': ', '.join(intersect)})
-            raise exc
-
-
-def _categories_changes(schema, event):
-    settings = ISpeakerListSettings(event.context)
-    for i, cat in enumerate(settings.get('multiple_lists', ())):
+def _insert_gender(schema, event):
+    request = event.request
+    if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
+        if request.root.site_settings.get('pronoun_active'):
+            title = _('Show gender or pronoun in speaker list')
+            values = (('', _('No')), ('gender', _('Gender')), ('pronoun', _('Pronoun')))
+        else:
+            title = _('Show gender in speaker list')
+            values = (('', _('No')), ('gender', _('Yes')))
         schema.add(colander.SchemaNode(
-            colander.List(),
-            name='item-%d' % i,
-            widget=UserReferenceWidget(),
-            title=cat,
-            missing=(),
+            colander.String(),
+            name='show_gender_in_speaker_list',
+            title=title,
+            widget=deform.widget.RadioChoiceWidget(values=values),
+            default='',
+            missing='',
         ))
-
-    def after_bind(self, schema, kw):
-        request = kw['request']
-        if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
-            if request.root.site_settings.get('pronoun_active'):
-                title = _('Show gender or pronoun in speaker list')
-                values = (('', _('No')), ('gender', _('Gender')), ('pronoun', _('Pronoun')))
-            else:
-                title = _('Show gender in speaker list')
-                values = (('', _('No')), ('gender', _('Yes')))
-
-            schema.add(colander.SchemaNode(
-                colander.String(),
-                name='show_gender_in_speaker_list',
-                title=title,
-                widget=deform.widget.RadioChoiceWidget(values=values),
-                default='',
-                missing='',
-            ))
 
 
 class LogEntries(colander.SequenceSchema):
     log = colander.SchemaNode(colander.Int())
 
 
-@schema_factory()
 class EditSpeakerLogSchema(colander.Schema):
     logs = LogEntries()
 
 
+class AddCategorySchema(colander.Schema):
+    title = colander.SchemaNode(
+        colander.String(),
+        title=_("Add a list category with this title"),
+    )
+
+
+class EditCategorySchema(colander.Schema):
+    title = colander.SchemaNode(
+        colander.String(),
+        title=_("Category title"),
+    )
+    users = colander.SchemaNode(
+        colander.List(),
+        widget=UserReferenceWidget(),
+        title=_("Tie the following users to this category"),
+        description=_("If they exist in another category they'll be moved here."),
+    )
+
+
+class RemoveCategorySchema(colander.Schema):
+    pass
+
+
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
-    config.add_content_schema('SpeakerLists', SpeakerListCategoriesSchema, 'category_settings')
+   # config.add_content_schema('SpeakerLists', SpeakerListCategoriesSchema, 'category_settings')
     config.add_content_schema('SpeakerLists', EditSpeakerLogSchema, 'edit_speaker_log')
-    config.add_subscriber(_categories_changes, [SpeakerListCategoriesSchema, ISchemaCreatedEvent])
+    config.add_content_schema('SpeakerLists', AddCategorySchema, 'add_speaker_list_category')
+    config.add_content_schema('SpeakerLists', EditCategorySchema, 'edit_speaker_list_category')
+    config.add_content_schema('SpeakerLists', RemoveCategorySchema, 'remove_speaker_list_category')
+    config.add_subscriber(_insert_gender, [SpeakerListSettingsSchema, ISchemaCreatedEvent])

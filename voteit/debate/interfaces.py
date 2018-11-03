@@ -55,6 +55,10 @@ class ISpeakerListSettings(IDict):
     pass
 
 
+class ISpeakerListCategories(IDict):
+    pass
+
+
 class ISpeakerList(Interface):
     """ A persistent speaker list. Implements all list like things."""
     name = Attribute("Internal id of this speaker list.")
@@ -76,3 +80,7 @@ class ISpeakerList(Interface):
         """ Undo starting current speaker.
             Returns its number if one was active.
         """
+
+
+class ISLCategory(Interface):
+    pass

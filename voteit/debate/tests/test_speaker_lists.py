@@ -18,6 +18,7 @@ class SpeakerListsTests(unittest.TestCase):
         self.config = testing.setUp()
         self.config.include('arche.testing')
         self.config.include('voteit.debate.schemas')
+        self.config.include('voteit.debate.models')
         self.request = testing.DummyRequest()
         apply_request_extensions(self.request)
         self.config.begin(self.request)
@@ -37,7 +38,7 @@ class SpeakerListsTests(unittest.TestCase):
 
     def _mk_one(self, context=None):
         if context is None:
-            context = testing.DummyResource()
+            context = Meeting()
         return self._cut(context, self.request)
 
     def test_verify_class(self):

@@ -28,11 +28,15 @@ class BaseSLView(BaseView):
 
     @reify
     def current_category(self):
-        return self.request.GET.get('category', 'default')
+        return self.request.GET.get('category')
 
     @reify
     def active_name(self):
         return self.request.speaker_lists.get_active_list(self.current_category)
+
+    @reify
+    def all_active_lists(self):
+        return frozenset(self.request.speaker_lists.active_lists.values())
 
     @reify
     def participant_numbers(self):

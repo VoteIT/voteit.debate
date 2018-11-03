@@ -1,14 +1,17 @@
-from BTrees._OOBTree import OOBTree
 from arche.portlets import get_portlet_manager
+from arche.views.base import BaseForm
 from arche.views.base import DefaultEditForm
 from pyramid.decorator import reify
 from pyramid.httpexceptions import HTTPFound
+from pyramid.httpexceptions import HTTPNotFound
 from pyramid.view import view_config
 from voteit.core import security
 from voteit.core.models.interfaces import IMeeting
 
 from voteit.debate import _
+from voteit.debate.interfaces import ISpeakerListCategories
 from voteit.debate.interfaces import ISpeakerListSettings
+from voteit.debate.models import SLCategory
 
 
 @view_config(context=IMeeting,
@@ -57,35 +60,116 @@ class SpeakerListSettingsForm(DefaultEditForm):
 
 
 @view_config(context=IMeeting,
-             name="speaker_list_category_settings",
-             renderer="arche:templates/form.pt",
+             name="speaker_list_categories",
+             renderer="voteit.debate:templates/speaker_list_categories.pt",
              permission=security.MODERATE_MEETING)
-class SpeakerListCategorySettingsForm(DefaultEditForm):
-    schema_name = 'category_settings'
+class SpeakerListCategorySettingsForm(BaseForm):
+    schema_name = 'add_speaker_list_category'
     type_name = 'SpeakerLists'
-    title = _("Speaker list category settings")
+    title = ""
+    appstruct = lambda x: {}
 
     @reify
-    def settings(self):
-        return ISpeakerListSettings(self.context)
+    def buttons(self):
+        return (self.button_add,)
 
-    def mapping_iter(self):
-        return iter(('item-%d' % i, name) for (i, name) in enumerate(self.settings['multiple_lists']))
+    @reify
+    def categories(self):
+        return ISpeakerListCategories(self.context)
 
-    def save_success(self, appstruct):
-        # if isinstance(self.settings.get('category_users'), dict):
-        #     self.settings['category_users'] = OOBTree()
-        for _id, name in self.mapping_iter():
-            self.settings.setdefault('category_users', OOBTree())[name] = appstruct.get(_id)
+    def add_success(self, appstruct):
+        category = SLCategory(**appstruct)
+        self.categories[category.uid] = category
         self.flash_messages.add(self.default_success, type="success")
-        return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_category_settings'))
+        return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_categories'))
+
+
+@view_config(context=IMeeting,
+             name="edit_speaker_list_category",
+             renderer="arche:templates/form.pt",
+             permission=security.MODERATE_MEETING)
+class EditSpeakerListCategoryForm(BaseForm):
+    schema_name = 'edit_speaker_list_category'
+    type_name = 'SpeakerLists'
+
+    @reify
+    def title(self):
+        return _("Edit '$title'", mapping={'title': self.sl_category.title})
+
+    @reify
+    def sl_category(self):
+        uid = self.request.GET.get('uid')
+        try:
+            return self.categories[uid]
+        except KeyError:
+            raise HTTPNotFound("No such category")
+
+    @reify
+    def categories(self):
+        return ISpeakerListCategories(self.context)
 
     def appstruct(self):
-        appstruct = {}
-        category_users = self.settings.get('category_users', {})
-        for _id, name in self.mapping_iter():
-            appstruct[_id] = category_users.get(name, ())
-        return appstruct
+        return {
+            'title': self.sl_category.title,
+            'users': self.sl_category,
+        }
+
+    def save_success(self, appstruct):
+        self.sl_category.title = appstruct['title']
+        if set(self.sl_category) != set(appstruct['users']):
+            self.sl_category[:] = appstruct['users']
+        reassigned = []
+        for cat in self.categories.values():
+            if cat is self.sl_category:
+                continue
+            for userid in appstruct['users']:
+                if userid in cat:
+                    cat.remove(userid)
+                    reassigned.append(userid)
+        if reassigned:
+            self.flash_messages.add(_("Saved. The following were reassigned: ${names}",
+                                      mapping={'names': ", ".join(reassigned)}))
+        else:
+            self.flash_messages.add(self.default_success, type="success")
+        return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_categories'))
+
+
+@view_config(context=IMeeting,
+             name="remove_speaker_list_category",
+             renderer="arche:templates/form.pt",
+             permission=security.MODERATE_MEETING)
+class RemoveSpeakerListCategoryForm(BaseForm):
+    schema_name = 'remove_speaker_list_category'
+    type_name = 'SpeakerLists'
+
+    @reify
+    def title(self):
+        return _("Remove '$title'?", mapping={'title': self.sl_category.title})
+
+    @property
+    def buttons(self):
+        return (self.button_delete, self.button_cancel)
+
+    @reify
+    def sl_category(self):
+        uid = self.request.GET.get('uid')
+        try:
+            return self.categories[uid]
+        except KeyError:
+            raise HTTPNotFound("No such category")
+
+    @reify
+    def categories(self):
+        return ISpeakerListCategories(self.context)
+
+    def appstruct(self):
+        return {}
+
+    def delete_success(self, appstruct):
+        self.request.speaker_lists.del_active_list(self.sl_category.uid)
+        del self.categories[self.sl_category.uid]
+        self.flash_messages.add(self.default_success)
+        return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_categories'))
 
 
 def includeme(config):

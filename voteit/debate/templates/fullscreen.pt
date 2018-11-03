@@ -15,9 +15,15 @@
         <a tal:condition="request.meeting"
           class="navbar-brand text-overflow greedy"
           href="${request.resource_url(request.meeting)}">
-          ${current_category or request.meeting.title}
+          <tal:default condition="current_category == 'default'">
+            ${request.meeting.title}
+          </tal:default>
+          <tal:category condition="current_category != 'default'">
+            ${request.speaker_lists.categories[current_category].title|'Unknown category'}
+          </tal:category>
         </a>
-        <ul tal:condition="categories" class="nav navbar-nav navbar-right" role="navigation">
+        <ul tal:condition="len(request.speaker_lists.categories)"
+            class="nav navbar-nav navbar-right" role="navigation">
           <li tal:attributes="class None if previous_category else 'disabled'">
             <a href="${previous_category and request.resource_path(context, 'fullscreen_speaker_list', query={'category': previous_category}) or None}">
               <span class="glyphicon glyphicon-chevron-left"></span>
@@ -27,23 +33,6 @@
             <a href="${next_category and request.resource_path(context, 'fullscreen_speaker_list', query={'category': next_category}) or None}">
               <span class="glyphicon glyphicon-chevron-right"></span>
             </a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <span class="glyphicon glyphicon-list"></span>
-              <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" id="speaker-lists-menu">
-              <li role="presentation" class="dropdown-header">
-                <span class="glyphicon glyphicon-bullhorn"></span>
-                <tal:ts i18n:translate="">Categories</tal:ts>
-              </li>
-              <li role="presentation" tal:repeat="cat categories">
-                <a role="menuitem" href="${request.resource_path(context, 'fullscreen_speaker_list', query={'category': cat})}">
-                  ${ cat }
-                </a>
-              </li>
-            </ul>
           </li>
         </ul>
       </div>
