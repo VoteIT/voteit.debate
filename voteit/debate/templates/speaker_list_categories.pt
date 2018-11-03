@@ -27,7 +27,7 @@
             <a href="${request.resource_url(sl.__parent__)}">${sl.title}</a>
         </div>
         <div class="panel-body" i18n:translate="">
-            Any user not tied to another list will use this one.
+            Moderators not tied to another category will use this one.
         </div>
     </div>
     <div tal:repeat="category view.categories.values()"

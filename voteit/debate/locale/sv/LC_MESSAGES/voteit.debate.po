@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-03 12:24+0100\n"
-"PO-Revision-Date: 2018-11-03 12:26+0100\n"
+"POT-Creation-Date: 2018-11-03 22:20+0100\n"
+"PO-Revision-Date: 2018-11-03 22:22+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -34,12 +34,12 @@ msgstr "Stängd"
 
 #: voteit/debate/models.py:94
 msgid "Default"
-msgstr ""
+msgstr "Standard"
 
 #: voteit/debate/models.py:101
 #, python-format
 msgid "List was active within '${title}' but was activated here instead."
-msgstr ""
+msgstr "Listan var aktiverad inom ’${title}’ men är nu aktiv här istället."
 
 #: voteit/debate/schemas.py:32
 msgid "Enable speaker lists for this meeting?"
@@ -130,7 +130,7 @@ msgstr "Ja"
 
 #: voteit/debate/schemas.py:128
 msgid "Add a list category with this title"
-msgstr "Lätt till listkategori med denna titel"
+msgstr "Lägg till listkategori med denna titel"
 
 #: voteit/debate/schemas.py:135
 msgid "Category title"
@@ -138,11 +138,11 @@ msgstr "Kategorititel"
 
 #: voteit/debate/schemas.py:140
 msgid "Tie the following users to this category"
-msgstr ""
+msgstr "Knyt följande användare till kategorin"
 
 #: voteit/debate/schemas.py:141
 msgid "If they exist in another category they'll be moved here."
-msgstr ""
+msgstr "Om de existerar i en annan kategori så flyttas de hit."
 
 #: voteit/debate/portlet.py:13
 msgid "Debate"
@@ -340,11 +340,11 @@ msgstr "Förfluten tid: ${time}"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:87
 msgid "You're managing: ${title}"
-msgstr ""
+msgstr "Du hanterar: ${title}"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:91
 msgid "You're managing the main list"
-msgstr ""
+msgstr "Du hanterar huvudlistan"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:100
 msgid "New list"
@@ -356,7 +356,7 @@ msgstr "Talarlogg"
 
 #: voteit/debate/templates/speaker_list_categories.pt:11
 msgid "Categories and multiple lists"
-msgstr ""
+msgstr "Kategorier och multipla listor"
 
 #. Default: In some meetings you may need to have several speaker lists active
 #. at once. If you need that functionality, add a category here and assign a
@@ -372,16 +372,16 @@ msgstr ""
 
 #: voteit/debate/templates/speaker_list_categories.pt:19
 msgid "(Default)"
-msgstr ""
+msgstr "(Standard)"
 
 #: voteit/debate/templates/speaker_list_categories.pt:26
 #: voteit/debate/templates/speaker_list_categories.pt:55
 msgid "Active:"
-msgstr ""
+msgstr "Aktiv:"
 
 #: voteit/debate/templates/speaker_list_categories.pt:29
-msgid "Any user not tied to another list will use this one."
-msgstr ""
+msgid "Moderators not tied to another category will use this one."
+msgstr "Moderatorer som inte är knutna till en annan kategori använder denna."
 
 #: voteit/debate/templates/speaker_statistics.pt:10
 #: voteit/debate/views/statistics.py:55
@@ -463,16 +463,16 @@ msgstr "Talarlistinställningar"
 
 #: voteit/debate/views/settings.py:97
 msgid "Edit '$title'"
-msgstr ""
+msgstr "Redigera ’$title’"
 
 #: voteit/debate/views/settings.py:130
 #, python-format
 msgid "Saved. The following were reassigned: ${names}"
-msgstr ""
+msgstr "Sparad. Följande flyttades hit istället: ${names}"
 
 #: voteit/debate/views/settings.py:147
 msgid "Remove '$title'?"
-msgstr ""
+msgstr "Radera ’$title’?"
 
 #: voteit/debate/views/manage.py:144
 #, python-format
