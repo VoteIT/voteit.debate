@@ -10,7 +10,7 @@
 
     <h1 i18n:translate="">Categories and multiple lists</h1>
     <p i18n:translate="multiple_lists_short_manual">
-        In some cases you may need to have several speaker lists active at once.
+        In some meetings you may need to have several speaker lists active at once.
         If you need that functionality, add a category here and assign a moderator to it.
         That moderator will activate list within it's own category instead of setting the main list.</p>
 

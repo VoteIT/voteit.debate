@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2018-11-02 18:26+0100\n"
+"POT-Creation-Date: 2018-11-03 12:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,23 +16,32 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Lingua 4.13\n"
 
-#: ./voteit/debate/models.py:31
+#: ./voteit/debate/models.py:35
 msgid "Default list handler"
 msgstr ""
 
-#: ./voteit/debate/models.py:33
+#: ./voteit/debate/models.py:37
 msgid "Open"
 msgstr ""
 
-#: ./voteit/debate/models.py:33
+#: ./voteit/debate/models.py:37
 msgid "Closed"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:33
+#: ./voteit/debate/models.py:94
+msgid "Default"
+msgstr ""
+
+#: ./voteit/debate/models.py:101
+#, python-format
+msgid "List was active within '${title}' but was activated here instead."
+msgstr ""
+
+#: ./voteit/debate/schemas.py:32
 msgid "Enable speaker lists for this meeting?"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:37
+#: ./voteit/debate/schemas.py:36
 msgid "Number of speaker lists to use"
 msgstr ""
 
@@ -42,11 +51,11 @@ msgstr ""
 #. will get to speak before everyone who's spoken 1 or more times. However,
 #. when entering the queue someone who's spoken 2 times and 4 will be treated
 #. equally.
-#: ./voteit/debate/schemas.py:38
+#: ./voteit/debate/schemas.py:37
 msgid "speaker_lists_to_use_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:53
+#: ./voteit/debate/schemas.py:52
 msgid "Safe positions"
 msgstr ""
 
@@ -54,70 +63,41 @@ msgstr ""
 #. their place. For instance, if 1 is entered here and 2 speaker lists are
 #. used, the next speaker in line will never be moved down regardless of what
 #. list they're on.
-#: ./voteit/debate/schemas.py:54
+#: ./voteit/debate/schemas.py:53
 msgid "safe_positions_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:70
+#: ./voteit/debate/schemas.py:69
 msgid "Plugin to handle speaker lists"
 msgstr ""
 
 #. Default: If you've registered anything esle as a plugin capable of adjusting
 #. speaker list behaviour.
-#: ./voteit/debate/schemas.py:71
+#: ./voteit/debate/schemas.py:70
 msgid "speaker_list_functionality_description"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:86
+#: ./voteit/debate/schemas.py:85
 msgid "Managers speaker list reload interval"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:87 ./voteit/debate/schemas.py:94
+#: ./voteit/debate/schemas.py:86 ./voteit/debate/schemas.py:93
 msgid "In seconds. After this timeout the list will be updated."
 msgstr ""
 
-#: ./voteit/debate/schemas.py:93
+#: ./voteit/debate/schemas.py:92
 msgid "Update interval for users"
 msgstr ""
 
 #: ./voteit/debate/schemas.py:102
-msgid "category"
-msgstr ""
-
-#: ./voteit/debate/schemas.py:104
-msgid "Speaker list categories"
-msgstr ""
-
-#. Default: Add speaker list categories to enable multiple active speaker
-#. lists.
-#: ./voteit/debate/schemas.py:105
-msgid "multiple_lists_description"
-msgstr ""
-
-#. Default: Select users that should manage each category of speaker lists. A
-#. user can only manage one category.
-#: ./voteit/debate/schemas.py:113
-msgid "speaker_lists_category_settings_description"
-msgstr ""
-
-#: ./voteit/debate/schemas.py:118
-msgid "Users can only have one category"
-msgstr ""
-
-#: ./voteit/debate/schemas.py:129
-#, python-format
-msgid "User(s) ${users} have more than one category"
-msgstr ""
-
-#: ./voteit/debate/schemas.py:149
 msgid "Show gender or pronoun in speaker list"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:150 ./voteit/debate/schemas.py:153
+#: ./voteit/debate/schemas.py:103 ./voteit/debate/schemas.py:106
 msgid "No"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:150
+#: ./voteit/debate/schemas.py:103
 #: ./voteit/debate/templates/gender_statistics.pt:24
 #: ./voteit/debate/templates/gender_statistics.pt:51
 #: ./voteit/debate/templates/gender_statistics.pt:79
@@ -125,16 +105,32 @@ msgstr ""
 msgid "Gender"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:150
+#: ./voteit/debate/schemas.py:103
 msgid "Pronoun"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:152
+#: ./voteit/debate/schemas.py:105
 msgid "Show gender in speaker list"
 msgstr ""
 
-#: ./voteit/debate/schemas.py:153
+#: ./voteit/debate/schemas.py:106
 msgid "Yes"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:128
+msgid "Add a list category with this title"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:135
+msgid "Category title"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:140
+msgid "Tie the following users to this category"
+msgstr ""
+
+#: ./voteit/debate/schemas.py:141
+msgid "If they exist in another category they'll be moved here."
 msgstr ""
 
 #: ./voteit/debate/portlet.py:13
@@ -247,10 +243,6 @@ msgstr ""
 msgid "gender_statistics_time_explanation"
 msgstr ""
 
-#: ./voteit/debate/templates/fullscreen.pt:39
-msgid "Categories"
-msgstr ""
-
 #: ./voteit/debate/templates/manage_list_controls.pt:21
 msgid "Close list"
 msgstr ""
@@ -288,12 +280,12 @@ msgid "Manage"
 msgstr ""
 
 #: ./voteit/debate/templates/portlet.pt:30
-#: ./voteit/debate/views/control_panel.py:32
+#: ./voteit/debate/views/control_panel.py:24
 msgid "Settings"
 msgstr ""
 
 #: ./voteit/debate/templates/portlet.pt:35
-#: ./voteit/debate/views/control_panel.py:45
+#: ./voteit/debate/views/control_panel.py:37
 msgid "Statistics"
 msgstr ""
 
@@ -329,12 +321,45 @@ msgstr ""
 msgid "Elapsed time: ${time}"
 msgstr ""
 
-#: ./voteit/debate/templates/manage_speaker_lists.pt:88
+#: ./voteit/debate/templates/manage_speaker_lists.pt:87
+msgid "You're managing: ${title}"
+msgstr ""
+
+#: ./voteit/debate/templates/manage_speaker_lists.pt:91
+msgid "You're managing the main list"
+msgstr ""
+
+#: ./voteit/debate/templates/manage_speaker_lists.pt:100
 msgid "New list"
 msgstr ""
 
-#: ./voteit/debate/templates/manage_speaker_lists.pt:90
+#: ./voteit/debate/templates/manage_speaker_lists.pt:102
 msgid "Speaker log"
+msgstr ""
+
+#: ./voteit/debate/templates/speaker_list_categories.pt:11
+msgid "Categories and multiple lists"
+msgstr ""
+
+#. Default: In some meetings you may need to have several speaker lists active
+#. at once. If you need that functionality, add a category here and assign a
+#. moderator to it. That moderator will activate list within it's own category
+#. instead of setting the main list.
+#: ./voteit/debate/templates/speaker_list_categories.pt:12
+msgid "multiple_lists_short_manual"
+msgstr ""
+
+#: ./voteit/debate/templates/speaker_list_categories.pt:19
+msgid "(Default)"
+msgstr ""
+
+#: ./voteit/debate/templates/speaker_list_categories.pt:26
+#: ./voteit/debate/templates/speaker_list_categories.pt:55
+msgid "Active:"
+msgstr ""
+
+#: ./voteit/debate/templates/speaker_list_categories.pt:29
+msgid "Any user not tied to another list will use this one."
 msgstr ""
 
 #: ./voteit/debate/templates/speaker_statistics.pt:10
@@ -362,32 +387,32 @@ msgstr ""
 msgid "Total seconds: ${secs}"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:14
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:15
 msgid "${num} in queue"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:24
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:25
 msgid "Remove yourself"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:26
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:27
 msgid "${num} speakers before you"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:35
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:36
 msgid "List closed"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:45
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:46
 msgid "Add yourself"
 msgstr ""
 
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:58
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:59
 msgid "You're the active speaker"
 msgstr ""
 
 #. Default: You need a participant number to use this.
-#: ./voteit/debate/templates/snippets/speaker_item_user.pt:65
+#: ./voteit/debate/templates/snippets/speaker_item_user.pt:66
 msgid "need_pn_to_enter_list"
 msgstr ""
 
@@ -395,33 +420,37 @@ msgstr ""
 msgid "Edit speaker log"
 msgstr ""
 
-#: ./voteit/debate/views/control_panel.py:25
+#: ./voteit/debate/views/control_panel.py:17
 msgid "Speaker lists"
 msgstr ""
 
-#: ./voteit/debate/views/control_panel.py:39
-msgid "Manage categories"
+#: ./voteit/debate/views/control_panel.py:31
+msgid "Multiple lists and categories"
 msgstr ""
 
-#: ./voteit/debate/views/control_panel.py:51
+#: ./voteit/debate/views/control_panel.py:43
 msgid "Fullscreen"
 msgstr ""
 
-#: ./voteit/debate/views/fullscreen.py:43
-#, python-format
-msgid "No speaker list \"${name}\" found."
-msgstr ""
-
-#: ./voteit/debate/views/fullscreen.py:50
+#: ./voteit/debate/views/fullscreen.py:42
 msgid "No list active"
 msgstr ""
 
-#: ./voteit/debate/views/settings.py:21
+#: ./voteit/debate/views/settings.py:24
 msgid "Speaker list settings"
 msgstr ""
 
-#: ./voteit/debate/views/settings.py:66
-msgid "Speaker list category settings"
+#: ./voteit/debate/views/settings.py:97
+msgid "Edit '$title'"
+msgstr ""
+
+#: ./voteit/debate/views/settings.py:130
+#, python-format
+msgid "Saved. The following were reassigned: ${names}"
+msgstr ""
+
+#: ./voteit/debate/views/settings.py:147
+msgid "Remove '$title'?"
 msgstr ""
 
 #: ./voteit/debate/views/manage.py:144
@@ -441,10 +470,10 @@ msgstr ""
 msgid "Seconds"
 msgstr ""
 
-#: ./voteit/debate/views/base.py:43
+#: ./voteit/debate/views/base.py:47
 msgid "(No user registered)"
 msgstr ""
 
-#: ./voteit/debate/views/base.py:54
+#: ./voteit/debate/views/base.py:58
 msgid "No such list"
 msgstr ""
