@@ -51,7 +51,7 @@ var FullscreenSpeakers = function() {
         } else {
             target.empty();
             //No active list
-            $('[data-list="title"]').html("No active list");
+            $('[data-list="title"]').html(this.inactive_list_title);
 
         }
         /*

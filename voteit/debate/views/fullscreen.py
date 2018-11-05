@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from pyramid.decorator import reify
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.view import view_config
@@ -35,7 +37,7 @@ class FullscreenSpeakerList(BaseSLView):
                 next_cat = category_order[category_order.index(current_category)+1]
             except IndexError:
                 pass
-            if current_category !=  'default':
+            if current_category != 'default':
                 previous_cat = category_order[category_order.index(current_category)-1]
 
         return {

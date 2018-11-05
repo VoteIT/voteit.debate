@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-03 22:20+0100\n"
-"PO-Revision-Date: 2018-11-03 22:22+0100\n"
+"POT-Creation-Date: 2018-11-05 11:12+0100\n"
+"PO-Revision-Date: 2018-11-05 11:14+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -17,8 +17,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.1.1\n"
 "Generated-By: Babel 1.3\n"
+
+#: voteit/debate/portlet.py:13
+msgid "Debate"
+msgstr "Debatt"
 
 #: voteit/debate/models.py:35
 msgid "Default list handler"
@@ -32,7 +36,7 @@ msgstr "Öppen"
 msgid "Closed"
 msgstr "Stängd"
 
-#: voteit/debate/models.py:94
+#: voteit/debate/models.py:94 voteit/debate/templates/fullscreen.pt:44
 msgid "Default"
 msgstr "Standard"
 
@@ -144,10 +148,6 @@ msgstr "Knyt följande användare till kategorin"
 msgid "If they exist in another category they'll be moved here."
 msgstr "Om de existerar i en annan kategori så flyttas de hit."
 
-#: voteit/debate/portlet.py:13
-msgid "Debate"
-msgstr "Debatt"
-
 #: voteit/debate/plugins/female_priority.py:11
 msgid "Female priority"
 msgstr "Prioritera kvinnor"
@@ -195,94 +195,9 @@ msgstr ""
 msgid "Female"
 msgstr "Kvinna"
 
-#: voteit/debate/templates/gender_statistics.pt:10
-#: voteit/debate/templates/speaker_statistics.pt:17
-msgid "Gender statistics"
-msgstr "Genusstatistik"
-
-#: voteit/debate/templates/gender_statistics.pt:12
-#: voteit/debate/templates/speaker_statistics.pt:12
-msgid "Back"
-msgstr "Tillbaka"
-
-#: voteit/debate/templates/gender_statistics.pt:15
-msgid "Expected result"
-msgstr "Förväntat resultat"
-
-#: voteit/debate/templates/gender_statistics.pt:25
-#: voteit/debate/templates/gender_statistics.pt:52
-#: voteit/debate/templates/gender_statistics.pt:80
-#: voteit/debate/templates/gender_statistics.pt:108
-msgid "Percentage"
-msgstr "Procent"
-
-#: voteit/debate/templates/gender_statistics.pt:26
-msgid "Participants"
-msgstr "Deltagare"
-
-#. Default: Expected result: The number of participants in this meeting of each
-#. gender.
-#: voteit/debate/templates/gender_statistics.pt:37
-msgid "gender_statistics_expected_explanation"
-msgstr "Förväntat resultat: Antal deltagare i mötet av varje genus."
-
-#: voteit/debate/templates/gender_statistics.pt:42
-#: voteit/debate/templates/gender_statistics.pt:53
-msgid "People spoken"
-msgstr "Personer som talat"
-
-#. Default: People spoken: The number of persons of each gender that has spoken
-#. in this meeting.
-#: voteit/debate/templates/gender_statistics.pt:65
-msgid "gender_statistics_people_explanation"
-msgstr ""
-"Personer som talat: Antal personer av varje genus som gjort inlägg i mötet."
-
-#: voteit/debate/templates/gender_statistics.pt:70
-#: voteit/debate/templates/gender_statistics.pt:81
-#: voteit/debate/templates/speaker_statistics.pt:27
-msgid "Times spoken"
-msgstr "Antal talat"
-
-#. Default: Times spoken: The number of times spoken per gender in this
-#. meeting.
-#: voteit/debate/templates/gender_statistics.pt:93
-msgid "gender_statistics_entries_explanation"
-msgstr "Antal gånger talat: Inlägg per genus i mötet."
-
-#: voteit/debate/templates/gender_statistics.pt:98
-#: voteit/debate/templates/gender_statistics.pt:109
-msgid "Time used"
-msgstr "Använd tid"
-
-#. Default: Time used: The sum of spoken time per gender in this meeting.
-#: voteit/debate/templates/gender_statistics.pt:121
-msgid "gender_statistics_time_explanation"
-msgstr "Tid använd: Summan av all tid som använts per genus."
-
-#: voteit/debate/templates/manage_list_controls.pt:21
-msgid "Close list"
-msgstr "Stäng lista"
-
-#: voteit/debate/templates/manage_list_controls.pt:28
-msgid "Open list"
-msgstr "Öppna lista"
-
-#: voteit/debate/templates/manage_list_controls.pt:34
-msgid "Rename"
-msgstr "Byt namn"
-
-#: voteit/debate/templates/manage_list_controls.pt:40
-msgid "Populate from proposals"
-msgstr "Hämta från förslag"
-
-#: voteit/debate/templates/manage_list_controls.pt:45
-msgid "Delete"
-msgstr "Radera"
-
-#: voteit/debate/templates/manage_list_controls.pt:63
-msgid "Save"
-msgstr "Spara"
+#: voteit/debate/templates/fullscreen.pt:53
+msgid "Categories"
+msgstr "Kategorier"
 
 #: voteit/debate/templates/portlet.pt:13
 msgid "Speaker list"
@@ -305,6 +220,35 @@ msgstr "Inställningar"
 #: voteit/debate/views/control_panel.py:37
 msgid "Statistics"
 msgstr "Statistik"
+
+#: voteit/debate/templates/speaker_list_categories.pt:11
+msgid "Categories and multiple lists"
+msgstr "Kategorier och multipla listor"
+
+#. Default: In some meetings you may need to have several speaker lists active
+#. at once. If you need that functionality, add a category here and assign a
+#. moderator to it. That moderator will activate list within it's own category
+#. instead of setting the main list.
+#: voteit/debate/templates/speaker_list_categories.pt:12
+msgid "multiple_lists_short_manual"
+msgstr ""
+"I vissa möten kan ni behöva ha flera listor aktiva samtidigt. Om ni behöver "
+"den funktionaliteten, lägg till en kategori här och välj sedan vilken "
+"moderator som ska leda den. Den moderatorn kommer aktivera listor inom den "
+"kategorin istället för att använda primära kategorin."
+
+#: voteit/debate/templates/speaker_list_categories.pt:19
+msgid "(Default)"
+msgstr "(Standard)"
+
+#: voteit/debate/templates/speaker_list_categories.pt:26
+#: voteit/debate/templates/speaker_list_categories.pt:55
+msgid "Active:"
+msgstr "Aktiv:"
+
+#: voteit/debate/templates/speaker_list_categories.pt:29
+msgid "Moderators not tied to another category will use this one."
+msgstr "Moderatorer som inte är knutna till en annan kategori använder denna."
 
 #: voteit/debate/templates/manage_speaker_lists.pt:19
 msgid "(Activate list to show controls)"
@@ -354,39 +298,20 @@ msgstr "Ny lista"
 msgid "Speaker log"
 msgstr "Talarlogg"
 
-#: voteit/debate/templates/speaker_list_categories.pt:11
-msgid "Categories and multiple lists"
-msgstr "Kategorier och multipla listor"
-
-#. Default: In some meetings you may need to have several speaker lists active
-#. at once. If you need that functionality, add a category here and assign a
-#. moderator to it. That moderator will activate list within it's own category
-#. instead of setting the main list.
-#: voteit/debate/templates/speaker_list_categories.pt:12
-msgid "multiple_lists_short_manual"
-msgstr ""
-"I vissa möten kan ni behöva ha flera listor aktiva samtidigt. Om ni behöver "
-"den funktionaliteten, lägg till en kategori här och välj sedan vilken "
-"moderator som ska leda den. Den moderatorn kommer aktivera listor inom den "
-"kategorin istället för att använda primära kategorin."
-
-#: voteit/debate/templates/speaker_list_categories.pt:19
-msgid "(Default)"
-msgstr "(Standard)"
-
-#: voteit/debate/templates/speaker_list_categories.pt:26
-#: voteit/debate/templates/speaker_list_categories.pt:55
-msgid "Active:"
-msgstr "Aktiv:"
-
-#: voteit/debate/templates/speaker_list_categories.pt:29
-msgid "Moderators not tied to another category will use this one."
-msgstr "Moderatorer som inte är knutna till en annan kategori använder denna."
-
 #: voteit/debate/templates/speaker_statistics.pt:10
 #: voteit/debate/views/statistics.py:55
 msgid "Speaker statistics"
 msgstr "Talarstatistik"
+
+#: voteit/debate/templates/speaker_statistics.pt:12
+#: voteit/debate/templates/gender_statistics.pt:12
+msgid "Back"
+msgstr "Tillbaka"
+
+#: voteit/debate/templates/speaker_statistics.pt:17
+#: voteit/debate/templates/gender_statistics.pt:10
+msgid "Gender statistics"
+msgstr "Genusstatistik"
 
 #: voteit/debate/templates/speaker_statistics.pt:20
 msgid "Export CSV, one entry per row"
@@ -396,17 +321,88 @@ msgstr "Exportera till CSV, en taltid per rad"
 msgid "Name"
 msgstr "Namn"
 
+#: voteit/debate/templates/speaker_statistics.pt:27
+#: voteit/debate/templates/gender_statistics.pt:70
+#: voteit/debate/templates/gender_statistics.pt:81
+msgid "Times spoken"
+msgstr "Antal talat"
+
 #: voteit/debate/templates/speaker_statistics.pt:28
 msgid "Total time"
 msgstr "Total tid"
 
-#: voteit/debate/templates/snippets/speaker_log_item.pt:16
-msgid "Entries: ${count}"
-msgstr "Inlägg: ${count}"
+#: voteit/debate/templates/gender_statistics.pt:15
+msgid "Expected result"
+msgstr "Förväntat resultat"
 
-#: voteit/debate/templates/snippets/speaker_log_item.pt:20
-msgid "Total seconds: ${secs}"
-msgstr "Totala sekunder: ${secs}"
+#: voteit/debate/templates/gender_statistics.pt:25
+#: voteit/debate/templates/gender_statistics.pt:52
+#: voteit/debate/templates/gender_statistics.pt:80
+#: voteit/debate/templates/gender_statistics.pt:108
+msgid "Percentage"
+msgstr "Procent"
+
+#: voteit/debate/templates/gender_statistics.pt:26
+msgid "Participants"
+msgstr "Deltagare"
+
+#. Default: Expected result: The number of participants in this meeting of each
+#. gender.
+#: voteit/debate/templates/gender_statistics.pt:37
+msgid "gender_statistics_expected_explanation"
+msgstr "Förväntat resultat: Antal deltagare i mötet av varje genus."
+
+#: voteit/debate/templates/gender_statistics.pt:42
+#: voteit/debate/templates/gender_statistics.pt:53
+msgid "People spoken"
+msgstr "Personer som talat"
+
+#. Default: People spoken: The number of persons of each gender that has spoken
+#. in this meeting.
+#: voteit/debate/templates/gender_statistics.pt:65
+msgid "gender_statistics_people_explanation"
+msgstr ""
+"Personer som talat: Antal personer av varje genus som gjort inlägg i mötet."
+
+#. Default: Times spoken: The number of times spoken per gender in this
+#. meeting.
+#: voteit/debate/templates/gender_statistics.pt:93
+msgid "gender_statistics_entries_explanation"
+msgstr "Antal gånger talat: Inlägg per genus i mötet."
+
+#: voteit/debate/templates/gender_statistics.pt:98
+#: voteit/debate/templates/gender_statistics.pt:109
+msgid "Time used"
+msgstr "Använd tid"
+
+#. Default: Time used: The sum of spoken time per gender in this meeting.
+#: voteit/debate/templates/gender_statistics.pt:121
+msgid "gender_statistics_time_explanation"
+msgstr "Tid använd: Summan av all tid som använts per genus."
+
+#: voteit/debate/templates/manage_list_controls.pt:21
+msgid "Close list"
+msgstr "Stäng lista"
+
+#: voteit/debate/templates/manage_list_controls.pt:28
+msgid "Open list"
+msgstr "Öppna lista"
+
+#: voteit/debate/templates/manage_list_controls.pt:34
+msgid "Rename"
+msgstr "Byt namn"
+
+#: voteit/debate/templates/manage_list_controls.pt:40
+msgid "Populate from proposals"
+msgstr "Hämta från förslag"
+
+#: voteit/debate/templates/manage_list_controls.pt:45
+msgid "Delete"
+msgstr "Radera"
+
+#: voteit/debate/templates/manage_list_controls.pt:63
+msgid "Save"
+msgstr "Spara"
 
 #: voteit/debate/templates/snippets/speaker_item_user.pt:15
 msgid "${num} in queue"
@@ -437,25 +433,21 @@ msgstr "Du är den aktiva talaren"
 msgid "need_pn_to_enter_list"
 msgstr "Du behöver ett deltagarnummer för att använda detta."
 
-#: voteit/debate/views/log.py:23
-msgid "Edit speaker log"
-msgstr "Redigera talarlogg"
+#: voteit/debate/templates/snippets/speaker_log_item.pt:16
+msgid "Entries: ${count}"
+msgstr "Inlägg: ${count}"
 
-#: voteit/debate/views/control_panel.py:17
-msgid "Speaker lists"
-msgstr "Talarlistor"
+#: voteit/debate/templates/snippets/speaker_log_item.pt:20
+msgid "Total seconds: ${secs}"
+msgstr "Totala sekunder: ${secs}"
 
-#: voteit/debate/views/control_panel.py:31
-msgid "Multiple lists and categories"
-msgstr "Multipla talarlistor och kategorier"
+#: voteit/debate/views/base.py:47
+msgid "(No user registered)"
+msgstr "(Ingen användare registrerad)"
 
-#: voteit/debate/views/control_panel.py:43
-msgid "Fullscreen"
-msgstr "Fullskärm"
-
-#: voteit/debate/views/fullscreen.py:42
-msgid "No list active"
-msgstr "Ingen aktiv lista"
+#: voteit/debate/views/base.py:58
+msgid "No such list"
+msgstr "Ingen sådan lista"
 
 #: voteit/debate/views/settings.py:24
 msgid "Speaker list settings"
@@ -474,6 +466,26 @@ msgstr "Sparad. Följande flyttades hit istället: ${names}"
 msgid "Remove '$title'?"
 msgstr "Radera ’$title’?"
 
+#: voteit/debate/views/control_panel.py:17
+msgid "Speaker lists"
+msgstr "Talarlistor"
+
+#: voteit/debate/views/control_panel.py:31
+msgid "Multiple lists and categories"
+msgstr "Multipla talarlistor och kategorier"
+
+#: voteit/debate/views/control_panel.py:43
+msgid "Fullscreen"
+msgstr "Fullskärm"
+
+#: voteit/debate/views/statistics.py:56
+msgid "Seconds"
+msgstr "Sekunder"
+
+#: voteit/debate/views/log.py:23
+msgid "Edit speaker log"
+msgstr "Redigera talarlogg"
+
 #: voteit/debate/views/manage.py:144
 #, python-format
 msgid "Added ${num} speakers from proposals"
@@ -487,17 +499,9 @@ msgstr "Inga talare hittades"
 msgid "Speakers"
 msgstr "Talare"
 
-#: voteit/debate/views/statistics.py:56
-msgid "Seconds"
-msgstr "Sekunder"
-
-#: voteit/debate/views/base.py:47
-msgid "(No user registered)"
-msgstr "(Ingen användare registrerad)"
-
-#: voteit/debate/views/base.py:58
-msgid "No such list"
-msgstr "Ingen sådan lista"
+#: voteit/debate/views/fullscreen.py:44
+msgid "No list active"
+msgstr "Ingen aktiv lista"
 
 #~ msgid "category"
 #~ msgstr "kategori"
