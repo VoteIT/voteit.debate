@@ -25,26 +25,11 @@ class FullscreenSpeakerList(BaseSLView):
                  renderer="voteit.debate:templates/fullscreen.pt")
     def fullscreen_view(self):
         fullscreen_static.need()
-        next_cat = None
-        previous_cat = None
-        current_category = self.request.GET.get('category')
-        if current_category is None:
-            current_category = 'default'
-        if len(self.request.speaker_lists.categories):
-            # Categories active
-            category_order = self.request.speaker_lists.category_order
-            try:
-                next_cat = category_order[category_order.index(current_category)+1]
-            except IndexError:
-                pass
-            if current_category != 'default':
-                previous_cat = category_order[category_order.index(current_category)-1]
+        current_category = self.request.GET.get('category', 'default')
 
         return {
             'inactive_list_title': _("No list active"),
             'current_category': current_category,
-            'next_category': next_cat,
-            'previous_category': previous_cat,
         }
 
 
