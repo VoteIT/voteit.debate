@@ -282,6 +282,9 @@ class SpeakerList(PersistentList):
     def __repr__(self):  # pragma : no cover
         return "<%s> '%s' with %s" % (self.__class__.__name__, self.name, super(SpeakerList, self).__repr__())
 
+    def __nonzero__(self):
+        return True
+
 
 def speaker_lists(request, meeting=None):
     """ Will fetch currently set ISpeakerLists adapter.

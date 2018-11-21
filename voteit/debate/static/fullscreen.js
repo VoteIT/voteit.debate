@@ -16,6 +16,7 @@ var FullscreenSpeakers = function() {
         '[data-speaker="listno"]': 'speaker.listno',
         '[data-speaker="pn"]': 'speaker.pn',
         '[data-speaker="fullname"]': 'speaker.fullname',
+        '[data-speaker="gender"]': 'speaker.gender',
         '[data-speaker="img_url"]@src': 'speaker.img_url'
 
     }}};
