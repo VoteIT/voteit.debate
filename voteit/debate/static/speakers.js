@@ -39,12 +39,12 @@ var UserSpeakerLists = function() {
             }
         }.bind(this))
         return request;
-    }
+    };
 
     this.timer_refresh = function() {
         this.update_timer = null;
         this.refresh()
-    }
+    };
 
     this.handle_response = function(response) {
         var response_string = JSON.stringify(response);
@@ -60,26 +60,40 @@ var UserSpeakerLists = function() {
             this.update_callbacks[i](this);
         }
         this.last_response = response_string;
-    }
+    };
 
     this.start_update_timer = function() {
         this.auto_update = true;
         if (this.update_timer == null) this.refresh()
-    }
+    };
 
     this.stop_update_timer = function() {
         this.auto_update = false;
-    }
+    };
+
+    this.do_request = function(listName, action) {
+        arche.do_request(this.action_url, {data: {'action': action, 'sl': listName}})
+        .done(this.handle_response.bind(this))
+        .fail(arche.flash_error);
+    };
 
     this.handle_user_action = function(event) {
         event.preventDefault();
         var target = $(event.currentTarget);
-        var list_name = target.parents('[data-list-name]').data('list-name');
+        var listName = target.parents('[data-list-name]').data('list-name');
         var action = target.data('sl-user-control');
-        var request = arche.do_request(this.action_url, {data: {'action': action, 'sl': list_name}});
-        request.done(this.handle_response.bind(this));
-        request.fail(arche.flash_error);
-    }
+        if (action==='add' && this.user_join_form) {
+            arche.create_modal(
+                this.user_join_form,
+                {backdrop: true},
+                function(value) {
+                    if (value === 'resolve') this.do_request(listName, action);
+                }.bind(this)
+            );
+        } else {
+            this.do_request(listName, action);
+        }
+    };
 }
 
 

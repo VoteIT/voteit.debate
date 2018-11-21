@@ -47,13 +47,17 @@
     </div>
 
     <script language="javascript" type="text/javascript">
-      user_speaker_lists.load_url = "${request.resource_url(context, 'context_list_stats.json')}";
-      user_speaker_lists.action_url = "${request.resource_url(context, '_user_list_act')}";
-      user_speaker_lists.update_interval = ${user_update_interval * 1000};
-      user_speaker_lists.user_pn = ${pn and pn or 'null'};
-      user_speaker_lists.auto_update = true;
-      user_speaker_lists.last_response = null;
-      user_speaker_lists.refresh();
+      $.extend(user_speaker_lists, {
+        load_url: "${request.resource_path(context, 'context_list_stats.json')}",
+        action_url: "${request.resource_path(context, '_user_list_act')}",
+        update_interval: ${user_update_interval * 1000},
+        user_pn: ${pn and pn or 'null'},
+        auto_update: true,
+        last_response: null,
+<tal:if condition="user_join_schema_active">
+        user_join_form: "${request.resource_path(request.profile, 'gender_settings')}",
+</tal:if>
+      }).refresh();
     </script>
 
   </div>
