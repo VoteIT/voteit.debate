@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-21 14:12+0100\n"
-"PO-Revision-Date: 2018-11-21 14:16+0100\n"
+"POT-Creation-Date: 2018-11-21 14:20+0100\n"
+"PO-Revision-Date: 2018-11-21 14:20+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -95,6 +95,33 @@ msgstr "I sekunder. Efter denna timeout kommer listan uppdateras."
 #: voteit/debate/schemas.py:92
 msgid "Update interval for users"
 msgstr "Omladdningsintervall för användare"
+
+#: voteit/debate/schemas.py:101
+msgid "Show gender or pronoun in speaker list"
+msgstr "Visa kön eller pronomen i talarlistor"
+
+#: voteit/debate/schemas.py:102 voteit/debate/schemas.py:105
+msgid "No"
+msgstr "Nej"
+
+#: voteit/debate/schemas.py:102 voteit/debate/templates/gender_statistics.pt:24
+#: voteit/debate/templates/gender_statistics.pt:51
+#: voteit/debate/templates/gender_statistics.pt:79
+#: voteit/debate/templates/gender_statistics.pt:107
+msgid "Gender"
+msgstr "Genus"
+
+#: voteit/debate/schemas.py:102
+msgid "Pronoun"
+msgstr "Pronomen"
+
+#: voteit/debate/schemas.py:104
+msgid "Show gender in speaker list"
+msgstr "Visa kön i talarlistor"
+
+#: voteit/debate/schemas.py:105
+msgid "Yes"
+msgstr "Ja"
 
 #: voteit/debate/views/log.py:23
 msgid "Edit speaker log"
@@ -264,13 +291,6 @@ msgstr "Total tid"
 msgid "Expected result"
 msgstr "Förväntat resultat"
 
-#: voteit/debate/templates/gender_statistics.pt:24
-#: voteit/debate/templates/gender_statistics.pt:51
-#: voteit/debate/templates/gender_statistics.pt:79
-#: voteit/debate/templates/gender_statistics.pt:107
-msgid "Gender"
-msgstr "Genus"
-
 #: voteit/debate/templates/gender_statistics.pt:25
 #: voteit/debate/templates/gender_statistics.pt:52
 #: voteit/debate/templates/gender_statistics.pt:80
@@ -381,7 +401,7 @@ msgstr ""
 
 #: voteit/debate/plugins/global_lists/__init__.py:50
 msgid "minute restriction"
-msgstr "minutbegränsning"
+msgstr "Tidsbegränsning i minuter"
 
 #: voteit/debate/plugins/global_lists/__init__.py:53
 msgid "Speaker time global entries"
@@ -395,11 +415,6 @@ msgstr ""
 #: voteit/debate/plugins/global_lists/__init__.py:54
 msgid "speaker_time_global_entries_description"
 msgstr ""
-"Med fler talarlistor prioriteras de som har pratat mindre än någon annan, "
-"men bara upp till antal listor.\n"
-"Exempel: Med 2 talarlistor kommer någon som inte ha pratat få prata före "
-"alla som har pratat förut. Men någon som har pratat 2 gånger får inte gå "
-"före någon som pratat 4 gånger."
 
 #: voteit/debate/plugins/templates/manage_speaker_item_w_gender.pt:25
 msgid "Female"
@@ -464,9 +479,6 @@ msgstr "Kvinna"
 #~ msgid "Quickstart next"
 #~ msgstr "Snabbstarta nästa"
 
-#~ msgid "Show user controls for speaker list statuses"
-#~ msgstr "Visa användarkontroller för talarlistor"
-
 #~ msgid "show_controls_participants_description"
 #~ msgstr ""
 #~ "Användare behöver deltagarnummer för att lägga till sig som talare. Detta "
@@ -483,9 +495,6 @@ msgstr "Kvinna"
 
 #~ msgid "Speaker list for projectors"
 #~ msgstr "Talarlista för projektor"
-
-#~ msgid "Manage speaker list"
-#~ msgstr "Hantera talarlista"
 
 #~| msgid "Speaker list settings"
 #~ msgid "Speaker list plugin"

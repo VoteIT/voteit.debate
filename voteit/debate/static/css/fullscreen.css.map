@@ -1,6 +1,6 @@
 {
 "version": 3,
-"mappings": "AACI,oCAAgB;EACZ,YAAY,EAAE,IAAI",
+"mappings": "AACI,oCAAgB;EACZ,YAAY,EAAE,IAAI;AAEtB,8CAA0B;EACtB,YAAY,EAAE,KAAK;AAEvB,4CAAwB;EACpB,KAAK,EAAE,IAAI;EACX,cAAc,EAAE,SAAS;AAE7B,oDAAgC;EAC5B,OAAO,EAAE,GAAG;AAEhB,mDAA+B;EAC3B,OAAO,EAAE,GAAG;AAEhB,kDAA8B;EAC1B,OAAO,EAAE,IAAI",
 "sources": ["../scss/fullscreen.scss"],
 "names": [],
 "file": "fullscreen.css"

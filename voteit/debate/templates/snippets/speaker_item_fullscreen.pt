@@ -17,6 +17,7 @@
            height="40" width="40" src="" />
       <b data-speaker="pn">pn:</b>:
       <span data-speaker="fullname">(Name and userid)</span>
+      <span data-speaker="gender" class="small">(Gender)</span>
     </div>
   </div>
 </div>
