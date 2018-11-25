@@ -20,14 +20,11 @@ class DebatePortlet(PortletType):
             if pns:
                 pn = pns.userid_to_number.get(request.authenticated_userid, None)
             update_interv = request.speaker_lists.settings.get('user_update_interval', 5)
-            join_schema = request.get_schema(request.profile, 'SpeakerLists', 'user_join_speaker_list')
-            join_schema_active = any(not hasattr(request.profile, f.name) for f in join_schema.children)
             return render(self.tpl,
                           {'portlet': self.portlet,
                            'view': view,
                            'user_update_interval': update_interv,
-                           'pn': pn,
-                           'user_join_schema_active': join_schema_active},
+                           'pn': pn},
                           request=request)
 
 

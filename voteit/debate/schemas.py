@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import colander
 import deform
 
-from arche.schemas import maybe_modal_form
 from betahaus.pyracont.decorators import schema_factory
 
 from voteit.debate import _
@@ -104,11 +103,6 @@ class EditSpeakerLogSchema(colander.Schema):
     logs = LogEntries()
 
 
-class UserJoinSpeakerList(colander.Schema):
-    widget = maybe_modal_form
-
-
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
     config.add_content_schema('SpeakerLists', EditSpeakerLogSchema, 'edit_speaker_log')
-    config.add_content_schema('SpeakerLists', UserJoinSpeakerList, 'user_join_speaker_list')
