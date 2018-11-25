@@ -54,9 +54,6 @@
         user_pn: ${pn and pn or 'null'},
         auto_update: true,
         last_response: null,
-<tal:if condition="user_join_schema_active">
-        user_join_form: "${request.resource_path(request.profile, 'gender_settings')}",
-</tal:if>
       }).refresh();
     </script>
 

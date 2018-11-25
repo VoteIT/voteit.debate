@@ -82,17 +82,7 @@ var UserSpeakerLists = function() {
         var target = $(event.currentTarget);
         var listName = target.parents('[data-list-name]').data('list-name');
         var action = target.data('sl-user-control');
-        if (action==='add' && this.user_join_form) {
-            arche.create_modal(
-                this.user_join_form,
-                {backdrop: true},
-                function(value) {
-                    if (value === 'resolve') this.do_request(listName, action);
-                }.bind(this)
-            );
-        } else {
-            this.do_request(listName, action);
-        }
+        this.do_request(listName, action);
     };
 }
 
