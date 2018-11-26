@@ -34,8 +34,7 @@ class ListActionsView(JSONView):
         return self.context_list_stats_view()
 
     def action_remove(self, sl, pn):
-        if pn in sl:
-            sl.remove(pn)
+        self.request.speaker_lists.remove_from_list(pn, sl)
         return self.context_list_stats_view()
 
 

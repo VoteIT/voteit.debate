@@ -145,10 +145,18 @@ class SpeakerLists(IterableUserDict, object):
         # Done for all in update_order
         return sl.index(pn) + 1
 
+    def remove_from_list(self, pn, sl):
+        if pn in sl:
+            sl.remove(pn)
+            sl.chronological.remove(pn)
+            self.update_order(sl)
+
     def update_order(self, sl, use_safe=True):
         safe_pos = use_safe and self.settings.get('safe_positions') or 0
+        # Touch attribute before delete to make sure any existing lists are copied over
+        chronological = sl.chronological
         del sl[safe_pos:]  # Clear list
-        for pn in sl.chronological:
+        for pn in chronological:
             if pn not in sl:
                 sl.insert(self.get_position(pn, sl), pn)
 
@@ -220,7 +228,7 @@ class SpeakerList(PersistentList):
         try:
             return self._chronological
         except AttributeError:
-            self._chronological = PersistentList()
+            self._chronological = PersistentList(self)
             return self._chronological
 
     @property
@@ -232,12 +240,10 @@ class SpeakerList(PersistentList):
         except AttributeError:  # pragma: no cover
             pass
 
-    # FIXME: This needs to be adjusted by SpeakerLists
     def append(self, item):
         self.chronological.append(item)
         super(SpeakerList, self).append(item)
 
-    # FIXME: This needs to be adjusted by SpeakerLists
     def extend(self, iterable):
         self.chronological.extend(iterable)
         super(SpeakerList, self).extend(iterable)
