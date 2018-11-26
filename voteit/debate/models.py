@@ -143,8 +143,6 @@ class SpeakerLists(IterableUserDict, object):
         sl.chronological.append(pn)
         self.update_order(sl)
         # Done for all in update_order
-        # pos = self.get_position(pn, sl)
-        # sl.insert(pos, pn)
         return sl.index(pn) + 1
 
     def update_order(self, sl, use_safe=True):
@@ -262,8 +260,6 @@ class SpeakerList(PersistentList):
         assert isinstance(pn, int)
         if self.current not in self.speaker_log:
             self.speaker_log[self.current] = PersistentList()
-        # While this is a volatile attr, current is also volatile.
-        # So if it doesn't exist, neither will current!
         self.speaker_log[self.current].append(self.current_secs)
         self.start_ts = None
         self.current = None
