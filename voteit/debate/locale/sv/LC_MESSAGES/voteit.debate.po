@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-28 13:43+0100\n"
-"PO-Revision-Date: 2018-11-28 11:38+0100\n"
+"POT-Creation-Date: 2018-11-28 13:50+0100\n"
+"PO-Revision-Date: 2018-11-28 13:54+0100\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -39,7 +39,7 @@ msgstr "Standard"
 #: voteit/debate/models.py:101
 #, python-format
 msgid "List was active within '${title}' but was activated here instead."
-msgstr ""
+msgstr "Listan var aktiv inom ’${title}’ men är nu aktiv här istället."
 
 #: voteit/debate/schemas.py:31
 msgid "Enable speaker lists for this meeting?"
@@ -103,19 +103,19 @@ msgstr "Omladdningsintervall för användare"
 
 #: voteit/debate/schemas.py:108
 msgid "Add a list category with this title"
-msgstr ""
+msgstr "Lägg till en listkategori med denna titel"
 
 #: voteit/debate/schemas.py:115
 msgid "Category title"
-msgstr ""
+msgstr "Kategorititel"
 
 #: voteit/debate/schemas.py:120
 msgid "Tie the following users to this category"
-msgstr ""
+msgstr "Knyt följande användare till denna kategori"
 
 #: voteit/debate/schemas.py:121
 msgid "If they exist in another category they'll be moved here."
-msgstr ""
+msgstr "Om de existerar i annan kategori så flyttas de hit."
 
 #: voteit/debate/portlet.py:13
 msgid "Debate"
@@ -145,15 +145,15 @@ msgstr "Global tidslogg"
 
 #: voteit/debate/plugins/global_lists/__init__.py:17
 msgid "Monitors and shows total entries"
-msgstr ""
+msgstr "Övervakar och visar totala inlägg"
 
 #: voteit/debate/plugins/global_lists/__init__.py:50
 msgid "minute restriction"
-msgstr "Tidsbegränsning i minuter"
+msgstr "tidsbegränsning i minuter"
 
 #: voteit/debate/plugins/global_lists/__init__.py:53
 msgid "Speaker time global entries"
-msgstr ""
+msgstr "Talartid globala inlägg"
 
 #. Default: Add entries to show time restriction. No entries mean no
 #. restriction. If you add entries, they will be shown in sequence.The last one
@@ -242,7 +242,7 @@ msgstr "Tid använd: Summan av all tid som använts per genus."
 
 #: voteit/debate/templates/fullscreen.pt:42
 msgid "Categories"
-msgstr ""
+msgstr "Kategorier"
 
 #: voteit/debate/templates/manage_list_controls.pt:21
 msgid "Close list"
@@ -324,11 +324,11 @@ msgstr "Förfluten tid: ${time}"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:87
 msgid "You're managing: ${title}"
-msgstr ""
+msgstr "Du hanterar: ${title}"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:91
 msgid "You're managing the main list"
-msgstr ""
+msgstr "Du hanterar huvudlistan"
 
 #: voteit/debate/templates/manage_speaker_lists.pt:100
 msgid "New list"
@@ -340,7 +340,7 @@ msgstr "Talarlogg"
 
 #: voteit/debate/templates/speaker_list_categories.pt:11
 msgid "Categories and multiple lists"
-msgstr ""
+msgstr "Kategorier och multipla listor"
 
 #. Default: In some meetings you may need to have several speaker lists active
 #. at once. If you need that functionality, add a category here and assign a
@@ -349,10 +349,14 @@ msgstr ""
 #: voteit/debate/templates/speaker_list_categories.pt:12
 msgid "multiple_lists_short_manual"
 msgstr ""
+"I vissa möten kan ni behöva ha flera talarlistor aktiva samtidigt. Om ni "
+"behöver den funktionaliteten, lägg till en kategori här och tilldela den "
+"till en moderator. Den moderatorn kommer då aktivera listan inom sin "
+"kategori, istället för huvudmötets lista."
 
 #: voteit/debate/templates/speaker_list_categories.pt:19
 msgid "(Default)"
-msgstr ""
+msgstr "(Standard)"
 
 #: voteit/debate/templates/speaker_list_categories.pt:26
 #: voteit/debate/templates/speaker_list_categories.pt:55
@@ -361,7 +365,7 @@ msgstr "Aktiv:"
 
 #: voteit/debate/templates/speaker_list_categories.pt:29
 msgid "Moderators not tied to another category will use this one."
-msgstr ""
+msgstr "Moderatorer som inte knyts till en kategori använder denna"
 
 #: voteit/debate/templates/speaker_statistics.pt:10
 #: voteit/debate/views/statistics.py:55
@@ -427,7 +431,7 @@ msgstr "Talarlistor"
 
 #: voteit/debate/views/control_panel.py:31
 msgid "Multiple lists and categories"
-msgstr ""
+msgstr "Multipla listor och kategorier"
 
 #: voteit/debate/views/control_panel.py:43
 msgid "Fullscreen"
@@ -448,11 +452,11 @@ msgstr "Redigera ’$title’"
 #: voteit/debate/views/settings.py:130
 #, python-format
 msgid "Saved. The following were reassigned: ${names}"
-msgstr ""
+msgstr "Sparad. Följande flyttades om: ${names}"
 
 #: voteit/debate/views/settings.py:147
 msgid "Remove '$title'?"
-msgstr ""
+msgstr "Radera ’$title’?"
 
 #: voteit/debate/views/manage.py:144
 #, python-format
