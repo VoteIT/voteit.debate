@@ -197,13 +197,13 @@ class ListActionsView(ManageQueueView):
 
     def action_remove(self, sl):
         pn = self._get_pn()
-        if pn in sl:
-            sl.remove(pn)
+        self.request.speaker_lists.remove_from_list(pn, sl)
 
     def action_shuffle(self, sl):
         self.request.speaker_lists.shuffle(sl)
 
     def action_refresh(self, sl):
+        # We don't want a response here, see code above :)
         pass
 
 

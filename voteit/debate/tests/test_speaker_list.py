@@ -68,3 +68,10 @@ class SpeakerListTests(unittest.TestCase):
         obj.extend([1,2,3])
         self.assertEqual(list(obj), [1,2,3])
         self.assertEqual(list(reversed(obj)), [3,2,1])
+
+    def test_chronological_migrates_automatically(self):
+        obj = self._cut('name')
+        # Make it look like old data
+        obj.data.extend([1,2,3])
+        self.assertEqual(len(obj), 3)
+        self.assertEqual(len(obj.chronological), 3)

@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 import colander
 import deform
-from arche.interfaces import ISchemaCreatedEvent
 from arche.widgets import UserReferenceWidget
 
 from voteit.debate import _
@@ -95,25 +94,6 @@ class SpeakerListSettingsSchema(colander.Schema):
     )
 
 
-def _insert_gender(schema, event):
-    request = event.request
-    if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
-        if request.root.site_settings.get('pronoun_active'):
-            title = _('Show gender or pronoun in speaker list')
-            values = (('', _('No')), ('gender', _('Gender')), ('pronoun', _('Pronoun')))
-        else:
-            title = _('Show gender in speaker list')
-            values = (('', _('No')), ('gender', _('Yes')))
-        schema.add(colander.SchemaNode(
-            colander.String(),
-            name='show_gender_in_speaker_list',
-            title=title,
-            widget=deform.widget.RadioChoiceWidget(values=values),
-            default='',
-            missing='',
-        ))
-
-
 class LogEntries(colander.SequenceSchema):
     log = colander.SchemaNode(colander.Int())
 
@@ -148,9 +128,7 @@ class RemoveCategorySchema(colander.Schema):
 
 def includeme(config):
     config.add_content_schema('SpeakerLists', SpeakerListSettingsSchema, 'settings')
-   # config.add_content_schema('SpeakerLists', SpeakerListCategoriesSchema, 'category_settings')
     config.add_content_schema('SpeakerLists', EditSpeakerLogSchema, 'edit_speaker_log')
     config.add_content_schema('SpeakerLists', AddCategorySchema, 'add_speaker_list_category')
     config.add_content_schema('SpeakerLists', EditCategorySchema, 'edit_speaker_list_category')
     config.add_content_schema('SpeakerLists', RemoveCategorySchema, 'remove_speaker_list_category')
-    config.add_subscriber(_insert_gender, [SpeakerListSettingsSchema, ISchemaCreatedEvent])

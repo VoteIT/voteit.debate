@@ -198,24 +198,41 @@ class SpeakerLists(IterableUserDict, object):
             return
         if pn == sl.current:
             return
-        pos = self.get_position(pn, sl)
-        sl.insert(pos, pn)
-        return pos
+        sl.chronological.append(pn)
+        self.update_order(sl)
+        # Done for all in update_order
+        return sl.index(pn) + 1
+
+    def remove_from_list(self, pn, sl):
+        if pn in sl:
+            sl.remove(pn)
+            sl.chronological.remove(pn)
+            self.update_order(sl)
+
+    def update_order(self, sl, use_safe=True):
+        safe_pos = use_safe and self.settings.get('safe_positions') or 0
+        # Touch attribute before delete to make sure any existing lists are copied over
+        chronological = sl.chronological
+        del sl[safe_pos:]  # Clear list
+        for pn in chronological:
+            if pn not in sl:
+                sl.insert(self.get_position(pn, sl), pn)
 
     def shuffle(self, sl):
         use_lists = self.settings.get('speaker_list_count')
         lists = {}
-        for speaker in sl:
+        for speaker in sl.chronological:
             cmp_val = len(sl.speaker_log.get(speaker, ())) + 1
             if cmp_val > use_lists:
                 cmp_val = use_lists
             cur = lists.setdefault(cmp_val, [])
             cur.append(speaker)
-        del sl[:]
+        del sl.chronological[:]
         for i in range(1, use_lists + 1):
             if i in lists:
                 shuffle(lists[i])
-                sl.extend(lists[i])
+                sl.chronological.extend(lists[i])
+        self.update_order(sl, use_safe=False)
 
     def get_position(self, pn, sl):
         safe_pos = self.settings.get('safe_positions')
@@ -271,6 +288,14 @@ class SpeakerList(PersistentList):
         self.state = state
 
     @property
+    def chronological(self):
+        try:
+            return self._chronological
+        except AttributeError:
+            self._chronological = PersistentList(self)
+            return self._chronological
+
+    @property
     def current_secs(self):
         try:
             if self.start_ts is not None:
@@ -278,6 +303,14 @@ class SpeakerList(PersistentList):
                 return ts.seconds
         except AttributeError:  # pragma: no cover
             pass
+
+    def append(self, item):
+        self.chronological.append(item)
+        super(SpeakerList, self).append(item)
+
+    def extend(self, iterable):
+        self.chronological.extend(iterable)
+        super(SpeakerList, self).extend(iterable)
 
     def open(self):
         return self.state == 'open'
@@ -287,6 +320,7 @@ class SpeakerList(PersistentList):
         if pn in self:
             self.current = pn
             self.remove(pn)
+            self.chronological.remove(pn)
             self.start_ts = utcnow()
             return pn
 
@@ -296,8 +330,6 @@ class SpeakerList(PersistentList):
         assert isinstance(pn, int)
         if self.current not in self.speaker_log:
             self.speaker_log[self.current] = PersistentList()
-        # While this is a volatile attr, current is also volatile.
-        # So if it doesn't exist, neither will current!
         self.speaker_log[self.current].append(self.current_secs)
         self.start_ts = None
         self.current = None
@@ -307,6 +339,7 @@ class SpeakerList(PersistentList):
         if self.current == None:
             return
         self.insert(0, self.current)
+        self.chronological.insert(0, self.current)
         pn = self.current
         self.current = None
         self.start_ts = None

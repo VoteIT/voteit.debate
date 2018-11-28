@@ -4,7 +4,6 @@ from pyramid import testing
 from pyramid.request import apply_request_extensions
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
-from voteit.core.models.agenda_item import AgendaItem
 from voteit.core.models.meeting import Meeting
 from voteit.core.models.user import User
 from voteit.core.testing_helpers import bootstrap_and_fixture
@@ -37,11 +36,6 @@ class FemalePriorityListsTests(unittest.TestCase):
     def _sl(self):
         from voteit.debate.models import SpeakerList
         return SpeakerList
-
-    #def _mk_one(self, context=None):
-    #    if context is None:
-    #        context = testing.DummyResource()
-    #    return self._cut(context, self.request)
 
     def _setup_meeting(self, meeting, speaker_list_count=1, safe_positions=0, **kw):
         settings = ISpeakerListSettings(meeting)
@@ -88,7 +82,8 @@ class FemalePriorityListsTests(unittest.TestCase):
         sl = lists['one']
         sl.extend([1, 2, 11, 3, 4])
         lists.add_to_list(5, sl)
-        self.assertEqual(sl, [1, 2, 11, 3, 4, 5])
+        # Note: update_order updates previous too.
+        self.assertEqual(sl, [1, 11, 2, 3, 4, 5])
 
     def test_female_bypasses_male(self):
         lists = self._fixture()
