@@ -1,7 +1,7 @@
 <tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
-      tal:define="female_pns request.speaker_lists.female_pns(sl)"
+      tal:define="priority_pns request.speaker_lists.priority_pns(sl)"
       i18n:domain="voteit.debate">
 <tal:iter repeat="pn user_pns">
 <tal:def define="user pn2user.get(pn, None)">
@@ -21,8 +21,11 @@
         <b>${pn}</b>:
         <span tal:condition="user">
           ${user.title} (${user.userid})
+          <small class="text-muted">
+            ${request.speaker_lists.gender_title(user)}
+            <span tal:condition="pn in priority_pns" class="glyphicon glyphicon-asterisk"></span>
+          </small>
         </span>
-        <i tal:condition="pn in female_pns" class="text-success" i18n:translate="">Female</i>
       </div>
       <div class="col-xs-2 text-right">
         <a href="javascript:" data-list-action="start">

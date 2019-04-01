@@ -2,6 +2,7 @@ import unittest
 
 from pyramid import testing
 from pyramid.request import apply_request_extensions
+from pyramid.traversal import find_root
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
@@ -96,7 +97,7 @@ class FemalePriorityListsTests(unittest.TestCase):
         lists = self._fixture()
         sl = lists['one']
         sl.extend(range(1, 16))
-        self.assertEqual(lists.female_pns(sl), frozenset(range(11, 16)))
+        self.assertEqual(lists.priority_pns(sl), frozenset(range(11, 16)))
 
     def test_female_bypasses_male_until_safe(self):
         lists = self._fixture()
@@ -135,3 +136,22 @@ class FemalePriorityListsTests(unittest.TestCase):
         self.assertEqual(sl, [1, 11, 3, 12])
         lists.add_to_list(2, sl)
         self.assertEqual(sl, [1, 11, 3, 12, 2])
+
+    def test_other_as_prio_gender(self):
+        lists = self._fixture()
+        self._setup_meeting(lists.context, prioritize_other=True)
+        # Let's change gender!
+        root = find_root(lists.context)
+        root.users['female11'].gender = 'other'
+        sl = lists['one']
+        sl.extend([1, 2, 3, 4, 5])
+        lists.add_to_list(11, sl)
+        self.assertEqual(sl, [1, 11, 2, 3, 4, 5])
+
+    def test_gender_title(self):
+        context = testing.DummyResource()
+        request = testing.DummyRequest()
+        obj = self._cut(context, request)
+        user = User()
+        user.gender = 'other'
+        self.assertEqual(obj.gender_title(user), 'Other')
