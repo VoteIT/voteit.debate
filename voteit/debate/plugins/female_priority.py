@@ -84,7 +84,8 @@ def add_option_to_settings(schema, event):
     schema.add(
         colander.SchemaNode(
             colander.Bool(),
-            title=_("Prioritize gender 'other' the same way as females? Applicable only when '${title}' is active.",
+            title=_("prio_other_too_title",
+                    default="Prioritize gender 'other' the same way as females? Applicable only when '${title}' is active.",
                     mapping={'title': request.localizer.translate(FemalePriorityLists.title)}),
             default=False,
             name='prioritize_other',

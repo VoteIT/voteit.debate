@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: voteit.debate 0.1dev\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2018-11-28 13:50+0100\n"
-"PO-Revision-Date: 2018-11-28 13:54+0100\n"
+"POT-Creation-Date: 2019-04-01 13:52+0200\n"
+"PO-Revision-Date: 2019-04-01 13:53+0200\n"
 "Last-Translator: Robin Harms Oredsson <robin@betahaus.net>\n"
 "Language-Team: sv <LL@li.org>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 2.2.1\n"
 "Generated-By: Babel 1.3\n"
 
 #: voteit/debate/models.py:35
@@ -121,7 +121,7 @@ msgstr "Om de existerar i annan kategori så flyttas de hit."
 msgid "Debate"
 msgstr "Debatt"
 
-#: voteit/debate/plugins/female_priority.py:11
+#: voteit/debate/plugins/female_priority.py:16
 msgid "Female priority"
 msgstr "Prioritera kvinnor"
 
@@ -130,7 +130,7 @@ msgstr "Prioritera kvinnor"
 #. second position. If their are other female speakers in the list, the new
 #. female speaker will be moved up until she's 2 positions after any female
 #. before her. (I.e. pos 3 if pos 1 is female)
-#: voteit/debate/plugins/female_priority.py:12
+#: voteit/debate/plugins/female_priority.py:17
 msgid "female_prio_plugin_desc"
 msgstr ""
 "Om det finns två eller fler talare före som inte är kvinnor, och alla talare "
@@ -138,6 +138,14 @@ msgstr ""
 "andra plats. Om det finns fler kvinnliga talespersoner kommer de att flyttas "
 "upp till två platser efter närmst föregående kvinna. (Till exempel position "
 "3 om plats 1 är kvinna och plats 2 inte är kvinna.)"
+
+#. Default: Prioritize gender 'other' the same way as females? Applicable only
+#. when '${title}' is active.
+#: voteit/debate/plugins/female_priority.py:87
+msgid "prio_other_too_title"
+msgstr ""
+"Prioritera könet ’annat’ på samma sätt som kvinnor? Gäller bara om "
+"’${title}’ är aktiverat."
 
 #: voteit/debate/plugins/global_lists/__init__.py:16
 msgid "Global timelog"
@@ -163,10 +171,6 @@ msgstr "Talartid globala inlägg"
 #: voteit/debate/plugins/global_lists/__init__.py:54
 msgid "speaker_time_global_entries_description"
 msgstr ""
-
-#: voteit/debate/plugins/templates/manage_speaker_item_w_gender.pt:25
-msgid "Female"
-msgstr "Kvinna"
 
 #: voteit/debate/templates/gender_statistics.pt:10
 #: voteit/debate/templates/speaker_statistics.pt:17
@@ -482,6 +486,9 @@ msgstr "(Ingen användare registrerad)"
 #: voteit/debate/views/base.py:58
 msgid "No such list"
 msgstr "Ingen sådan lista"
+
+#~ msgid "Female"
+#~ msgstr "Kvinna"
 
 #~ msgid "Show gender or pronoun in speaker list"
 #~ msgstr "Visa kön eller pronomen i talarlistor"

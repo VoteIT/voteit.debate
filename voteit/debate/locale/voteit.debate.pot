@@ -1,12 +1,12 @@
 #
 # SOME DESCRIPTIVE TITLE
 # This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2019.
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE 1.0\n"
-"POT-Creation-Date: 2018-11-28 13:50+0100\n"
+"POT-Creation-Date: 2019-04-01 13:52+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,7 +109,7 @@ msgstr ""
 msgid "Debate"
 msgstr ""
 
-#: ./voteit/debate/plugins/female_priority.py:11
+#: ./voteit/debate/plugins/female_priority.py:16
 msgid "Female priority"
 msgstr ""
 
@@ -118,8 +118,14 @@ msgstr ""
 #. second position. If their are other female speakers in the list, the new
 #. female speaker will be moved up until she's 2 positions after any female
 #. before her. (I.e. pos 3 if pos 1 is female)
-#: ./voteit/debate/plugins/female_priority.py:12
+#: ./voteit/debate/plugins/female_priority.py:17
 msgid "female_prio_plugin_desc"
+msgstr ""
+
+#. Default: Prioritize gender 'other' the same way as females? Applicable only
+#. when '${title}' is active.
+#: ./voteit/debate/plugins/female_priority.py:87
+msgid "prio_other_too_title"
 msgstr ""
 
 #: ./voteit/debate/plugins/global_lists/__init__.py:16
@@ -145,10 +151,6 @@ msgstr ""
 #. entries.
 #: ./voteit/debate/plugins/global_lists/__init__.py:54
 msgid "speaker_time_global_entries_description"
-msgstr ""
-
-#: ./voteit/debate/plugins/templates/manage_speaker_item_w_gender.pt:25
-msgid "Female"
 msgstr ""
 
 #: ./voteit/debate/templates/gender_statistics.pt:10
