@@ -9,6 +9,8 @@ from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.security import MODERATE_MEETING
 from voteit.core.security import VIEW
+from voteit.irl.plugins.gender import GENDER_NAME_DICT
+from voteit.irl.plugins.gender import PRONOUN_NAME_DICT
 
 from voteit.debate.views.base import BaseSLView
 
@@ -35,20 +37,6 @@ class JSONView(BaseSLView):
         if sl.current:
             user_pns.insert(0, sl.current)
 
-        def get_gender_display(user):
-            pass
-
-        if 'voteit.irl.plugins.gender' in self.request.registry.settings.get('plugins', ''):
-            show_gender = self.request.speaker_lists.settings.get('show_gender_in_speaker_list', False)
-            if show_gender:
-                if show_gender == 'gender':
-                    from voteit.irl.plugins.gender import GENDER_NAME_DICT as GENDER_DICT
-                elif show_gender == 'pronoun':
-                    from voteit.irl.plugins.gender import PRONOUN_NAME_DICT as GENDER_DICT
-
-                def get_gender_display(user):
-                    return self.request.localizer.translate(GENDER_DICT.get(getattr(user, show_gender)))
-
         # FIXME: AS View action
         #total_count = dict([(x, 0) for x in user_pns])
         # if total:
@@ -65,20 +53,15 @@ class JSONView(BaseSLView):
                 pn = None
             userid = n2u.get(pn, '')
             user = None
-            fullname = self.no_user_txt
-            gender = None
             if userid:
                 user = self.request.root['users'].get(userid, None)
-                if user:
-                    fullname = user.title
-                    gender = get_gender_display(user)
+
             user_data = dict(
                 pn=pn,
                 userid=userid,
-                fullname=fullname,
+                fullname='',
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
-                gender=gender,
                 #total_times_spoken=total_count.get(pn, None),
                 is_safe=safe_count > user_pns.index(pn),
             )
@@ -177,6 +160,24 @@ def image_url(user, request, va, **kw):
             if img_url:
                 return img_url
     return request.static_url('voteit.debate:static/default_user.png')
+
+
+@view_action('voteit_debate_userdata', 'gender')
+def gender(user, request, va, **kw):
+    if user:
+        if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
+            gender_type = request.speaker_lists.settings.get('show_gender_in_speaker_list', False)
+            if gender_type == 'gender':
+                return request.localizer.translate(GENDER_NAME_DICT.get(getattr(user, gender_type)))
+            elif gender_type == 'pronoun':
+                return request.localizer.translate(PRONOUN_NAME_DICT.get(getattr(user, gender_type)))
+
+
+@view_action('voteit_debate_userdata', 'fullname')
+def user_fullname(user, request, va, **kw):
+    if user:
+        return user.title
+    return kw.get('view').no_user_txt
 
 
 def includeme(config):
