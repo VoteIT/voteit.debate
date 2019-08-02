@@ -9,10 +9,12 @@ CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 requires = ('voteit.core',
             'voteit.irl',
+            'betahaus.viewcomponent',
             'pyramid',
             'colander',
             'deform',
             'fanstatic',)
+
 
 setup(name='voteit.debate',
       version='0.1dev',
@@ -39,4 +41,3 @@ setup(name='voteit.debate',
       voteit_debate_lib = voteit.debate.fanstaticlib:voteit_debate_lib
       """,
       )
-

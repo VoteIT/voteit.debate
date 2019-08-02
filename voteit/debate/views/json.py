@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from betahaus.viewcomponent import render_view_group
+from betahaus.viewcomponent import view_action
 from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
-from pyramid.view import view_config, view_defaults
+from pyramid.view import view_config
+from pyramid.view import view_defaults
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.security import MODERATE_MEETING
@@ -12,6 +15,13 @@ from voteit.debate.views.base import BaseSLView
 
 @view_defaults(context=IMeeting, renderer='json', permission=NO_PERMISSION_REQUIRED)
 class JSONView(BaseSLView):
+
+    def user_resource_data(self, user, pn=None, userid=None, **kw):
+        """ Get extra data for a user. Note that the user object might be None.
+            This is so we allow these functions to populate default data too."""
+        # FIXME: This should probably pass other things too, like participant number etc.
+        return render_view_group(user, self.request, 'voteit_debate_userdata',
+                                 view = self, as_type='dict', empty_val='', pn=pn, userid=userid, **kw)
 
     @view_config(name='speakers_current_queue.json')
     def speakers_current_queue(self):
@@ -24,7 +34,6 @@ class JSONView(BaseSLView):
         safe_count = self.request.speaker_lists.settings.get('safe_positions', 1)
         if sl.current:
             user_pns.insert(0, sl.current)
-        base_img_url = self.request.static_url('voteit.debate:static/default_user.png')
 
         def get_gender_display(user):
             pass
@@ -40,6 +49,7 @@ class JSONView(BaseSLView):
                 def get_gender_display(user):
                     return self.request.localizer.translate(GENDER_DICT.get(getattr(user, show_gender)))
 
+        # FIXME: AS View action
         #total_count = dict([(x, 0) for x in user_pns])
         # if total:
         #     # Calculate total entries for all users.
@@ -52,9 +62,9 @@ class JSONView(BaseSLView):
             try:
                 pn = int(pn)
             except (ValueError, TypeError):
-                continue
+                pn = None
             userid = n2u.get(pn, '')
-            img_url = base_img_url
+            user = None
             fullname = self.no_user_txt
             gender = None
             if userid:
@@ -62,23 +72,18 @@ class JSONView(BaseSLView):
                 if user:
                     fullname = user.title
                     gender = get_gender_display(user)
-                    plugin = user.get_image_plugin(self.request)
-                    if plugin:
-                        try:
-                            img_url = plugin.url(60, self.request)
-                        except:
-                            pass
-            list_users.append(dict(
+            user_data = dict(
                 pn=pn,
                 userid=userid,
                 fullname=fullname,
                 active=pn == sl.current,
                 listno=self.request.speaker_lists.get_list_number_for(pn, sl),
                 gender=gender,
-                img_url=img_url,
                 #total_times_spoken=total_count.get(pn, None),
                 is_safe=safe_count > user_pns.index(pn),
-            ))
+            )
+            user_data.update(self.user_resource_data(user, pn=pn, userid=userid))
+            list_users.append(user_data)
         return dict(
             name=sl.name,
             title=sl.title,
@@ -158,6 +163,20 @@ class JSONView(BaseSLView):
                 'user_case': user_case,
             })
         return {'speaker_lists': speaker_lists}
+
+
+@view_action('voteit_debate_userdata', 'img_url')
+def image_url(user, request, va, **kw):
+    if user:
+        plugin = user.get_image_plugin(request)
+        if plugin:
+            try:
+                img_url = plugin.url(60, request)
+            except:
+                img_url = None
+            if img_url:
+                return img_url
+    return request.static_url('voteit.debate:static/default_user.png')
 
 
 def includeme(config):
