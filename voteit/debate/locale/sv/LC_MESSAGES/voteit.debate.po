@@ -59,9 +59,9 @@ msgstr "Antal talarlistor att använda"
 msgid "speaker_lists_to_use_description"
 msgstr ""
 "Med fler talarlistor prioriteras de som har pratat mindre än någon annan, "
-"men bara upp till antal listor. <br/><br/>Exempel:Med 2 talarlistor kommer "
-"någon som inte ha pratat få prata före alla som har pratat förut. Men någon "
-"som har pratat 2 gånger får inte gå före någon som pratat 4 gånger."
+"men bara upp till antal listor. Exempel: Med 2 talarlistor kommer någon som "
+"inte ha pratat få prata före alla som har pratat förut. Men någon som har "
+"pratat 2 gånger får inte gå före någon som pratat 4 gånger."
 
 #: voteit/debate/schemas.py:51
 msgid "Safe positions"
