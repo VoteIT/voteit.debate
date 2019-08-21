@@ -20,6 +20,9 @@ from zope.component import adapter
 from zope.interface import implementer
 
 from voteit.debate import _
+from voteit.debate.events import SpeakerAddedEvent
+from voteit.debate.events import SpeakerFinishedEvent
+from voteit.debate.events import SpeakerRemovedEvent
 from voteit.debate.interfaces import ISLCategory
 from voteit.debate.interfaces import ISpeakerList
 from voteit.debate.interfaces import ISpeakerListCategories
@@ -200,14 +203,21 @@ class SpeakerLists(IterableUserDict, object):
             return
         sl.chronological.append(pn)
         self.update_order(sl)
+        self.request.registry.notify(SpeakerAddedEvent(sl, self.request, pn))
         # Done for all in update_order
         return sl.index(pn) + 1
+
+    def finish_on_list(self, sl):
+        if sl.current:
+            sl.finish(sl.current)
+            self.request.registry.notify(SpeakerFinishedEvent(sl, self.request, sl.current))
 
     def remove_from_list(self, pn, sl):
         if pn in sl:
             sl.remove(pn)
             sl.chronological.remove(pn)
             self.update_order(sl)
+            self.request.registry.notify(SpeakerRemovedEvent(sl, self.request, pn))
 
     def update_order(self, sl, use_safe=True):
         safe_pos = use_safe and self.settings.get('safe_positions') or 0

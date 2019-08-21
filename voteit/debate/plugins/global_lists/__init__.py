@@ -4,8 +4,10 @@ from collections import Counter
 import colander
 from arche.interfaces import ISchemaCreatedEvent
 from pyramid.decorator import reify
+from pyramid.events import subscriber
 
 from voteit.debate import _
+from voteit.debate.events import SpeakerAddedEvent, SpeakerRemovedEvent, SpeakerFinishedEvent
 from voteit.debate.models import SpeakerLists
 from voteit.debate.schemas import SpeakerListSettingsSchema
 
@@ -68,6 +70,13 @@ def update_schema(schema, event):
     )
 
 
+def test(event):
+    print('yey')
+    print(event.context)
+    print(event.pn)
+
+
 def includeme(config):
     config.registry.registerAdapter(GlobalLists, name=GlobalLists.name)
     config.add_subscriber(update_schema, [SpeakerListSettingsSchema, ISchemaCreatedEvent])
+    config.add_subscriber(test, SpeakerAddedEvent)
