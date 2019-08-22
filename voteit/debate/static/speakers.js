@@ -71,8 +71,11 @@ var UserSpeakerLists = function() {
         this.auto_update = false;
     };
 
-    this.do_request = function(listName, action) {
-        arche.do_request(this.action_url, {data: {'action': action, 'sl': listName}})
+    this.do_request = function(listName, action, extra_data) {
+        var data ={'action': action, 'sl': listName};
+        if (extra_data !== undefined)
+            $.extend(data, extra_data);
+        arche.do_request(this.action_url, {data: data})
         .done(this.handle_response.bind(this))
         .fail(arche.flash_error);
     };
@@ -82,7 +85,10 @@ var UserSpeakerLists = function() {
         var target = $(event.currentTarget);
         var listName = target.parents('[data-list-name]').data('list-name');
         var action = target.data('sl-user-control');
-        this.do_request(listName, action);
+        // Allow extra data from plugins.
+        var extra_data = target.data();
+        delete extra_data.slUserControl;
+        this.do_request(listName, action, extra_data);
     };
 }
 

@@ -49,6 +49,7 @@ class SpeakerLists(IterableUserDict, object):
 
     @property
     def data(self):
+        # type: () -> OOBTree
         try:
             return self.context._speaker_lists
         except AttributeError:
@@ -208,9 +209,11 @@ class SpeakerLists(IterableUserDict, object):
         return sl.index(pn) + 1
 
     def finish_on_list(self, sl):
-        if sl.current:
-            sl.finish(sl.current)
-            self.request.registry.notify(SpeakerFinishedEvent(sl, self.request, sl.current))
+        pn = sl.current
+        if pn:
+            sl.finish(pn)
+            self.request.registry.notify(SpeakerFinishedEvent(sl, self.request, pn))
+            return pn
 
     def remove_from_list(self, pn, sl):
         if pn in sl:

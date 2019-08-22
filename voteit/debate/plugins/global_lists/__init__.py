@@ -2,9 +2,12 @@
 from collections import Counter
 
 import colander
+from BTrees.OOBTree import OOBTree
+from BTrees.IOBTree import IOBTree
+from BTrees.IOBTree import IOSet
 from arche.interfaces import ISchemaCreatedEvent
 from pyramid.decorator import reify
-from pyramid.events import subscriber
+from voteit.irl.models.interfaces import IParticipantNumbers
 
 from voteit.debate import _
 from voteit.debate.events import SpeakerAddedEvent, SpeakerRemovedEvent, SpeakerFinishedEvent
@@ -18,6 +21,7 @@ class GlobalLists(SpeakerLists):
     title = _("Global timelog")
     description = _("Monitors and shows total entries")
     tpl_manage_speaker_item = 'voteit.debate:plugins/global_lists/templates/manage_speaker_item.pt'
+    tpl_user = 'voteit.debate:plugins/global_lists/templates/snippets/speaker_item_user.pt'
 
     def total_count(self, pns):
         # FIXME: Should be cached later on
@@ -32,12 +36,80 @@ class GlobalLists(SpeakerLists):
     def time_restrictions(self):
         return self.settings.get('global_time_restrictions', ())
 
-    def get_time_restr(self, num):
-        if self.time_restrictions:
-            try:
-                return self.time_restrictions[num]
-            except IndexError:
-                return self.time_restrictions[-1]
+    # Old method
+    # def get_time_restr(self, num):
+    #     if self.time_restrictions:
+    #         try:
+    #             return self.time_restrictions[num]
+    #         except IndexError:
+    #             return self.time_restrictions[-1]
+
+    def get_time_restriction(self, sl, pn):
+        try:
+            return self.restrictions_active[sl.name][pn]
+        except KeyError:
+            pass
+
+    def get_annotation(self, name, cls=OOBTree):
+        # Avoid creating new OOBTree objects if they don't exist
+        attr = '__global_time__' + name
+        annotation = getattr(self.context, attr, None)
+        if not isinstance(annotation, cls):
+            annotation = cls()
+            setattr(self.context, attr, annotation)
+        return annotation
+
+    @reify
+    def restrictions_active(self):
+        # type: () -> OOBTree
+        return self.get_annotation('restrictions_active')
+
+    @reify
+    def restrictions_used(self):
+        # type: () -> IOBTree
+        return self.get_annotation('restrictions_used', IOBTree)
+
+    def get_available_restrictions(self, pn=None):
+        # type: (int) -> list
+        if pn is None:
+            pns = IParticipantNumbers(self.context)
+            pn = pns.userid_to_number.get(self.request.authenticated_userid)
+            assert pn is not None, 'Can\'t get available restrictions for user w/o participant number.'
+        active = set(item[pn] for item in self.restrictions_active.values() if pn in item)
+        used = self.restrictions_used.get(pn, ())
+        non_avail = active.union(used)
+        return [r for r in self.time_restrictions[:-1] if r not in non_avail] + self.time_restrictions[-1:]
+
+    def _remove_active(self, sl, pn, used=False):
+        try:
+            if used:
+                self.restrictions_used.setdefault(pn, IOSet()).add(self.restrictions_active[sl.name][pn])
+            del self.restrictions_active[sl.name][pn]
+        except KeyError:
+            pass
+
+    def add_to_list(self, pn, sl, override=False):
+        user_available = self.get_available_restrictions(pn)
+        try:
+            restriction = int(self.request.params.get('timeRestriction'))
+            # If client sent non-available restriction, use first available instead of failing.
+            if restriction not in user_available:
+                raise ValueError
+        except (TypeError, ValueError):
+            restriction = user_available[0]
+
+        count = super(GlobalLists, self).add_to_list(pn, sl, override)
+        self.restrictions_active.setdefault(sl.name, OOBTree())[pn] = restriction
+        return count
+
+    def remove_from_list(self, pn, sl):
+        super(GlobalLists, self).remove_from_list(pn, sl)
+        self._remove_active(sl, pn)
+
+    def finish_on_list(self, sl):
+        pn = super(GlobalLists, self).finish_on_list(sl)
+        self._remove_active(sl, pn, used=True)
+        return pn
 
 
 def update_schema(schema, event):
@@ -70,13 +142,6 @@ def update_schema(schema, event):
     )
 
 
-def test(event):
-    print('yey')
-    print(event.context)
-    print(event.pn)
-
-
 def includeme(config):
     config.registry.registerAdapter(GlobalLists, name=GlobalLists.name)
     config.add_subscriber(update_schema, [SpeakerListSettingsSchema, ISchemaCreatedEvent])
-    config.add_subscriber(test, SpeakerAddedEvent)
