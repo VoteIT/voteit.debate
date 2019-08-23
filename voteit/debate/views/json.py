@@ -66,6 +66,8 @@ class JSONView(BaseSLView):
                 is_safe=safe_count > user_pns.index(pn),
             )
             user_data.update(self.user_resource_data(user, pn=pn, userid=userid))
+            # Allow extra data from plugins
+            user_data.update(self.request.speaker_lists.get_user_extra_data(pn, sl))
             list_users.append(user_data)
         return dict(
             name=sl.name,

@@ -13,6 +13,8 @@ from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.interfaces import IRequest
 from pyramid.renderers import render
+from voteit.irl.models.interfaces import IParticipantNumbers
+
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IFlashMessages
 from voteit.core.models.interfaces import IMeeting
@@ -61,6 +63,10 @@ class SpeakerLists(IterableUserDict, object):
         schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
         settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
         return self.request.validate_appstruct(schema, settings)
+
+    @reify
+    def participant_numbers(self):
+        return IParticipantNumbers(self.context)
 
     @reify
     def categories(self):
@@ -270,6 +276,9 @@ class SpeakerLists(IterableUserDict, object):
     def render_tpl(self, name, **kw):
         tpl = getattr(self, "tpl_%s" % name, None)
         return render(tpl, kw, request=self.request)
+
+    def get_user_extra_data(self, pn, sl):
+        return {}
 
 
 @implementer(ISpeakerListSettings)

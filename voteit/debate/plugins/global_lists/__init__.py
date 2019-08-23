@@ -10,7 +10,6 @@ from pyramid.decorator import reify
 from voteit.irl.models.interfaces import IParticipantNumbers
 
 from voteit.debate import _
-from voteit.debate.events import SpeakerAddedEvent, SpeakerRemovedEvent, SpeakerFinishedEvent
 from voteit.debate.models import SpeakerLists
 from voteit.debate.schemas import SpeakerListSettingsSchema
 
@@ -20,6 +19,7 @@ class GlobalLists(SpeakerLists):
     name = "global_lists"
     title = _("Global timelog")
     description = _("Monitors and shows total entries")
+    tpl_fullscreen = 'voteit.debate:plugins/global_lists/templates/snippets/speaker_item_fullscreen.pt'
     tpl_manage_speaker_item = 'voteit.debate:plugins/global_lists/templates/manage_speaker_item.pt'
     tpl_user = 'voteit.debate:plugins/global_lists/templates/snippets/speaker_item_user.pt'
 
@@ -110,6 +110,21 @@ class GlobalLists(SpeakerLists):
         pn = super(GlobalLists, self).finish_on_list(sl)
         self._remove_active(sl, pn, used=True)
         return pn
+
+    # On list delete, also delete active time restrictions for that list.
+    # Otherwise people might loose restrictions without getting a chance to speak.
+    def __delitem__(self, key):
+        super(GlobalLists, self).__delitem__(key)
+        if key in self.restrictions_active:
+            del self.restrictions_active[key]
+
+    def get_user_extra_data(self, pn, sl):
+        try:
+            return {
+                'time_restriction': self.restrictions_active[sl.name][pn]
+            }
+        except IndexError:
+            return {}
 
 
 def update_schema(schema, event):
