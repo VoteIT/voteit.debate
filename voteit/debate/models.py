@@ -13,8 +13,6 @@ from persistent.list import PersistentList
 from pyramid.decorator import reify
 from pyramid.interfaces import IRequest
 from pyramid.renderers import render
-from voteit.irl.models.interfaces import IParticipantNumbers
-
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IFlashMessages
 from voteit.core.models.interfaces import IMeeting
@@ -22,9 +20,6 @@ from zope.component import adapter
 from zope.interface import implementer
 
 from voteit.debate import _
-from voteit.debate.events import SpeakerAddedEvent
-from voteit.debate.events import SpeakerFinishedEvent
-from voteit.debate.events import SpeakerRemovedEvent
 from voteit.debate.interfaces import ISLCategory
 from voteit.debate.interfaces import ISpeakerList
 from voteit.debate.interfaces import ISpeakerListCategories
@@ -63,10 +58,6 @@ class SpeakerLists(IterableUserDict, object):
         schema = self.request.get_schema(self.context, 'SpeakerLists', 'settings')
         settings = dict(ISpeakerListSettings(self.context, SpeakerListSettings(self.context)))
         return self.request.validate_appstruct(schema, settings)
-
-    @reify
-    def participant_numbers(self):
-        return IParticipantNumbers(self.context)
 
     @reify
     def categories(self):
@@ -210,7 +201,6 @@ class SpeakerLists(IterableUserDict, object):
             return
         sl.chronological.append(pn)
         self.update_order(sl)
-        self.request.registry.notify(SpeakerAddedEvent(sl, self.request, pn))
         # Done for all in update_order
         return sl.index(pn) + 1
 
@@ -218,7 +208,6 @@ class SpeakerLists(IterableUserDict, object):
         pn = sl.current
         if pn:
             sl.finish(pn)
-            self.request.registry.notify(SpeakerFinishedEvent(sl, self.request, pn))
             return pn
 
     def remove_from_list(self, pn, sl):
@@ -226,7 +215,6 @@ class SpeakerLists(IterableUserDict, object):
             sl.remove(pn)
             sl.chronological.remove(pn)
             self.update_order(sl)
-            self.request.registry.notify(SpeakerRemovedEvent(sl, self.request, pn))
 
     def update_order(self, sl, use_safe=True):
         safe_pos = use_safe and self.settings.get('safe_positions') or 0
