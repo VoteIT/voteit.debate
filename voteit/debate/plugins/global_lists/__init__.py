@@ -36,14 +36,6 @@ class GlobalLists(SpeakerLists):
     def time_restrictions(self):
         return self.settings.get('global_time_restrictions', ())
 
-    # Old method
-    # def get_time_restr(self, num):
-    #     if self.time_restrictions:
-    #         try:
-    #             return self.time_restrictions[num]
-    #         except IndexError:
-    #             return self.time_restrictions[-1]
-
     def get_time_restriction(self, sl, pn):
         try:
             return self.restrictions_active[sl.name][pn]
@@ -118,14 +110,6 @@ class GlobalLists(SpeakerLists):
         if key in self.restrictions_active:
             del self.restrictions_active[key]
 
-    def get_user_extra_data(self, pn, sl):
-        try:
-            return {
-                'time_restriction': self.restrictions_active[sl.name][pn]
-            }
-        except IndexError:
-            return {}
-
 
 def update_schema(schema, event):
     request = event.request
@@ -160,3 +144,4 @@ def update_schema(schema, event):
 def includeme(config):
     config.registry.registerAdapter(GlobalLists, name=GlobalLists.name)
     config.add_subscriber(update_schema, [SpeakerListSettingsSchema, ISchemaCreatedEvent])
+    config.include('.views')

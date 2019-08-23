@@ -265,9 +265,6 @@ class SpeakerLists(IterableUserDict, object):
         tpl = getattr(self, "tpl_%s" % name, None)
         return render(tpl, kw, request=self.request)
 
-    def get_user_extra_data(self, pn, sl):
-        return {}
-
 
 @implementer(ISpeakerListSettings)
 @adapter(IMeeting)

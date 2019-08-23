@@ -18,12 +18,25 @@ from voteit.debate.views.base import BaseSLView
 @view_defaults(context=IMeeting, renderer='json', permission=NO_PERMISSION_REQUIRED)
 class JSONView(BaseSLView):
 
-    def user_resource_data(self, user, pn=None, userid=None, **kw):
+    def user_resource_data(self, user, pn=None, userid=None, sl=None, is_safe=False, **kw):
         """ Get extra data for a user. Note that the user object might be None.
             This is so we allow these functions to populate default data too."""
-        # FIXME: This should probably pass other things too, like participant number etc.
-        return render_view_group(user, self.request, 'voteit_debate_userdata',
-                                 view = self, as_type='dict', empty_val='', pn=pn, userid=userid, **kw)
+        data = dict(
+            pn=pn,
+            userid=userid,
+            active=pn == sl.current,
+            listno=self.request.speaker_lists.get_list_number_for(pn, sl),
+            is_safe=is_safe,
+        )
+        data.update(
+            # Anything registered within view group 'voteit_debate_userdata' will be added here.
+            # So for instance 'fullname' will be included as key, since it's registered below.
+            # See betahaus.viewcomponent for more info.
+            render_view_group(user, self.request, 'voteit_debate_userdata',
+                              view=self, as_type='dict', empty_val='',
+                              pn=pn, userid=userid, sl=sl, is_safe=is_safe, **kw)
+        )
+        return data
 
     @view_config(name='speakers_current_queue.json')
     def speakers_current_queue(self):
@@ -36,16 +49,6 @@ class JSONView(BaseSLView):
         safe_count = self.request.speaker_lists.settings.get('safe_positions', 1)
         if sl.current:
             user_pns.insert(0, sl.current)
-
-        # FIXME: AS View action
-        #total_count = dict([(x, 0) for x in user_pns])
-        # if total:
-        #     # Calculate total entries for all users.
-        #     # FIXME: Should be cached later on
-        #     for x in self.request.speaker_lists.values():
-        #         for (k, v) in x.speaker_log.items():
-        #             if k in user_pns:
-        #                 total_count[k] = total_count.get(k, 0) + len(v)
         for pn in user_pns:
             try:
                 pn = int(pn)
@@ -55,20 +58,10 @@ class JSONView(BaseSLView):
             user = None
             if userid:
                 user = self.request.root['users'].get(userid, None)
-
-            user_data = dict(
-                pn=pn,
-                userid=userid,
-                fullname='',
-                active=pn == sl.current,
-                listno=self.request.speaker_lists.get_list_number_for(pn, sl),
-                #total_times_spoken=total_count.get(pn, None),
-                is_safe=safe_count > user_pns.index(pn),
+            is_safe = safe_count > user_pns.index(pn)
+            list_users.append(
+                self.user_resource_data(user, pn=pn, userid=userid, sl=sl, is_safe=is_safe)
             )
-            user_data.update(self.user_resource_data(user, pn=pn, userid=userid))
-            # Allow extra data from plugins
-            user_data.update(self.request.speaker_lists.get_user_extra_data(pn, sl))
-            list_users.append(user_data)
         return dict(
             name=sl.name,
             title=sl.title,
