@@ -31,7 +31,7 @@ class GlobalLists(SpeakerLists):
 
     @reify
     def time_restrictions(self):
-        return self.settings.get('global_time_restrictions', ())
+        return self.settings['global_time_restrictions']
 
     def get_time_restriction(self, sl, pn):
         try:

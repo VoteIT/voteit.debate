@@ -31,7 +31,7 @@ def update_schema(schema, event):
                         "for first entry, and 1 minute for all other entries."
             ),
             name='global_time_restrictions',
-            missing=(),
+            missing=[], # This is a global default
             tab='advanced',
         )
     )
