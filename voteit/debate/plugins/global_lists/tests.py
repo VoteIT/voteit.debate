@@ -3,6 +3,7 @@ import unittest
 from pyramid import testing
 from pyramid.request import apply_request_extensions
 from voteit.core.models.agenda_item import AgendaItem
+from voteit.irl.models.interfaces import IParticipantNumbers
 from zope.interface.verify import verifyClass
 from zope.interface.verify import verifyObject
 from voteit.core.models.meeting import Meeting
@@ -114,3 +115,100 @@ class GlobalListsTests(unittest.TestCase):
         result = obj.total_count([1, 2])
         self.assertEqual(4, result[1])
         self.assertEqual(1, result[2])
+
+    def test_get_available_restrictions(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        sl = self._sl('one')
+        sl.__parent__ = meeting
+        obj['one'] = sl
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions(1))
+        obj.add_to_list(1, sl)
+        self.assertIn(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+
+    def test_get_time_restriction(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        sl = self._sl('one')
+        sl.__parent__ = meeting
+        obj['one'] = sl
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))
+        obj.add_to_list(1, sl)
+        self.assertEqual(3, obj.get_time_restriction(sl, 1))
+
+    def test_get_available_restrictions_from_currently_authenticated(self):
+        self.config.testing_securitypolicy(userid='jane')
+        self.config.include('voteit.irl.models.participant_numbers')
+        meeting, request = self._fixture()
+        pns = IParticipantNumbers(meeting)
+        pns.new_tickets('admin', 1)
+        ticket = pns.tickets[1]
+        # 'jane' should now be participant nr 1
+        pns.claim_ticket('jane', ticket.token)
+        self.assertEqual('jane', request.authenticated_userid)
+        obj = self._cut(meeting, request)
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions())
+        ai = AgendaItem()
+        sl = obj.add_list_to(ai)
+        obj.add_to_list(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions())
+
+    def test_remove_from_list_w_active(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        ai = AgendaItem()
+        sl = obj.add_list_to(ai)
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))
+        obj.add_to_list(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(3, obj.get_time_restriction(sl, 1))
+        obj.remove_from_list(1, sl)
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))
+
+    def test_finish_on_list(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        ai = AgendaItem()
+        sl = obj.add_list_to(ai)
+        obj.add_to_list(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(3, obj.get_time_restriction(sl, 1))
+        sl.start(1)
+        obj.finish_on_list(sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))
+
+    def test_list_deleted_w_active_speaker(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        ai = AgendaItem()
+        sl = obj.add_list_to(ai)
+        obj.add_to_list(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(3, obj.get_time_restriction(sl, 1))
+        sl.start(1)
+        del obj[sl.name]
+        # Everything should be restored
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))
+
+    def test_list_deleted_w_speaker_in_list(self):
+        meeting, request = self._fixture()
+        request.params['timeRestriction'] = 3
+        obj = self._cut(meeting, request)
+        ai = AgendaItem()
+        sl = obj.add_list_to(ai)
+        obj.add_to_list(1, sl)
+        self.assertEqual([2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(3, obj.get_time_restriction(sl, 1))
+        del obj[sl.name]
+        self.assertEqual([3, 2, 1], obj.get_available_restrictions(1))
+        self.assertEqual(None, obj.get_time_restriction(sl, 1))

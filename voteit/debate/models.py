@@ -35,6 +35,7 @@ class SpeakerLists(IterableUserDict, object):
     title = _("Default list handler")
     description = ""
     state_titles = {"open": _("Open"), "closed": _("Closed")}
+    # See render_tpl
     tpl_manage_speaker_item = 'voteit.debate:templates/snippets/manage_speaker_item.pt'
     tpl_log = 'voteit.debate:templates/snippets/speaker_log_item.pt'
     tpl_fullscreen = 'voteit.debate:templates/snippets/speaker_item_fullscreen.pt'
@@ -343,7 +344,7 @@ class SpeakerList(PersistentList):
         return pn
 
     def undo(self):
-        if self.current == None:
+        if self.current is None:
             return
         self.insert(0, self.current)
         self.chronological.insert(0, self.current)
