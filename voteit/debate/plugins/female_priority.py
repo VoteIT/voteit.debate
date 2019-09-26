@@ -81,6 +81,9 @@ class FemalePriorityLists(SpeakerLists):
 
 def add_option_to_settings(schema, event):
     request = getattr(event, 'request', get_current_request())
+    if request.speaker_lists.name != FemalePriorityLists.name:
+        return
+
     schema.add(
         colander.SchemaNode(
             colander.Bool(),
