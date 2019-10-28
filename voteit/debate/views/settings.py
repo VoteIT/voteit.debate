@@ -28,10 +28,10 @@ class SpeakerListSettingsForm(DefaultEditForm):
         return ISpeakerListSettings(self.context)
 
     def appstruct(self):
-        return dict(self.settings)
+        return self.request.validate_appstruct(self.schema, dict(self.settings))
 
     def save_success(self, appstruct):
-        plugin_changed = self.settings['speaker_list_plugin'] != appstruct['speaker_list_plugin']
+        plugin_changed = self.settings.get('speaker_list_plugin', None) != appstruct['speaker_list_plugin']
         self.settings.update(appstruct)
         self.toggle_portlet(appstruct['enable_voteit_debate'])
         if plugin_changed:
