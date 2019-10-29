@@ -1,6 +1,7 @@
 <tal:main xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      xmlns:v-bind="http://www.w3.org/1999/xhtml"
       i18n:domain="voteit.debate">
 <div id="ai-debate-portlet" class="col-sm-12">
 
@@ -15,10 +16,10 @@
         </div>
         <div class="col-sm-6">
           <a tal:condition="request.is_moderator"
-            href="${request.resource_url(context, '_add_slist')}"
+             href="${request.resource_url(context, '_add_slist')}"
              data-href-list-action
-            class="btn btn-default btn-sm"
-            i18n:translate="">New</a>
+             class="btn btn-default btn-sm"
+             i18n:translate="">New</a>
           <a tal:condition="request.is_moderator"
             class="btn btn-default btn-sm"
             href="${request.resource_url(context, 'manage_speaker_lists')}"
@@ -39,22 +40,23 @@
       </div>
     </div>
 
-    <div data-user-speaker-lists></div>
+    <user-speaker-lists
+        ref="userLists"
+        load_url="${request.resource_path(context, 'context_list_stats.json')}"
+        action_url="${request.resource_path(context, '_user_list_act')}"
+        v-bind:update_interval="${user_update_interval * 1000}">
+    </user-speaker-lists>
 
-    <div class="hidden" data-user-speaker-template
-         tal:content="structure request.speaker_lists.render_tpl('user')">
-        Template for user controls for speaker lists goes here, it will be populated by json
-    </div>
+    <tal:user_template replace="structure request.speaker_lists.render_tpl('user')" />
 
     <script language="javascript" type="text/javascript">
-      $.extend(user_speaker_lists, {
-        load_url: "${request.resource_path(context, 'context_list_stats.json')}",
-        action_url: "${request.resource_path(context, '_user_list_act')}",
-        update_interval: ${user_update_interval * 1000},
-        user_pn: ${pn and pn or 'null'},
-        auto_update: true,
-        last_response: null,
-      }).refresh();
+
+      $(document).ready(function () {
+          var userSpeakerLists = new Vue({
+              el: "user-speaker-lists",
+          })
+          $('body').on("click", "[data-href-list-action]", userSpeakerLists.$refs.userLists.handleExternalAction)
+      })
     </script>
 
   </div>

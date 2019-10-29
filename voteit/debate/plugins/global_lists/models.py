@@ -58,6 +58,11 @@ class GlobalLists(SpeakerLists):
         # type: () -> IOBTree
         return self.get_annotation('restrictions_used', IOBTree)
 
+    @reify
+    def available_restrictions(self):
+        """ Cached version"""
+        return self.get_available_restrictions()
+
     def get_available_restrictions(self, pn=None):
         # type: (int) -> list
         if pn is None:
