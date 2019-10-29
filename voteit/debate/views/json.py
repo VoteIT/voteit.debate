@@ -9,6 +9,7 @@ from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.security import MODERATE_MEETING
 from voteit.core.security import VIEW
+from voteit.debate.views import CONTEXTLIST_SLOT, USERDATA_SLOT
 from voteit.irl.plugins.gender import GENDER_NAME_DICT
 from voteit.irl.plugins.gender import PRONOUN_NAME_DICT
 
@@ -32,7 +33,7 @@ class JSONView(BaseSLView):
             # Anything registered within view group 'voteit_debate_userdata' will be added here.
             # So for instance 'fullname' will be included as key, since it's registered below.
             # See betahaus.viewcomponent for more info.
-            render_view_group(user, self.request, 'voteit_debate_userdata',
+            render_view_group(user, self.request, USERDATA_SLOT,
                               view=self, as_type='dict', empty_val='',
                               pn=pn, userid=userid, sl=sl, is_safe=is_safe, **kw)
         )
@@ -98,6 +99,52 @@ class JSONView(BaseSLView):
             ))
         return log_entries
 
+    def contextlist_data(self, ai, userid, pn=None, sl=None, **kw):
+        """ Get extra data for the view for user controls within the agenda context. """
+        user_in_list = pn != None and pn in sl
+        # Return the users relation to this list expressed as:
+        # in_list, not_in_list, no_pn
+        before_user_count = None
+        if pn is None:
+            user_case = 'no_pn'
+        elif user_in_list:
+            user_case = 'in_list'
+            before_user_count = sl.index(pn)
+        elif sl.open():
+            if sl.current == pn:
+                user_case = 'current_speaker'
+            else:
+                user_case = 'not_in_list'
+        else:
+            user_case = 'not_in_list_closed'
+        active = sl.name in self.all_active_lists
+        cat_title = ''
+        if active:
+            cat = self.request.speaker_lists.get_category_for_list(sl)
+            if cat:
+                cat_title = cat.title
+
+        data = {
+            'name': sl.name,
+            'title': sl.title,
+            'active': active,
+            'cat_title': cat_title,
+            'user_in_list': user_in_list,
+            'before_user_count': before_user_count,
+            'list_len': len(sl),
+            'state': sl.state,
+            'state_title': self.request.speaker_lists.get_state_title(sl),
+            'user_case': user_case,
+        }
+        data.update(
+            # Anything registered within view group 'voteit_debate_contextlist' will be added here.
+            # It will have the same key as the view action name. For instance see global lists plugin
+            render_view_group(ai, self.request, CONTEXTLIST_SLOT,
+                              view=self, as_type='dict', empty_val='',
+                              pn=pn, userid=userid, sl=sl, **kw)
+        )
+        return data
+
     @view_config(name='context_list_stats.json', context=IAgendaItem, permission=VIEW)
     def context_list_stats_view(self):
         speaker_lists = []
@@ -106,44 +153,13 @@ class JSONView(BaseSLView):
         if userid:
             pn = self.participant_numbers.userid_to_number.get(userid, None)
         for sl in self.request.speaker_lists.get_lists_in(self.context.uid):
-            user_in_list = pn != None and pn in sl
-            # Return the users relation to this list expressed as:
-            # in_list, not_in_list, no_pn
-            before_user_count = None
-            if pn is None:
-                user_case = 'no_pn'
-            elif user_in_list:
-                user_case = 'in_list'
-                before_user_count = sl.index(pn)
-            elif sl.open():
-                if sl.current == pn:
-                    user_case = 'current_speaker'
-                else:
-                    user_case = 'not_in_list'
-            else:
-                user_case = 'not_in_list_closed'
-            active = sl.name in self.all_active_lists
-            cat_title = ''
-            if active:
-                cat = self.request.speaker_lists.get_category_for_list(sl)
-                if cat:
-                    cat_title = cat.title
-            speaker_lists.append({
-                'name': sl.name,
-                'title': sl.title,
-                'active': active,
-                'cat_title': cat_title,
-                'user_in_list': user_in_list,
-                'before_user_count': before_user_count,
-                'list_len': len(sl),
-                'state': sl.state,
-                'state_title': self.request.speaker_lists.get_state_title(sl),
-                'user_case': user_case,
-            })
+            speaker_lists.append(
+                self.contextlist_data(self.context, userid, pn=pn, sl=sl)
+            )
         return {'speaker_lists': speaker_lists}
 
 
-@view_action('voteit_debate_userdata', 'img_url')
+@view_action(USERDATA_SLOT, 'img_url')
 def image_url(user, request, va, **kw):
     if user:
         plugin = user.get_image_plugin(request)
@@ -157,7 +173,7 @@ def image_url(user, request, va, **kw):
     return request.static_url('voteit.debate:static/default_user.png')
 
 
-@view_action('voteit_debate_userdata', 'gender')
+@view_action(USERDATA_SLOT, 'gender')
 def gender(user, request, va, **kw):
     if user:
         if 'voteit.irl.plugins.gender' in request.registry.settings.get('plugins', ''):
@@ -168,7 +184,7 @@ def gender(user, request, va, **kw):
                 return request.localizer.translate(PRONOUN_NAME_DICT.get(getattr(user, gender_type)))
 
 
-@view_action('voteit_debate_userdata', 'fullname')
+@view_action(USERDATA_SLOT, 'fullname')
 def user_fullname(user, request, va, **kw):
     if user:
         return user.title
