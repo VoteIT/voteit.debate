@@ -5,15 +5,16 @@ from pyramid.httpexceptions import HTTPBadRequest
 from pyramid.security import NO_PERMISSION_REQUIRED
 from pyramid.view import view_config
 from pyramid.view import view_defaults
+from zope.interface.interfaces import ComponentLookupError
+
 from voteit.core.models.interfaces import IAgendaItem
 from voteit.core.models.interfaces import IMeeting
 from voteit.core.security import MODERATE_MEETING
 from voteit.core.security import VIEW
 from voteit.debate.views import CONTEXTLIST_SLOT, USERDATA_SLOT
+from voteit.debate.views.base import BaseSLView
 from voteit.irl.plugins.gender import GENDER_NAME_DICT
 from voteit.irl.plugins.gender import PRONOUN_NAME_DICT
-
-from voteit.debate.views.base import BaseSLView
 
 
 @view_defaults(context=IMeeting, renderer='json', permission=NO_PERMISSION_REQUIRED)
@@ -136,13 +137,18 @@ class JSONView(BaseSLView):
             'state_title': self.request.speaker_lists.get_state_title(sl),
             'user_case': user_case,
         }
-        data.update(
-            # Anything registered within view group 'voteit_debate_contextlist' will be added here.
-            # It will have the same key as the view action name. For instance see global lists plugin
-            render_view_group(ai, self.request, CONTEXTLIST_SLOT,
-                              view=self, as_type='dict', empty_val='',
-                              pn=pn, userid=userid, sl=sl, **kw)
-        )
+        try:
+            data.update(
+                # Anything registered within view group 'voteit_debate_contextlist' will be added here.
+                # It will have the same key as the view action name. For instance see global lists plugin
+                render_view_group(ai, self.request, CONTEXTLIST_SLOT,
+                                  view=self, as_type='dict', empty_val='',
+                                  pn=pn, userid=userid, sl=sl, **kw)
+            )
+        except ComponentLookupError:
+            # 'voteit_debate_contextlist' might not contain anything, in that case the component won't exist.
+            # And this is okay :)
+            pass
         return data
 
     @view_config(name='context_list_stats.json', context=IAgendaItem, permission=VIEW)
