@@ -28,13 +28,18 @@ class SpeakerListSettingsForm(DefaultEditForm):
         return ISpeakerListSettings(self.context)
 
     def appstruct(self):
-        return dict(self.settings)
+        return self.request.validate_appstruct(self.schema, dict(self.settings))
 
     def save_success(self, appstruct):
+        plugin_changed = self.settings.get('speaker_list_plugin', None) != appstruct['speaker_list_plugin']
         self.settings.update(appstruct)
         self.toggle_portlet(appstruct['enable_voteit_debate'])
-        self.flash_messages.add(self.default_success, type="success")
-        return HTTPFound(location=self.request.resource_url(self.context))
+        if plugin_changed:
+            self.flash_messages.add(_("Changed list handler, you may want to review settings."), type="info")
+            return HTTPFound(location=self.request.resource_url(self.context, 'speaker_list_settings'))
+        else:
+            self.flash_messages.add(self.default_success, type="success")
+            return HTTPFound(location=self.request.resource_url(self.context))
 
     def toggle_portlet(self, enable=True):
         manager = get_portlet_manager(self.context)

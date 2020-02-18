@@ -20,13 +20,13 @@
       </div>
       <div class="col-xs-8">
         <b>${pn}</b>:
-        <span tal:condition="user">
-          ${user.title} (${user.userid})
+        <span>
+          <tal:if condition="user">${user.title} (${user.userid})</tal:if>
           <tal:no_mins condition="not time_restrict">
             <span class="glyphicon glyphicon-globe"></span> ${total_count[pn]}
           </tal:no_mins>
           <span tal:condition="time_restrict" class="label label-default">
-            ${request.speaker_lists.get_time_restr(total_count[pn])} min
+            ${request.speaker_lists.get_time_restriction(sl, pn)} min
           </span>
         </span>
       </div>

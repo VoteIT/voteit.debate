@@ -45,9 +45,19 @@
 
                 <!-- user isn't in list -->
                 <div v-if="list.user_case === 'not_in_list'">
-                    <a v-on:click="add(list.name)"
-                       class="btn btn-success"
-                       i18n:translate="">Add yourself</a>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <tal:ts i18n:translate="">Add yourself</tal:ts> <span class="caret"></span>
+                        </button>
+                        <ul data-global-item="" class="dropdown-menu">
+                            <li v-for="timeslot in list.available_timeslots">
+                                <a v-on:click="add(list.name, {timeRestriction: timeslot})" i18n:translate="">
+                                    <span i18n:name="minutes">{{timeslot}}</span> min(s)
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
 
                 </div><!-- /user isn't in list -->
 

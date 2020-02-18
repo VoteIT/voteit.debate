@@ -189,8 +189,7 @@ class ListActionsView(ManageQueueView):
         sl.start(pn)
 
     def action_finish(self, sl):
-        if sl.current:
-            sl.finish(sl.current)
+        self.request.speaker_lists.finish_on_list(sl)
 
     def action_undo(self, sl):
         sl.undo()
