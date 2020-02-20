@@ -1,2 +1,2 @@
 include *.txt *.ini *.cfg *.rst
-recursive-include voteit *.css *.pt *.txt *.js *.html
+recursive-include voteit/debate *.css *.pt *.txt *.js *.html *.mo
