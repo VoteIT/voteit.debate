@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import colander
 import deform
-from arche.widgets import UserReferenceWidget
+from voteit.core.schemas.common import MeetingUserReferenceWidget
 
 from voteit.debate import _
 from voteit.debate.interfaces import ISpeakerLists
@@ -101,7 +101,7 @@ class EditCategorySchema(colander.Schema):
     )
     users = colander.SchemaNode(
         colander.List(),
-        widget=UserReferenceWidget(),
+        widget=MeetingUserReferenceWidget(),
         title=_("Tie the following users to this category"),
         description=_("If they exist in another category they'll be moved here."),
     )
