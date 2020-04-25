@@ -8,6 +8,7 @@ from pyramid.decorator import reify
 from voteit.irl.models.interfaces import IParticipantNumbers
 
 from voteit.debate import _
+from voteit.debate.interfaces import ISpeakerLists
 from voteit.debate.models import SpeakerLists
 
 
@@ -114,4 +115,4 @@ class GlobalLists(SpeakerLists):
 
 
 def includeme(config):
-    config.registry.registerAdapter(GlobalLists, name=GlobalLists.name)
+    config.registry.registerAdapter(GlobalLists, name=GlobalLists.name, provided=ISpeakerLists)

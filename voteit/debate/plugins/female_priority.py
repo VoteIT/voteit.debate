@@ -7,6 +7,7 @@ from voteit.irl.plugins.gender import GENDER_NAME_DICT
 
 from voteit.debate import _
 from voteit.debate import logger
+from voteit.debate.interfaces import ISpeakerLists
 from voteit.debate.models import SpeakerLists
 from voteit.debate.schemas import SpeakerListSettingsSchema
 
@@ -100,6 +101,6 @@ def includeme(config):
     if 'voteit.irl.plugins.gender' not in config.registry.settings.get('plugins', ''):
         logger.warning("Can't find 'voteit.irl.plugins.gender' in plugins. Adding that package.")
         config.include('voteit.irl.plugins.gender')
-    config.registry.registerAdapter(FemalePriorityLists, name=FemalePriorityLists.name)
+    config.registry.registerAdapter(FemalePriorityLists, name=FemalePriorityLists.name, provided=ISpeakerLists)
     config.add_subscriber(add_option_to_settings, [SpeakerListSettingsSchema, ISchemaCreatedEvent])
     assert 'other' in GENDER_NAME_DICT, "Missing 'other' as gender"

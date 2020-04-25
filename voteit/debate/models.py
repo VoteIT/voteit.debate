@@ -389,6 +389,6 @@ def speaker_lists(request, meeting=None):
 def includeme(config):
     config.add_request_method(speaker_lists, reify=True)
     # The default one won't have a name
-    config.registry.registerAdapter(SpeakerLists, name=SpeakerLists.name)
-    config.registry.registerAdapter(SpeakerListSettings)
-    config.registry.registerAdapter(SpeakerListCategories)
+    config.registry.registerAdapter(SpeakerLists, name=SpeakerLists.name, provided=ISpeakerLists)
+    config.registry.registerAdapter(SpeakerListSettings, provided=ISpeakerListSettings)
+    config.registry.registerAdapter(SpeakerListCategories, provided=ISpeakerListCategories)
